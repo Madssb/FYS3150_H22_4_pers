@@ -1,8 +1,8 @@
 # Fdb version 3
-["pdflatex"] 1662550777 "/home/mads/mads/compfys/FYS3150_H22_4_pers/Project_1/latex/problem_2/problem_2.tex" "/home/mads/mads/compfys/FYS3150_H22_4_pers/Project_1/latex/problem_2/problem_2.pdf" "problem_2" 1662550796
+["pdflatex"] 1662565313 "/home/mads/mads/compfys/FYS3150_H22_4_pers/Project_1/latex/problem_2/problem_2.tex" "/home/mads/mads/compfys/FYS3150_H22_4_pers/Project_1/latex/problem_2/problem_2.pdf" "problem_2" 1662565313
   "/etc/texmf/web2c/texmf.cnf" 1630931877 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/mads/mads/compfys/FYS3150_H22_4_pers/Project_1/latex/problem_2/problem_2.aux" 1662550777 379 111c984ef6ce5d1b013d0c205754ffda ""
-  "/home/mads/mads/compfys/FYS3150_H22_4_pers/Project_1/latex/problem_2/problem_2.tex" 1662550796 1049 7ce793fcd020ee676de6d269aa43509d ""
+  "/home/mads/mads/compfys/FYS3150_H22_4_pers/Project_1/latex/problem_2/problem_2.aux" 1662565313 393 7f4d9ab7d6888142ca5a3eba5ee8dc66 ""
+  "/home/mads/mads/compfys/FYS3150_H22_4_pers/Project_1/latex/problem_2/problem_2.tex" 1662565313 1563 21b32676a31ff07913ce0b42518adf8f ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm" 1136768653 1324 c910af8c371558dc20f2d7822f66fe64 ""
@@ -39,12 +39,12 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1581979058 38841 ce3692aa899bb693b90b87eaa5d4d84e ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1662028189 4770781 1ed1abab22da9c3e2cc82e4db562318b ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1662028234 8264138 46ee18bd3e23eb1347ed83121aa7a8be ""
-  "problem_2.aux" 1662550777 379 111c984ef6ce5d1b013d0c205754ffda "pdflatex"
-  "problem_2.tex" 1662550796 1049 7ce793fcd020ee676de6d269aa43509d ""
+  "problem_2.aux" 1662565313 393 7f4d9ab7d6888142ca5a3eba5ee8dc66 "pdflatex"
+  "problem_2.tex" 1662565313 1563 21b32676a31ff07913ce0b42518adf8f ""
   "problem_2_fig.pdf" 1662549073 13102 b05917e432cd5f3f4fea58c05864c040 ""
   (generated)
-  "/home/mads/mads/compfys/FYS3150_H22_4_pers/Project_1/latex/problem_2/problem_2.pdf"
-  "problem_2.pdf"
-  "problem_2.aux"
-  "problem_2.log"
   "/home/mads/mads/compfys/FYS3150_H22_4_pers/Project_1/latex/problem_2/problem_2.log"
+  "problem_2.aux"
+  "/home/mads/mads/compfys/FYS3150_H22_4_pers/Project_1/latex/problem_2/problem_2.pdf"
+  "problem_2.log"
+  "problem_2.pdf"
