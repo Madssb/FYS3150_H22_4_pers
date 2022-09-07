@@ -53,12 +53,14 @@ INPUT /usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 INPUT /usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmr12.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
+INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmr12.tfm
+INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
+INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
+INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
 INPUT /home/mads/mads/compfys/FYS3150_H22_4_pers/Project_1/latex/problem_2/problem_2_fig.pdf
 INPUT /home/mads/mads/compfys/FYS3150_H22_4_pers/Project_1/latex/problem_2/problem_2_fig.pdf
 OUTPUT /home/mads/mads/compfys/FYS3150_H22_4_pers/Project_1/latex/problem_2/problem_2.pdf
 INPUT /home/mads/mads/compfys/FYS3150_H22_4_pers/Project_1/latex/problem_2/problem_2_fig.pdf
-INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
-INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
 INPUT /var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map
 INPUT /home/mads/mads/compfys/FYS3150_H22_4_pers/Project_1/latex/problem_2/problem_2.aux
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb

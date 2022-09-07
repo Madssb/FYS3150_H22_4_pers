@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2022.9.1)  7 SEP 2022 13:15
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2022.9.1)  7 SEP 2022 13:39
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -151,21 +151,21 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 <problem_2_fig.pdf, id=1, 227.62204pt x 227.62204pt>
 File: problem_2_fig.pdf Graphic file (type pdf)
 <use problem_2_fig.pdf>
-Package pdftex.def Info: problem_2_fig.pdf  used on input line 11.
+Package pdftex.def Info: problem_2_fig.pdf  used on input line 21.
 (pdftex.def)             Requested size: 227.62148pt x 227.62148pt.
  [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
 
  </home/mads/mads/compfys/FYS3150_H22_4_pers/Project_1/latex/problem_2/problem_2_fig.pdf>] (/home/mads/mads/compfys/FYS3150_H22_4_pers/Project_1/latex/problem_2/problem_2.aux) ) 
 Here is how much of TeX's memory you used:
- 2749 strings out of 481239
- 41520 string characters out of 5920378
- 283706 words of memory out of 5000000
- 18031 multiletter control sequences out of 15000+600000
- 533397 words of font info for 28 fonts, out of 8000000 for 9000
+ 2753 strings out of 481239
+ 41587 string characters out of 5920378
+ 284714 words of memory out of 5000000
+ 18035 multiletter control sequences out of 15000+600000
+ 534002 words of font info for 30 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 43i,5n,38p,400b,200s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 43i,8n,38p,400b,200s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb>
-Output written on /home/mads/mads/compfys/FYS3150_H22_4_pers/Project_1/latex/problem_2/problem_2.pdf (1 page, 71820 bytes).
+Output written on /home/mads/mads/compfys/FYS3150_H22_4_pers/Project_1/latex/problem_2/problem_2.pdf (1 page, 75844 bytes).
 PDF statistics:
  71 PDF objects out of 1000 (max. 8388607)
  35 compressed objects within 1 object stream
