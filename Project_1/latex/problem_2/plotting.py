@@ -19,11 +19,12 @@ with open('analytic_sol.data', 'r') as infile:
 
 # Plotting
 cm = 1/2.54  
-fig, ax = plt.subplots(figsize=(10*cm,10*cm))
+fig, ax = plt.subplots(figsize=(8*cm,8*cm))
 ax.plot(sol_vec[:, 0], sol_vec[:, 1], label='$u(x)$')
 ax.set_title('Analytic solution')
 ax.set_xlabel('$x$')
 ax.set_ylabel('$u(x)$')
 ax.legend()
-plt.savefig('problem_2.pdf')
+fig.tight_layout()
+fig.savefig('problem_2_fig.pdf')
 #plt.show()
