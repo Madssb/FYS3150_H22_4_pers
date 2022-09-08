@@ -33,7 +33,12 @@ std::vector<double> source_term(std::vector<double> x){
 }
 
 int main(){
-  std::vector<int> n_vec = {10, 100, 1000};
+  int k = 7;
+  std::vector<int> n_vec(k);
+  n_vec[0] = 10;
+  for (int j=0; j<k; j++){
+    n_vec[j+1] = n_vec[j]*10;
+  }
   for (int N_step : n_vec){
     int n_step = N_step;
     // The dimension of matrix, i.e B: n x n. Is number of points (n_step + 1) minus 2 => n_step - 1
