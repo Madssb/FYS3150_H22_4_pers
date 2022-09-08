@@ -72,7 +72,7 @@ int main(){
   gt[0] = g[0];
 
   // Loop solving for bt and gt using Thomas algorithm
-  for (int i=1; i<n; i++){
+  for (int i=1; i<bt.size(); i++){
     /*
     Be careful of the indexing. Since the algorithm says bt_i = b_i - a_i / bt_(i-1) * c(i-1),
     but remember that for instance bt_2 = b_2 - a_2 / bt_1 * c_1. Here a_1 lies in the
@@ -85,11 +85,11 @@ int main(){
   // Initializing v, where last element is gt / bt
   v[n-1] = gt[n-1] / bt[n-1];
   // Solving v using Thomas algorithm, backwards substitution
-  for (int i=n-2; i>=0; i--){
+  for (int i=v.size()-2; i>=0; i--){
     v[i] = (gt[i] - c[i]*v[i+1]) / bt[i];
   }
   // Appending solutions from v in our original vector. This has size n+2 as our inital conditions is added.
-  for (int i=1; i<=n; i++){
+  for (int i=1; i<=v.size(); i++){
     vt[i] = v[i-1];
   }
 
