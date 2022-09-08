@@ -44,8 +44,11 @@ int main(){
   std::vector<double> x = linspace(0., 1., n+2);
   double h = x[1] - x[0];
   std::vector<double> f = source_term(x);
+  // Setting -1 as initial values for the upper diagonal
   std::vector<double> a(n, -1.);
+  // Setting 2 as initial values for the diagonal
   std::vector<double> b(n, 2.);
+  // Setting -1 as initial values for the lower diagonal
   std::vector<double> c(n, -1.);
   std::vector<double> g(n);
   std::vector<double> bt(n);
