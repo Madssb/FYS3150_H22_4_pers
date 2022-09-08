@@ -1,5 +1,4 @@
 # include <iostream>
-# include <cmath>
 # include <vector>
 /*
 Problem 7 on FYS3150 project 1. Implementing the Thomas-algorithm as general as possible.
