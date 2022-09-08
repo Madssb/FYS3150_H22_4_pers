@@ -32,17 +32,18 @@ std::vector<double> source_term(std::vector<double> x){
 }
 
 int main(){
-  // The dimension of matrix, i.e B: n x n
-  int n = 10000;
+  int n_step = 10000;
+  // The dimension of matrix, i.e B: n x n. Is number of points (n_step + 1) minus 2 => n_step - 1
+  int n = n_step - 1;
 
   /*
   Defining and initializing all vectors needed to solve. Use n elements for
   a and c (upper and lower diagonals of the tridiagonal matrix) as the 0'th element are thrown away when indexing in the loop. Therefore
   we need the n'th element, and the 0'th element is never used. This is to
   keep the indexing convention of the algorithm. Remember that a, b, c in the special case have signature (-1, 2, -1),
-  but generally can be any arbitrary vector a, b, c with arbitrary entries. 
+  but generally can be any arbitrary vector a, b, c with arbitrary entries.
   */
-  std::vector<double> x = linspace(0., 1., n+2);
+  std::vector<double> x = linspace(0., 1., n_step+1);
   double h = x[1] - x[0];
   std::vector<double> f = source_term(x);
   // Setting -1 as initial values for the upper diagonal
@@ -55,7 +56,7 @@ int main(){
   std::vector<double> bt(n);
   std::vector<double> gt(n);
   std::vector<double> v(n);
-  std::vector<double> vt(n+2);
+  std::vector<double> vt(n_step+1);
   // Initial values for vector we are solving, end points
   double v0 = 0.;
   double vN = 0.;
@@ -83,7 +84,7 @@ int main(){
   }
   // Initializing v, where last element is gt / bt
   v[n-1] = gt[n-1] / bt[n-1];
-  // Solving v using Thomas algorithm, backwars substitution
+  // Solving v using Thomas algorithm, backwards substitution
   for (int i=n-2; i>=0; i--){
     v[i] = (gt[i] - c[i]*v[i+1]) / bt[i];
   }
