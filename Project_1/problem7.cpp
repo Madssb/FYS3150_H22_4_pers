@@ -39,7 +39,8 @@ int main(){
   Defining and initializing all vectors needed to solve. Use n elements for
   a and c (upper and lower diagonals of the tridiagonal matrix) as the 0'th element are thrown away when indexing in the loop. Therefore
   we need the n'th element, and the 0'th element is never used. This is to
-  keep the indexing convention of the algorithm.
+  keep the indexing convention of the algorithm. Remember that a, b, c in the special case have signature (-1, 2, -1),
+  but generally can be any arbitrary vector a, b, c with arbitrary entries. 
   */
   std::vector<double> x = linspace(0., 1., n+2);
   double h = x[1] - x[0];
