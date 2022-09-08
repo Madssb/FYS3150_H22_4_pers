@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-data = np.loadtxt('problem7_data.txt')
+data = np.loadtxt('problem7_data_n=1000.txt')
 x = data[:,0]
 v = data[:,1]       # The approximated numerical solution
 
