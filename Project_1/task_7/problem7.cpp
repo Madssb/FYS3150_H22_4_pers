@@ -15,6 +15,7 @@ void print_all(std::vector<double> y){
   std::cout << "" << std::endl;
 }
 
+// Function that acts like Python linspace
 std::vector<double> linspace(double start, double end, int points){
   std::vector<double> linvec(points);
   for (int i=0; i<points; i++){
