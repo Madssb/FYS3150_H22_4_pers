@@ -14,7 +14,7 @@ void print_all(std::vector<double> y){
 }
 
 int main(){
-  // Defining n, the dimension of matrix, i.e B: n x n
+  // The dimension of matrix, i.e B: n x n
   int n = 4;
   // Initial values for vector we are solving, end points
   double v0 = 1.;
@@ -22,8 +22,9 @@ int main(){
 
   /*
   Defining and initializing all vectors needed to solve. Use n elements for
-  a and c as the 0'th element are thrown away when indexing in the loop. Therefore
-  we need the n'th element, and the 0'th element is never used.
+  a and c (upper and lower diagonals of the tridiagonal matrix) as the 0'th element are thrown away when indexing in the loop. Therefore
+  we need the n'th element, and the 0'th element is never used. This is to
+  keep the indexing convention of the algorithm.
   */
   std::vector<double> a(n, -1.);
   std::vector<double> b(n, 2.);
@@ -43,7 +44,6 @@ int main(){
     bt[i] = b[i] - a[i]/bt[i-1]*c[i-1];
     gt[i] = g[i] - a[i]/bt[i-1]*gt[i-1];
   }
-
   // Initializing v, where last element is gt / bt
   v[n-1] = gt[n-1] / bt[n-1];
   // Solving v using Thomas algorithm, backwars substitution
