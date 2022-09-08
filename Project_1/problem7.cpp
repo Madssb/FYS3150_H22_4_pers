@@ -45,11 +45,11 @@ int main(){
   double h = x[1] - x[0];
   std::vector<double> f = source_term(x);
   // Setting -1 as initial values for the upper diagonal
-  std::vector<double> a(n, -1.);
+  std::vector<double> a(n-1, -1.);
   // Setting 2 as initial values for the diagonal
   std::vector<double> b(n, 2.);
   // Setting -1 as initial values for the lower diagonal
-  std::vector<double> c(n, -1.);
+  std::vector<double> c(n-1, -1.);
   std::vector<double> g(n);
   std::vector<double> bt(n);
   std::vector<double> gt(n);
@@ -71,8 +71,14 @@ int main(){
 
   // Loop solving for bt and gt using Thomas algorithm
   for (int i=1; i<n; i++){
-    bt[i] = b[i] - a[i]/bt[i-1]*c[i-1];
-    gt[i] = g[i] - a[i]/bt[i-1]*gt[i-1];
+    /*
+    Be careful of the indexing. Since the algorithm says bt_i = b_i - a_i / bt_(i-1) * c(i-1),
+    but remember that for instance bt_2 = b_2 - a_2 / bt_1 * c_1. Here a_1 lies in the
+    0'th index of a while b_2 lies in the 1'st index of b, making us shift the index with -1.
+    i.e b[1] = b_2, while a[1] = a_3 and c[1] = c_2. Thus, the shift in index i on a by -1.
+    */
+    bt[i] = b[i] - a[i-1]/bt[i-1]*c[i-1];
+    gt[i] = g[i] - a[i-1]/bt[i-1]*gt[i-1];
   }
   // Initializing v, where last element is gt / bt
   v[n-1] = gt[n-1] / bt[n-1];
