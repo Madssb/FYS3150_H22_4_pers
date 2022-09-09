@@ -13,6 +13,7 @@ void print_all(std::vector<double> y){
     std::cout << x << " ";
   }
   std::cout << "" << std::endl;
+  return;
 }
 
 // Function that acts like Python linspace
