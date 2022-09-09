@@ -3,6 +3,7 @@
 #include <armadillo>
 #include <cmath>
 #include <iomanip>
+#include <chrono>
 
 // no. of points to simulate
 int n = 10000;
@@ -32,7 +33,7 @@ double u_sol(double x)
 // g solution
 double g_sol(double x)
 {
-  double g = h * h * (f(x) - a/b * f(x));
+  double g = h * h * f(x);
   return g;
 }
 
