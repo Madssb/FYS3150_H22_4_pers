@@ -5,7 +5,12 @@
 #include <fstream>
 #include <chrono>
 /*
-Problem 7 on FYS3150 project 1. Implementing the Thomas-algorithm as general as possible.
+Problem 9 on FYS3150 project 1. Implementing the Thomas-algorithm as special as possible for the
+tridiaginal matrix A with signature (-1, 2, -1).
+Then
+bt_i = 2 - 1 / bt_(i-1)  since a, c = -1, a*c = 1, b_i = 2.
+gt_i = g_i + gt_(i-1)/bt_(i-1) since a = -1
+v_i = (gt_i + v_(i+1)) / bt_i since c = -1
 */
 
 // Function that prints all elements in vector
@@ -50,21 +55,13 @@ int main(){
     int n = n_step - 1;
 
     /*
-    Defining and initializing all vectors needed to solve. Use n elements for
-    a and c (upper and lower diagonals of the tridiagonal matrix) as the 0'th element are thrown away when indexing in the loop. Therefore
-    we need the n'th element, and the 0'th element is never used. This is to
-    keep the indexing convention of the algorithm. Remember that a, b, c in the special case have signature (-1, 2, -1),
+    Defining and initializing all vectors needed to solve. Remember that a, b, c in the special case have signature (-1, 2, -1),
     but generally can be any arbitrary vector a, b, c with arbitrary entries.
+    Now we alter the algorithm to be specific for a = c = -1, and b = 2 as it will reduce FLOPs.
     */
     std::vector<double> x = linspace(0., 1., n_step+1);
     double h = x[1] - x[0];
     std::vector<double> f = source_term(x);
-    // Setting -1 as initial values for the upper diagonal
-    std::vector<double> a(n-1, -1.);
-    // Setting 2 as initial values for the diagonal
-    std::vector<double> b(n, 2.);
-    // Setting -1 as initial values for the lower diagonal
-    std::vector<double> c(n-1, -1.);
     std::vector<double> g(n);
     std::vector<double> bt(n);
     std::vector<double> gt(n);
@@ -81,7 +78,7 @@ int main(){
     }
     vt[0] = v0;
     vt[n+1] = vN;
-    bt[0] = b[0];
+    bt[0] = 2;
     gt[0] = g[0];
 
     // Loop solving for bt and gt using Thomas algorithm
@@ -92,14 +89,14 @@ int main(){
       0'th index of a while b_2 lies in the 1'st index of b, making us shift the index with -1.
       i.e b[1] = b_2, while a[1] = a_3 and c[1] = c_2. Thus, the shift in index i on a by -1.
       */
-      bt[i] = b[i] - a[i-1]/bt[i-1]*c[i-1];
-      gt[i] = g[i] - a[i-1]/bt[i-1]*gt[i-1];
+      bt[i] = 2 - 1/bt[i-1];
+      gt[i] = g[i] + gt[i-1]/bt[i-1];
     }
     // Initializing v, where last element is gt / bt
     v[n-1] = gt[n-1] / bt[n-1];
     // Solving v using Thomas algorithm, backwards substitution
     for (int i=v.size()-2; i>=0; i--){
-      v[i] = (gt[i] - c[i]*v[i+1]) / bt[i];
+      v[i] = (gt[i] + v[i+1]) / bt[i];
     }
     // Appending solutions from v in our original vector. This has size n+2 as our inital conditions is added.
     for (int i=1; i<=v.size(); i++){
@@ -121,7 +118,7 @@ int main(){
     // print_all(vt);
 
     // Set a filename
-    std::string filename = "problem7_data_n=";
+    std::string filename = "problem9_data_n=";
     std::string txt = ".txt";
     filename += std::to_string(n_step);
     filename += txt;
