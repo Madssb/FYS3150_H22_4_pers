@@ -84,10 +84,9 @@ int main(){
     // Loop solving for bt and gt using Thomas algorithm
     for (int i=1; i<bt.size(); i++){
       /*
-      Be careful of the indexing. Since the algorithm says bt_i = b_i - a_i / bt_(i-1) * c(i-1),
-      but remember that for instance bt_2 = b_2 - a_2 / bt_1 * c_1. Here a_1 lies in the
-      0'th index of a while b_2 lies in the 1'st index of b, making us shift the index with -1.
-      i.e b[1] = b_2, while a[1] = a_3 and c[1] = c_2. Thus, the shift in index i on a by -1.
+      Here, b_i = 2 and a_i*c_(i-1) = 1, so we reduce the first line by 1 FLOP.
+      In the second line we have that a_i = -1, so the sign is flipped. This allow us to
+      move gt_(i-1) on top of bt_(i-1), reducing the line by 1 FLOP.
       */
       bt[i] = 2 - 1/bt[i-1];
       gt[i] = g[i] + gt[i-1]/bt[i-1];
@@ -96,6 +95,9 @@ int main(){
     v[n-1] = gt[n-1] / bt[n-1];
     // Solving v using Thomas algorithm, backwards substitution
     for (int i=v.size()-2; i>=0; i--){
+      /*
+      Here c_(i-1) = -1, flipping the sign. This reduces the line by 1 FLOP
+      */
       v[i] = (gt[i] + v[i+1]) / bt[i];
     }
     // Appending solutions from v in our original vector. This has size n+2 as our inital conditions is added.

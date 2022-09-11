@@ -36,11 +36,12 @@ for n, time_n in enumerate(time_array_special, start=1):
     time_n_mean = np.mean(time_n)
     time_n_std = np.std(time_n)
     print(f'Time for n={10**n:.0e}:\t{time_n_mean:.3e} +- {time_n_std:.3e} s')
-    
+
 print('')
 
 print('Ratio Special / General:')
 print('\t\t\tmean')
+# Excluding the first n=10 because it would result in a 0/0 expression.
 for n, (special, general) in enumerate(zip(time_array_special[1:], time_array_general[1:]), start=2):
     special_mean = np.mean(special)
     general_mean = np.mean(general)
