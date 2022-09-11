@@ -23,8 +23,8 @@ for i, n in enumerate(n_arr):
     abserror = abs(u-v)
     relerror = abs((u - v)/u)
 
-    ax1.plot(x, abserror, label=f'n = {n}')
-    ax2.plot(x, relerror, label=f'n = {n}')
+    ax1.plot(x, abserror, label='n = 10' + r'$^{' + f'{i+1}' + r'}$')
+    ax2.plot(x, relerror, label='n = 10' + r'$^{' + f'{i+1}' + r'}$')
 
     maxrelerror[i] = np.max(relerror)
     print(f'|\t{n}\t|\t{maxrelerror[i]:.3e}\t|')
@@ -33,22 +33,23 @@ ax3.plot(n_arr, maxrelerror, 'r')
 
 ax1.set_yscale('log')
 ax2.set_yscale('log')
+ax3.set_yscale('log')
 ax3.set_xscale('log')
 
 ax1.set_title('Absolute error', weight='bold', fontsize=20)
 ax2.set_title('Relative error', weight='bold', fontsize=20)
 ax3.set_title('Maximum relative error', weight='bold', fontsize=20)
 
-ax1.set_xlabel('x', weight='bold', fontsize=20)
-ax2.set_xlabel('x', weight='bold', fontsize=20)
-ax3.set_xlabel(r'n$_{steps}$', weight='bold', fontsize=20)
+ax1.set_xlabel('x', weight='bold', fontsize=30)
+ax2.set_xlabel('x', weight='bold', fontsize=30)
+ax3.set_xlabel(r'n$_{steps}$', weight='bold', fontsize=30)
 
-ax1.set_ylabel(r'$\Delta$', weight='bold', fontsize=20)
-ax2.set_ylabel(r'$\epsilon$', weight='bold', fontsize=20)
-ax3.set_ylabel(r'max($\epsilon$)', weight='bold', fontsize=20)
+ax1.set_ylabel(r'$\Delta$', weight='bold', fontsize=30)
+ax2.set_ylabel(r'$\epsilon$', weight='bold', fontsize=30)
+ax3.set_ylabel(r'max($\epsilon$)', weight='bold', fontsize=30)
 
-ax1.legend(prop={'size': 14})
-ax2.legend(prop={'size': 14})
+ax1.legend(prop={'size': 20})
+ax2.legend(prop={'size': 20})
 
 fig1.tight_layout()
 fig2.tight_layout()
