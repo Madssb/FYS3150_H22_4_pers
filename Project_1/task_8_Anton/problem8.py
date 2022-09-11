@@ -21,7 +21,7 @@ for i, n in enumerate(n_arr):
     u = 1 - (1 - np.exp(-10))*x - np.exp(-10*x)     # Analytic solution
 
     abserror = abs(u-v)
-    relerror = abs((u - v)/v)
+    relerror = abs((u - v)/u)
 
     ax1.plot(x, abserror, label=f'n = {n}')
     ax2.plot(x, relerror, label=f'n = {n}')
