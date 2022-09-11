@@ -13,6 +13,7 @@ ax3 = fig3.add_subplot()
 N = 7
 n_arr = np.array([10**i for i in range(1, N+1)])
 maxrelerror = np.zeros(len(n_arr))
+maxabserror = np.zeros(len(n_arr))
 for i, n in enumerate(n_arr):
     data = np.loadtxt(f'problem7_data_n={n}.txt')   # Collect numerical data
     # Excluding endpoints that contains 0
@@ -27,9 +28,11 @@ for i, n in enumerate(n_arr):
     ax2.plot(x, relerror, label='n = 10' + r'$^{' + f'{i+1}' + r'}$')
 
     maxrelerror[i] = np.max(relerror)
+    maxabserror[i] = np.max(abserror)
     print(f'|\t{n}\t|\t{maxrelerror[i]:.3e}\t|')
 
 ax3.plot(n_arr, maxrelerror, 'r')
+# ax3.plot(n_arr, maxabserror, 'b')
 
 ax1.set_yscale('log')
 ax2.set_yscale('log')

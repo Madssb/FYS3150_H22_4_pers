@@ -35,7 +35,7 @@ std::vector<double> source_term(std::vector<double> x){
 }
 
 int main(){
-  int k = 6;
+  int k = 7;
   std::vector<int> n_vec(k);
   n_vec[0] = 10;
   for (int j=0; j<k; j++){
