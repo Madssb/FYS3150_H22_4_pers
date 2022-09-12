@@ -1,0 +1,32 @@
+
+///problem 9, special case
+
+void forwardSpecial(vector<double> &b, vector<double> &g);
+void backwardSpecial(vector<double> &b, vector<double> &v, vector<double> &g);
+
+void forwardSpecial(vector<double> &b, vector<double> &g)
+{
+  ///første b og g er allerede satt
+  
+  for (unsinged int i = 2;  < b.size() - 1; i++)
+  {
+    b[i] = (i+1)/i
+    //b[i] = 2 - (1)/b[1-1]
+    g[i] = g[i] - (-1)/b[i-1] * g[i-1]
+    
+  }
+}
+
+void backwardSpecial(vector<double> &b, vector<double> &v, vector<double> &g)
+{
+     int size = v.size() - 2 ;// den siste elementet, siden vi kjenner det
+    v[size] = g[size]/b[size];
+
+    // fra nest sist, til første elementet
+    for (unsigned i = size - 1; i > 0; i--)
+    {
+        v[i] = (g[i] + v[i+1])/ b[i];
+    }
+
+  
+}
