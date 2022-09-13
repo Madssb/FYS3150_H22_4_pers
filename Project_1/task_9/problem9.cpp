@@ -43,7 +43,7 @@ int main(){
   int k = 6;
   std::vector<int> n_vec(k);
   n_vec[0] = 10;
-  for (int j=0; j<(k-1); j++){
+  for (int j=0; j<k-1; j++){
     n_vec[j+1] = n_vec[j]*10;
   }
   for (int N_step : n_vec){
