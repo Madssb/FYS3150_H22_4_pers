@@ -10,8 +10,8 @@ axin = ax.inset_axes([0.2, 0.1, 0.2, 0.2])
 n_list = [10**i for i in range(1, 5)]
 for n in n_list:
     data = np.loadtxt(f'problem9_data_n={n}.txt')   # Collect numerical data
-    x = data[:,0]
-    v = data[:,1]
+    x = data[:, 0]
+    v = data[:, 1]
 
     ax.plot(x, v, linestyle='--', label=f'Numeric, n = {n:.0e}')
     axin.plot(x, v, linestyle='--')

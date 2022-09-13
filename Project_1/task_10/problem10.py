@@ -3,12 +3,17 @@ import numpy as np
 # Time-arrays for the general algorithm
 time_n10 = np.array([0, 0, 0, 0, 0, 0])
 time_n100 = np.array([5.5e-5, 0.000334, 0, 7.4e-5, 0, 0])
-time_n1000 = np.array([0.001002, 0.001005, 0.000503, 0.000783, 0.000502, 0.000501])
-time_n10000 = np.array([0.005946, 0.005819, 0.007009, 0.0055, 0.0045, 0.004502])
-time_n100000 = np.array([0.058995, 0.063889, 0.056993, 0.048521, 0.056489, 0.059116])
-time_n1000000 = np.array([0.606497, 0.586001, 0.577265, 0.503477, 0.587996, 0.586002])
+time_n1000 = np.array([0.001002, 0.001005, 0.000503,
+                      0.000783, 0.000502, 0.000501])
+time_n10000 = np.array(
+    [0.005946, 0.005819, 0.007009, 0.0055, 0.0045, 0.004502])
+time_n100000 = np.array([0.058995, 0.063889, 0.056993,
+                        0.048521, 0.056489, 0.059116])
+time_n1000000 = np.array(
+    [0.606497, 0.586001, 0.577265, 0.503477, 0.587996, 0.586002])
 
-time_array_general = np.array([time_n10, time_n100, time_n1000, time_n10000, time_n100000, time_n1000000])
+time_array_general = np.array(
+    [time_n10, time_n100, time_n1000, time_n10000, time_n100000, time_n1000000])
 
 print('\n')
 print('For the general algorithm:')
@@ -23,12 +28,15 @@ print('')
 # Time-arrays for the special algorithm
 time_n10 = np.array([0, 0, 0, 0, 0, 0])
 time_n100 = np.array([0, 0, 0, 0, 0, 0])
-time_n1000 = np.array([0.000499, 0.000343, 0.000502, 0.000611, 0.000666, 0.000581])
-time_n10000 = np.array([0.00304, 0.003, 0.002998, 0.003498, 0.003725, 0.002389])
+time_n1000 = np.array([0.000499, 0.000343, 0.000502,
+                      0.000611, 0.000666, 0.000581])
+time_n10000 = np.array(
+    [0.00304, 0.003, 0.002998, 0.003498, 0.003725, 0.002389])
 time_n100000 = np.array([0.032, 0.032, 0.026998, 0.031727, 0.031999, 0.027001])
 time_n1000000 = np.array([0.319499, 0.3195, 0.271499, 0.318999, 0.3185, 0.271])
 
-time_array_special = np.array([time_n10, time_n100, time_n1000, time_n10000, time_n100000, time_n1000000])
+time_array_special = np.array(
+    [time_n10, time_n100, time_n1000, time_n10000, time_n100000, time_n1000000])
 
 print('For the special algorithm:')
 print('\t\t\tmean\t\tstd')

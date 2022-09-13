@@ -42,9 +42,9 @@ int main()
   for (int k = 0; k <= n_points; k++) // Loop over and solve for u with analytic formula
   {
     u[k] = analytic_sol(x[k]);
-    //amount of decimals are fixed
+    // amount of decimals are fixed
     std::cout.precision(3);
-    //data is stored in scientific notation
+    // data is stored in scientific notation
     std::cout << std::scientific << x[k] << '\t' << u[k] << std::endl;
   }
 

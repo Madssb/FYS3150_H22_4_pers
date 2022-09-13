@@ -18,8 +18,8 @@ with open('analytic_sol.data', 'r') as infile:
         i += 1
 
 # Plotting
-cm = 1/2.54  
-fig, ax = plt.subplots(figsize=(10*cm,10*cm))
+cm = 1/2.54
+fig, ax = plt.subplots(figsize=(10*cm, 10*cm))
 ax.plot(sol_vec[:, 0], sol_vec[:, 1], label='$u(x)$')
 ax.set_title('Analytic solution')
 ax.set_xlabel('$x$')

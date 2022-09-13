@@ -17,8 +17,8 @@ maxabserror = np.zeros(len(n_arr))
 for i, n in enumerate(n_arr):
     data = np.loadtxt(f'problem7_data_n={n}.txt')   # Collect numerical data
     # Excluding endpoints that contains 0
-    x = data[:,0][1:-1]
-    v = data[:,1][1:-1]
+    x = data[:, 0][1:-1]
+    v = data[:, 1][1:-1]
     u = 1 - (1 - np.exp(-10))*x - np.exp(-10*x)     # Analytic solution
 
     abserror = abs(u-v)

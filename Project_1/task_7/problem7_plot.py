@@ -10,10 +10,11 @@ axin = ax.inset_axes([0.185, 0.05, 0.25, 0.4])
 n_list = [10**i for i in range(1, 7)]
 for i, n in enumerate(n_list, start=1):
     data = np.loadtxt(f'problem7_data_n={n}.txt')   # Collect numerical data
-    x = data[:,0]
-    v = data[:,1]
+    x = data[:, 0]
+    v = data[:, 1]
 
-    ax.plot(x, v, linestyle='--', label=f'Numeric, n = 10' + r'$^{' + f'{i}' + r'}$')
+    ax.plot(x, v, linestyle='--', label=f'Numeric, n = 10' +
+            r'$^{' + f'{i}' + r'}$')
     axin.plot(x, v, linestyle='--')
 
 ax.plot(x0, u, 'b', linestyle=':', label='Analytic solution')
