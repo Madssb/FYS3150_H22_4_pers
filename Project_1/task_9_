@@ -4,6 +4,13 @@
 void forwardSpecial(vector<double> &b, vector<double> &g);
 void backwardSpecial(vector<double> &b, vector<double> &v, vector<double> &g);
 
+//input : vectorene b, v, og g
+//output: vektorene endres, v kan da printes. 
+
+//forwardspecial kjøres fra andre elemntet til siste antall ganger 
+//mens backwardspecial kjøres fra den nest siste til den første elementet. 
+
+
 void forwardSpecial(vector<double> &b, vector<double> &g)
 {
   ///første b og g er allerede satt
