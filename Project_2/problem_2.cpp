@@ -6,6 +6,9 @@
 
 int main()
 {
+    //
+    // initializing the tridiagonal (a,d,a) matrix A
+    //
     int N = 6;
     int n_rows = N;
     int n_cols = N;
@@ -33,8 +36,9 @@ int main()
         // defining the supradiagonal
         tridiagonal_matrix(i, i + 1) = a;
     }
-
-    // finding the numerical eigenvalues and eigenvectors
+    //
+    // computing the eigenvalues and eigenvectors for A by numerical means
+    //
     arma::vec num_eigvals;
     arma::mat num_eigvecs;
     arma::eig_sym(num_eigvals, num_eigvecs, tridiagonal_matrix);
@@ -42,12 +46,15 @@ int main()
     // normalizing eigenvectors in terms of units p=1
     arma::mat num_eigvecs_norm = arma::normalise(num_eigvecs, 1);
 
-    // finding analytical eigenvalues
-    arma::vec anal_eigvals = arma::vec(N - 1);
+    // 
+    // solving for the eigenvalues and eigenvalues for A by analytic means
+    //
+
+    arma::vec anal_eigvals = arma::vec(N);
     double pi = 3.1415926535897;
-    for (int i = 1; i < 6; i++)
+    for (int i = 0; i < 6; i++)
     {
-        anal_eigvals(i - 1) = d + 2 * a * std::cos((i * pi) / (N + 1));
+        anal_eigvals(i) = d + 2 * a * std::cos(((i+1) * pi) / (N + 1));
     }
 
     // finding analytical eigenvectors
@@ -63,6 +70,19 @@ int main()
 
     // normalize analytical eigenvectors
     arma::mat anal_eigvecs_norm = arma::normalise(anal_eigvecs, 1);
+
+    // manual rescaling such that signs match for the numeric and analytic eigenvectors
+    std::vector<int>  indices_for_rows_that_must_be_inverted= {1,5};
+    for(int index:indices_for_rows_that_must_be_inverted)
+    {
+        anal_eigvecs_norm.col(index) *= -1;
+    }
+
+    //
+    // finding relative errors for the computed eigenvalues/ & eigenvectors
+    //
+    arma::vec rel_err_eigvals = (num_eigvals- anal_eigvals)/anal_eigvals;
+    arma::mat rel_err_eigvecs = (num_eigvecs_norm - anal_eigvecs_norm)/anal_eigvecs_norm;
 
     //
     // section for all output
@@ -81,15 +101,21 @@ int main()
     std::cout << "numerical eigenvectors (normalized):\n"
               << num_eigvecs_norm << std::endl;
 
-    std::cout << "numerical eigvecs:\n"
+    std::cout << "numerical eigenvectors:\n"
               << num_eigvecs << std::endl;
 
-    std::cout << "analytic eigvecs:\n"
+    std::cout << "analytic eigvectors:\n"
               << anal_eigvecs << std::endl;
 
-    std::cout << "analytical eigvals:\n"
+    std::cout << "analytical eigenvalues:\n"
               << anal_eigvals << std::endl;
 
-    std::cout << "numerical eigvals:\n"
+    std::cout << "numerical eigenvalues:\n"
               << num_eigvals << std::endl;
+
+    std::cout << "relative error for eigenvalues:\n"
+              << rel_err_eigvals << std::endl;
+            
+    std::cout << "relative error for eigenvectors:\n"
+              << rel_err_eigvecs << std::endl;
 }
