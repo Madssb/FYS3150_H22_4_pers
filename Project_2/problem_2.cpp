@@ -78,7 +78,7 @@ int main()
     }
 
     //
-    // finding relative errors for the computed eigenvalues/ & eigenvectors
+    // finding relative errors for the computed eigenvalues & eigenvectors
     //
     arma::vec rel_err_eigvals = (num_eigvals- anal_eigvals)/anal_eigvals;
     arma::mat rel_err_eigvecs = (num_eigvecs_norm - anal_eigvecs_norm)/anal_eigvecs_norm;
