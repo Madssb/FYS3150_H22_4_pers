@@ -85,7 +85,7 @@ int main()
     arma::mat rel_err_eigvecs = (num_eigvecs_norm - anal_eigvecs_norm)/anal_eigvecs_norm;
 
     //
-    // section for all output
+    // section for output of all results
     //
 
     std::cout << "tridiagonal matrix:\n"
