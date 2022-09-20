@@ -27,6 +27,62 @@ double max_offdiag_symm(const arma::mat& A, int& k, int& l){
   return max;
 }
 
+// Tests Armadillo solution and analytic solution of
+// matrix eq. Ax = lambda x for tridiag. A = (NxN).
+void ana_vs_arma_test(const double& d, const double& a, const double& N){
+
+  // Setting up tridiagonal matrix A w/ signature (a,d,a).
+  arma::mat A = arma::mat(N,N);
+  arma::vec a_diag = arma::vec(N-1);
+  arma::vec d_diag = arma::vec(N);
+
+  a_diag.fill(a);
+  d_diag.fill(d);
+
+  A.diag(0) = d_diag;
+  A.diag(1) = a_diag;
+  A.diag(-1) = a_diag;
+
+  cout << endl << "Tridiagonal matrix A:" << endl;
+  cout << A << endl;
+
+  const double pi = 4. * atan(1.);
+
+  arma::vec arma_eigenvals;
+  arma::mat arma_eigenvecs;
+
+  arma::vec ana_eigenvals = arma::vec(N);
+  arma::mat ana_eigenvecs = arma::mat(N,N);
+
+  for (int i = 0; i < N; i++){
+    ana_eigenvals(i) = d + 2 * a * cos((i+1) * pi / (N+1));
+
+    for (int n = 0; n < N; n++){
+      double element = sin((n+1) * (i+1) * pi / (N+1));
+
+      ana_eigenvecs.col(i)(n) = element;
+    }
+  }
+
+  arma::eig_sym(arma_eigenvals, arma_eigenvecs, A);
+
+  arma::vec ana_eigenvals_sorted = arma::sort(ana_eigenvals);
+  arma::mat arma_eigenvecs_norm = arma::normalise(arma_eigenvecs, 1, 0);
+  arma::mat ana_eigenvecs_norm = arma::normalise(ana_eigenvecs, 1, 0);
+
+  cout << "EIGENVALUES" << endl;
+  cout << "Armadillo:" << endl;
+  cout << arma_eigenvals << endl;
+  cout << "Analytical" << endl;
+  cout << ana_eigenvals_sorted << endl;
+
+  cout << "EIGENVECTORS" << endl;
+  cout << "Armadillo:" << endl;
+  cout << arma_eigenvecs_norm << endl;
+  cout << "Analytical:" << endl;
+  cout << ana_eigenvecs_norm << endl;
+}
+
 // Test function to test if max_offdiag_symm is working correctly.
 void max_offdiag_symm_test(){
 
