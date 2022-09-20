@@ -1,5 +1,4 @@
 #include <armadillo>
-// std::pow and std::cos lives here
 #include <cmath>
 #include <iostream>
 #include <vector>
@@ -15,7 +14,7 @@ int main()
     arma::mat tridiagonal_matrix(n_rows, n_cols);
 
     // finding the step length h
-    double x_hat_max = 1.;
+    double x_hat_max = 1.;      
     double x_hat_min = 0.;
     double h = (x_hat_max - x_hat_min) / N;
 
