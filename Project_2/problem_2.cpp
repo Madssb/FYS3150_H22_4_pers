@@ -47,7 +47,7 @@ int main()
     arma::eig_sym(num_eigvals, num_eigvecs, tridiagonal_matrix);
 
     // normalizing eigenvectors in terms of units p=1
-    arma::mat num_eigvecs_norm = arma::normalise(num_eigvecs, 1);
+    arma::mat num_eigvecs_norm = arma::normalise(num_eigvecs);
 
     //
     // solving for the eigenvalues and eigenvalues for A by analytic means
@@ -66,13 +66,12 @@ int main()
     {
         for (int row = 0; row < N; row++)
         {
-            std::cout << row << std::endl;
             anal_eigvecs(row, col) = std::sin((col + 1) * (row + 1) * pi / (N + 1));
         }
     }
 
     // normalize analytical eigenvectors
-    arma::mat anal_eigvecs_norm = arma::normalise(anal_eigvecs, 1);
+    arma::mat anal_eigvecs_norm = arma::normalise(anal_eigvecs);
 
     // manual rescaling such that signs match for the numeric and analytic eigenvectors
     std::vector<int> indices_for_rows_that_must_be_inverted = {1, 5};
