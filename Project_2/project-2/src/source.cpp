@@ -29,19 +29,10 @@ double max_offdiag_symm(const arma::mat& A, int& k, int& l){
 
 // Tests Armadillo solution and analytic solution of
 // matrix eq. Ax = lambda x for tridiag. A = (NxN).
-void ana_vs_arma_test(const double& d, const double& a, const double& N){
+void ana_vs_arma_test(const double& a, const double& d, const double& e, const double& N){
 
-  // Setting up tridiagonal matrix A w/ signature (a,d,a).
-  arma::mat A = arma::mat(N,N);
-  arma::vec a_diag = arma::vec(N-1);
-  arma::vec d_diag = arma::vec(N);
-
-  a_diag.fill(a);
-  d_diag.fill(d);
-
-  A.diag(0) = d_diag;
-  A.diag(1) = a_diag;
-  A.diag(-1) = a_diag;
+  // Setting up tridiagonal matrix A w/ signature (a,d,e).
+  arma::mat A = create_tridiag_mat(a, d, e, N);
 
   cout << endl << "Tridiagonal matrix A:" << endl;
   cout << A << endl;
@@ -73,7 +64,7 @@ void ana_vs_arma_test(const double& d, const double& a, const double& N){
   cout << "EIGENVALUES" << endl;
   cout << "Armadillo:" << endl;
   cout << arma_eigenvals << endl;
-  cout << "Analytical" << endl;
+  cout << "Analytical:" << endl;
   cout << ana_eigenvals_sorted << endl;
 
   cout << "EIGENVECTORS" << endl;
@@ -165,27 +156,45 @@ void jacobi_eigensolver(const arma::mat& A, double eps, arma::vec& eigenvalues,
     int k;
     int l;
 
-    arma::mat R = arma::mat(A.n_rows, A.n_cols);
+    arma::mat R = arma::mat(A.n_rows, A.n_cols, arma::fill::eye);
+    arma::mat A_m = A;
 
     while (converged == false && iterations <= maxiter){
-      double max_offdiagonal = max_offdiag_symm(A, k, l);
-
-      iterations += 1;
+      double max_offdiagonal = max_offdiag_symm(A_m, k, l);
 
       if (max_offdiagonal < eps){
         converged = true;
       }
       else{}
+
+      jacobi_rotate(A_m, R, k, l);
+
+      iterations += 1;
     }
+
     if (converged == false || iterations > maxiter){
-      cout << endl << "Converged: " << converged << endl;
+      cout << endl << "Converged (1 is yes, 0 is no): " << converged << endl;
       cout << "Max iterations: " << maxiter << endl;
       cout << "Iterations: " << iterations << endl;
     }
     else{
-      cout << endl << "Converged: " << converged << endl;
+      cout << endl << "Converged in " << iterations << " iterations." << endl;
 
-      eigenvalues = A.diag();
+      eigenvalues = A_m.diag(0);
       eigenvectors = R.cols(arma::span::all);
     }
+    cout << endl << "Matrix A_m:" << endl;
+    cout << A_m << endl;
   }
+
+// Creating a tri-diagonal matrix
+arma::mat create_tridiag_mat(const double& a, const double& d, const double& e, const int& N){
+
+  arma::mat A = arma::mat(N,N);
+
+  A.diag(-1).fill(a);
+  A.diag(0).fill(d);
+  A.diag(1).fill(e);
+
+  return A;
+}

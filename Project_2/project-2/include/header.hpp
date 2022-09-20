@@ -18,6 +18,8 @@ void jacobi_eigensolver(const arma::mat& A, double eps, arma::vec& eigenvalues,
 
 void max_offdiag_symm_test();
 
-void ana_vs_arma_test(const double& d, const double& a, const double& N);
+void ana_vs_arma_test(const double& a, const double& d, const double& e, const double& N);
+
+arma::mat create_tridiag_mat(const double& a, const double& d, const double& e, const int& N);
 // End of include gurad
 #endif
