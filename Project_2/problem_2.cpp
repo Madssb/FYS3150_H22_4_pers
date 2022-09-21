@@ -9,28 +9,28 @@ int main()
     // initializing the tridiagonal (a,d,a) matrix A
     //
 
-    int N = 6;
-    int n_rows = N;
-    int n_cols = N;
+    constexpr int N = 6;
+    constexpr int n_rows = N;
+    constexpr int n_cols = N;
     arma::mat tridiagonal_matrix(n_rows, n_cols);
 
     // finding the step length h
-    double x_hat_max = 1.;
-    double x_hat_min = 0.;
-    int n_steps = N+1;
-    double h = (x_hat_max - x_hat_min) / n_steps;
+    constexpr double x_hat_max = 1.;
+    constexpr double x_hat_min = 0.;
+    constexpr int n_steps = N+1;
+    constexpr double h = (x_hat_max - x_hat_min) / n_steps;
 
     // defining the diagonal of tridiagonal matrix
-    double d = 2 / std::pow(h, 2);
-    for (int i = 0; i < 6; i++)
+    constexpr double d = 2 / std::pow(h, 2);
+    for (int i = 0; i < N; i++)
     {
         tridiagonal_matrix(i, i) = d;
     }
 
     // defining the supra- and subdiagonals
-    double a = -1 / std::pow(h, 2);
+    constexpr double a = -1 / std::pow(h, 2);
 
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < N-1; i++)
     {
         // defining the subdiagonal
         tridiagonal_matrix(i + 1, i) = a;
@@ -54,7 +54,7 @@ int main()
     //
 
     arma::vec anal_eigvals = arma::vec(N);
-    double pi = 3.1415926535897;
+    constexpr double pi = 3.1415926535897;
     for (int i = 0; i < 6; i++)
     {
         anal_eigvals(i) = d + 2 * a * std::cos(((i + 1) * pi) / (N + 1));
