@@ -1,3 +1,7 @@
+//
+// program defines a method for finding the maximum element within the off-diagonals of a symmetric matrix.
+// The method is tested for a symmetric matrix A.
+//
 #include <armadillo>
 #include <iostream>
 #include <cmath>
