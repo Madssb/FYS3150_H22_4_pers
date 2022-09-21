@@ -17,26 +17,15 @@ int main()
     // finding the step length h
     constexpr double x_hat_max = 1.;
     constexpr double x_hat_min = 0.;
-    constexpr int n_steps = N+1;
+    constexpr int n_steps = N + 1;
     constexpr double h = (x_hat_max - x_hat_min) / n_steps;
 
-    // defining the diagonal of tridiagonal matrix
+    // defining the main, sub and supra-diagonals
     constexpr double d = 2 / std::pow(h, 2);
-    for (int i = 0; i < N; i++)
-    {
-        tridiagonal_matrix(i, i) = d;
-    }
-
-    // defining the supra- and subdiagonals
     constexpr double a = -1 / std::pow(h, 2);
-
-    for (int i = 0; i < N-1; i++)
-    {
-        // defining the subdiagonal
-        tridiagonal_matrix(i + 1, i) = a;
-        // defining the supradiagonal
-        tridiagonal_matrix(i, i + 1) = a;
-    }
+    tridiagonal_matrix.diag(1).fill(a);
+    tridiagonal_matrix.diag(0).fill(d);
+    tridiagonal_matrix.diag(-1).fill(a);
 
     //
     // computing the eigenvalues and eigenvectors for A by numerical means
