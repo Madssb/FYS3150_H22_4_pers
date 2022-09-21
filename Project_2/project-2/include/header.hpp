@@ -7,6 +7,8 @@
 #include<armadillo>
 #include<fstream>
 
+using namespace std;
+
 // header file to be included in the main program project_2.cpp
 // declaring functions defined in source.cpp
 double max_offdiag_symm(const arma::mat& A, int& k, int& l);
@@ -21,5 +23,11 @@ void max_offdiag_symm_test();
 void ana_vs_arma_test(const double& a, const double& d, const double& e, const double& N);
 
 arma::mat create_tridiag_mat(const double& a, const double& d, const double& e, const int& N);
+
+void jacobi_eigensolver_multiple(const arma::mat& A, double eps, const int maxiter,
+  int& iterations, bool& converged, fstream& outfile);
+
+void three_lowest(const arma::vec& eigenvals, const arma::mat& eigenvecs);
+
 // End of include gurad
 #endif

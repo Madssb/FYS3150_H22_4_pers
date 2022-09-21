@@ -178,14 +178,58 @@ void jacobi_eigensolver(const arma::mat& A, double eps, arma::vec& eigenvalues,
       cout << "Iterations: " << iterations << endl;
     }
     else{
-      cout << endl << "Converged in " << iterations << " iterations." << endl;
+      cout << endl << "Converged in " << iterations << " iterations for A=(" << A.n_rows <<
+      "x" << A.n_rows << ")." << endl;
 
       eigenvalues = A_m.diag(0);
       eigenvectors = R.cols(arma::span::all);
     }
-    cout << endl << "Matrix A_m:" << endl;
-    cout << A_m << endl;
+    if (A.n_rows <= 10){
+      cout << endl << "Matrix A^(" << iterations << "):" << endl;
+      // Printing out the matrix A_m where elements w/ value <= eps set to zero.
+      cout << A_m.clean(eps) << endl;
+    }
+    else{
+      cout << "Matrix is " << to_string(A.n_rows) << "x" << to_string(A.n_rows)
+      << ", skipping print to terminal." << endl;
+    }
   }
+
+// Function to write N and no. of iterations to terminal
+// for plotting in python
+void jacobi_eigensolver_multiple(const arma::mat& A, double eps, const int maxiter,
+  int& iterations, bool& converged, fstream& outfile){
+    int k;
+    int l;
+    int N = A.n_rows;
+
+    arma::mat R = arma::mat(N, N, arma::fill::eye);
+    arma::mat A_m = A;
+
+    while (converged == false && iterations <= maxiter){
+      double max_offdiagonal = max_offdiag_symm(A_m, k, l);
+
+      if (max_offdiagonal < eps){
+        converged = true;
+      }
+      else{}
+
+      jacobi_rotate(A_m, R, k, l);
+
+      iterations += 1;
+    }
+
+    if (converged == false || iterations > maxiter){
+      cout << endl << "Converged (1 is yes, 0 is no): " << converged << endl;
+      cout << "Max iterations: " << maxiter << endl;
+      cout << "Iterations: " << iterations << endl;
+    }
+    else{
+      outfile.open("N_vs_iterations.txt", fstream::out | fstream::app);
+      outfile << to_string(N) << "\t" << to_string(iterations) << endl;
+      outfile.close();
+    }
+}
 
 // Creating a tri-diagonal matrix
 arma::mat create_tridiag_mat(const double& a, const double& d, const double& e, const int& N){
@@ -197,4 +241,28 @@ arma::mat create_tridiag_mat(const double& a, const double& d, const double& e, 
   A.diag(1).fill(e);
 
   return A;
+}
+
+// Sort 3 eigenvecs corresponding to the 3 lowest egenvals
+// and write to .txt document
+void three_lowest(const arma::vec& eigenvals, const arma::mat& eigenvecs){
+  int N = eigenvals.size();
+
+  arma::mat A = arma::mat(N+2, 4);
+  arma::uvec indices = arma::sort_index(eigenvals);
+  arma::vec x_hat = arma::linspace(0, 1, N+2);
+  A.col(0) = x_hat;
+
+  for (int i = 1; i < 4; i++){
+    A(arma::span(1,N), i) = eigenvecs.col(indices(i));
+  }
+  string filename = "3_eigvecs_N_is_";
+  string mat_size = to_string(N);
+  string end_str = ".txt";
+  string fullFilename = filename + mat_size + end_str;
+  fstream outfile;
+
+  outfile.open(fullFilename, fstream::out | fstream::app);
+  outfile << A << endl;
+  outfile.close();
 }
