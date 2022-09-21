@@ -1,3 +1,10 @@
+//
+// This program generates a tridiagonal matrix A, computes the eigenvalues and eigenvectors by analytical means, 
+// and by more numerical means, using armadillo properties. 
+// Both are compared to find the relative error of armadillo-generated eigenvalues and eigenvectors.
+//
+
+
 #include <armadillo>
 #include <cmath>
 #include <iostream>
