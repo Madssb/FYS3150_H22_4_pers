@@ -7,11 +7,11 @@ name. See code comments or create an issue for more information/help.
 
 To build:
 
-g++ project_2.cpp src/source.cpp -I include -std=c++11 -o project_2 -larmadillo
+g++ project_2.cpp src/source.cpp -I include -std=c++11 -o project_2.exe -larmadillo
 
 To run:
 
-./project_2
+./project_2.exe
 
 To visualise plots, run w/ python3:
 
