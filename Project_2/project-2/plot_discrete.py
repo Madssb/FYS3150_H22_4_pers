@@ -22,9 +22,9 @@ def plot_discrete(filename):
     plt.tight_layout()
 
 plot_discrete('3_eigvecs_N_is_9_DONT_MODIFY.txt')
-# plt.savefig('n_is_10.pdf')
+plt.savefig('n_is_10.pdf')
 
 plot_discrete('3_eigvecs_N_is_99_DONT_MODIFY.txt')
-# plt.savefig('n_is_100.pdf')
+plt.savefig('n_is_100.pdf')
 
 plt.show()

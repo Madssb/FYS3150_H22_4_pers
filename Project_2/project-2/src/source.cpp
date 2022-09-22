@@ -96,6 +96,12 @@ void max_offdiag_symm_test(){
   cout << max_offdiag << endl;
   cout << "Element position:" << endl;
   cout << "A(" << k+1 << "," << l+1 << ")" << endl;
+  arma::mat R = arma::mat(4, 4, arma::fill::eye);
+  int k_2=1;
+  int l_2=2;
+  jacobi_rotate(A, R, k_2, l_2);
+  cout << A << endl;
+  cout << R << endl;
 }
 
 // Performs one rotation where the largest absolute value of
@@ -119,8 +125,8 @@ void jacobi_rotate(arma::mat& A, arma::mat& R, int k, int l){
   double c = 1. / sqrt(1 + (t * t));
   double s = c * t;
 
-  A(k,k) = a_kk - 2. * a_kl * c * s + a_ll * s * s;
-  A(l,l) = a_ll + 2. * a_kl * c * s + a_kk * s * s;
+  A(k,k) = a_kk * c * c - 2. * a_kl * c * s + a_ll * s * s;
+  A(l,l) = a_ll * c * c + 2. * a_kl * c * s + a_kk * s * s;
   A(k,l) = 0.;
   A(l,k) = 0.;
 

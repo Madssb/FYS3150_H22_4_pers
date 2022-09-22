@@ -7,7 +7,7 @@ int main(){
 
   // Testing Armadillo vs. analytical solution.
   int N_1 = 6;
-  double h_1 = 1./100;
+  double h_1 = 1./7;
   double a_1 = -1./(h_1*h_1);
   double d_1 = 2./(h_1*h_1);
   double e_1 = a_1;
@@ -70,6 +70,7 @@ int main(){
   int maxiter_2 = 1e5;
   fstream outfile;
 
+  // Comment out below to write to file.
   // for (int n = N_start; n <= N_stop; n++){
   //   bool converged = false;
   //   int iterations = 0;
