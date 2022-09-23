@@ -19,6 +19,7 @@ double jacobi_rotate(const arma::mat symmetric_matrix)
     double l;
     //k = k, l = l
     double &a_kl = max_element_offdiag(A0,k,l)
+
     while(a_kl > tolerance)
     {
         double tau = (A_M(k,k) - A_M(l,l)) / (2*A_M(k,l)) 
