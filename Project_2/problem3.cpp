@@ -5,10 +5,9 @@
 #include <armadillo>
 #include <iostream>
 #include <cmath>
-
-double max_element_offdiag(const arma::mat &symmetric_matrix, int &row_max_element, int &col_max_element)
+/*
+double max_element_offdiag_symmetric(const arma::mat &symmetric_matrix, int &row_max_element, int &col_max_element)
 {
-
     const int matrix_dims = symmetric_matrix.n_cols;
     double current_element_sup;
     double max_offdiag_element = 0;
@@ -23,7 +22,28 @@ double max_element_offdiag(const arma::mat &symmetric_matrix, int &row_max_eleme
         }
     }
     return max_offdiag_element;
-};
+}
+*/
+
+double max_element_offdiag_symmetric(const arma::mat &symmetric_matrix, int &row_max_element, int &col_max_element)
+{
+    const int matrix_dims = symmetric_matrix.n_cols;
+    double max_offdiag_element = 0;
+    double current_offdiag_element;
+    for(int i=1; i<matrix_dims; i++)
+    {
+        for(int j=i+1; j<matrix_dims; j++)
+        {
+            if (std::abs(symmetric_matrix(i,j)) > std::abs(max_offdiag_element))
+            {
+                row_max_element = i;
+                col_max_element = j;
+                max_offdiag_element = symmetric_matrix(i,j);
+            }
+        }
+    }
+    return max_offdiag_element;
+}
 
 int main()
 {
@@ -32,10 +52,10 @@ int main()
             {1, 0, 0, 0.5},
             {0, 1, -0.7, 0},
             {0, -0.7, 1, 0},
-            {0.5, 0, 0, 1}
-        };
-    std::cout << "matrix A:\n" << A <<std::endl;
+            {0.5, 0, 0, 1}};
+    std::cout << "matrix A:\n"
+              << A << std::endl;
     int k;
     int l;
-    std::cout << "maximum off-diagonal element of A: " << max_element_offdiag(A,k,l) << ", k = " << k + 1 << ", l = " << l +1 <<  std::endl;
+    std::cout << "maximum off-diagonal element of A: " << max_element_offdiag_symmetric(A, k, l) << ", k = " << k + 1 << ", l = " << l + 1 << std::endl;
 }
