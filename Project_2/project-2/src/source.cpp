@@ -72,6 +72,12 @@ void ana_vs_arma_test(const double& a, const double& d, const double& e, const d
   cout << arma_eigenvecs_norm << endl;
   cout << "Analytical:" << endl;
   cout << ana_eigenvecs_norm << endl;
+
+  cout << "RELATIVE ERRORS" << endl;
+  cout << "Eigenvalues:" << endl;
+  cout << abs(ana_eigenvals_sorted - arma_eigenvals) / abs(arma_eigenvals) << endl;
+  cout << "Eigenvectors:" << endl;
+  cout << abs(ana_eigenvecs_norm - arma_eigenvecs_norm) / abs(arma_eigenvecs_norm) << endl;
 }
 
 // Test function to test if max_offdiag_symm is working correctly.
@@ -100,8 +106,6 @@ void max_offdiag_symm_test(){
   int k_2=1;
   int l_2=2;
   jacobi_rotate(A, R, k_2, l_2);
-  cout << A << endl;
-  cout << R << endl;
 }
 
 // Performs one rotation where the largest absolute value of
