@@ -1,0 +1,13 @@
+# Filetypes to ignore by Git
+
+# object and executable files
+*.o
+*.exe
+
+# data and text files
+*.dat
+*.txt
+
+# figures
+*.png
+*.pdf
