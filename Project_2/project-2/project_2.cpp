@@ -1,21 +1,23 @@
-#include<iostream>
+#include <iostream>
 #include "header.hpp"
 
 using namespace std;
 
-int main(){
+int main()
+{
 
   // Testing Armadillo vs. analytical solution.
   int N_1 = 6;
-  double h_1 = 1./7;
-  double a_1 = -1./(h_1*h_1);
-  double d_1 = 2./(h_1*h_1);
+  double h_1 = 1. / 7;
+  double a_1 = -1. / (h_1 * h_1);
+  double d_1 = 2. / (h_1 * h_1);
   double e_1 = a_1;
 
   string str_1 = "Testing Armadillo vs. analytical solution";
   string lines_1 = string(str_1.length(), '-');
 
-  cout << endl << str_1 << endl;
+  cout << endl
+       << str_1 << endl;
   cout << lines_1 << endl;
   ana_vs_arma_test(a_1, d_1, e_1, N_1);
   cout << lines_1 << endl;
@@ -32,9 +34,9 @@ int main(){
 
   // Testing the function jacobi_eigensolver and
   // jacobi_rotate.
-  double a_2 = -1/(h_1*h_1);
-  double d_2 = 2/(h_1*h_1);
-  double e_2 = -1/(h_1*h_1);
+  double a_2 = -1 / (h_1 * h_1);
+  double d_2 = 2 / (h_1 * h_1);
+  double e_2 = -1 / (h_1 * h_1);
   arma::mat A_1 = create_tridiag_mat(a_2, d_2, e_2, N_1);
 
   int iterations = 0;
@@ -51,7 +53,7 @@ int main(){
   cout << str_3 << endl;
   cout << lines_3 << endl;
   jacobi_eigensolver(A_1, eps, eigenvalues_1, eigenvectors_1, maxiter_1,
-    iterations, converged);
+                     iterations, converged);
   cout << lines_3 << endl;
 
   string str_4 = "Testing that the eigenvalues and eigenvectors from Armadillo\
@@ -80,14 +82,15 @@ int main(){
   // }
 
   // Solving the discrete equation for n = 10 and n = 100.
-  for (int i = 0; i <= 1; i++){
-    int n = 10 + (90*i);
-    double h_2 = 1./n;
-    int N_2 = n-1;
+  for (int i = 0; i <= 1; i++)
+  {
+    int n = 10 + (90 * i);
+    double h_2 = 1. / n;
+    int N_2 = n - 1;
 
-    double a_3 = -1./(h_2 * h_2);
-    double d_3 = 2./(h_2 * h_2);
-    double e_3 = -1./(h_2 * h_2);
+    double a_3 = -1. / (h_2 * h_2);
+    double d_3 = 2. / (h_2 * h_2);
+    double e_3 = -1. / (h_2 * h_2);
 
     int iterations_3 = 0;
     bool converged_3 = false;
@@ -95,11 +98,11 @@ int main(){
     arma::vec eigenvalues_2;
     arma::mat eigenvectors_2;
 
-    arma::vec x_hat = arma::linspace(0, 1, n+1);
+    arma::vec x_hat = arma::linspace(0, 1, n + 1);
     arma::mat A_3 = create_tridiag_mat(a_3, d_3, e_3, N_2);
 
     jacobi_eigensolver(A_3, eps, eigenvalues_2, eigenvectors_2, maxiter_2,
-    iterations_3, converged_3);
+                       iterations_3, converged_3);
 
     // Uncomment below to write to file.
     // three_lowest(eigenvalues_2, eigenvectors_2);
