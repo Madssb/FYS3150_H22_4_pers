@@ -1,4 +1,5 @@
 #include "header.hpp"
+#include <iostream>
 
 // Find the element w/ largest absolute value of matrix A.
 // Since A is symmetric, we only scan through upper triangular
