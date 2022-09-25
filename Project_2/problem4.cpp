@@ -18,7 +18,7 @@ double jacobi_rotate(const arma::mat symmetric_matrix)
     double k;
     double l;
     //k = k, l = l
-    double &a_kl = max_element_offdiag(A0,k,l)
+    double &max_element_offdiag = max_element_offdiag(A0,k,l);
 
     while(a_kl > tolerance)
     {
@@ -36,7 +36,8 @@ double jacobi_rotate(const arma::mat symmetric_matrix)
         S_m(l,k) = -sin;
         S_m(k,l) = sin;
         S_m(l,l) = cos;
-        // evauluating A = STAS
+        // evauluating A = STAS 
+        s
         
     }
 

@@ -30,9 +30,9 @@ double max_element_offdiag_symmetric(const arma::mat &symmetric_matrix, int &row
     const int matrix_dims = symmetric_matrix.n_cols;
     double max_offdiag_element = 0;
     double current_offdiag_element;
-    for(int i=1; i<matrix_dims; i++)
+    for(int i=0; i<(matrix_dims-1); i++)
     {
-        for(int j=i+1; j<matrix_dims; j++)
+        for(int j=i+1; j<(matrix_dims-1); j++)
         {
             if (std::abs(symmetric_matrix(i,j)) > std::abs(max_offdiag_element))
             {
