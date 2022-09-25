@@ -118,14 +118,14 @@ void max_offdiag_symm_test()
 
 // Performs one rotation where the largest absolute value of
 // A is rotated to zero.
-void jacobi_rotate(arma::mat &A, arma::mat &R, int k, int l)
+void jacobi_rotate(arma::mat &symmetric_matrix, arma::mat &R, int k, int l)
 {
 
-  double tau = (A(l, l) - A(k, k)) / (2. * A(k, l));
+  double tau = (symmetric_matrix(l, l) - symmetric_matrix(k, k)) / (2. * symmetric_matrix(k, l));
   // Keeps track of elements so we dont use the wrong ones.
-  double a_kk = A(k, k);
-  double a_ll = A(l, l);
-  double a_kl = A(k, l);
+  double a_kk = symmetric_matrix(k, k);
+  double a_ll = symmetric_matrix(l, l);
+  double a_kl = symmetric_matrix(k, l);
   double t;
 
   if (tau > 0)
@@ -140,30 +140,30 @@ void jacobi_rotate(arma::mat &A, arma::mat &R, int k, int l)
   double c = 1. / sqrt(1 + (t * t));
   double s = c * t;
 
-  A(k, k) = a_kk * c * c - 2. * a_kl * c * s + a_ll * s * s;
-  A(l, l) = a_ll * c * c + 2. * a_kl * c * s + a_kk * s * s;
-  A(k, l) = 0.;
-  A(l, k) = 0.;
+  symmetric_matrix(k, k) = a_kk * c * c - 2. * a_kl * c * s + a_ll * s * s;
+  symmetric_matrix(l, l) = a_ll * c * c + 2. * a_kl * c * s + a_kk * s * s;
+  symmetric_matrix(k, l) = 0.;
+  symmetric_matrix(l, k) = 0.;
 
-  for (int i = 0; i < A.n_rows; i++)
+  for (int i = 0; i < symmetric_matrix.n_rows; i++)
   {
 
     if (i != k && i != l)
     {
-      double a_ik = A(i, k);
-      double a_il = A(i, l);
+      double a_ik = symmetric_matrix(i, k);
+      double a_il = symmetric_matrix(i, l);
 
-      A(i, k) = a_ik * c - a_il * s;
-      A(k, i) = A(i, k);
-      A(i, l) = a_il * c + a_ik * s;
-      A(l, i) = A(i, l);
+      symmetric_matrix(i, k) = a_ik * c - a_il * s;
+      symmetric_matrix(k, i) = symmetric_matrix(i, k);
+      symmetric_matrix(i, l) = a_il * c + a_ik * s;
+      symmetric_matrix(l, i) = symmetric_matrix(i, l);
     }
     else
     {
     }
   }
 
-  for (int i = 0; i < A.n_rows; i++)
+  for (int i = 0; i < symmetric_matrix.n_rows; i++)
   {
     double r_ik = R(i, k);
     double r_il = R(i, l);
