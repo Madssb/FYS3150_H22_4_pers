@@ -103,6 +103,7 @@ int main(){
 
     // Uncomment below to write to file.
     // three_lowest(eigenvalues_2, eigenvectors_2);
+    analytical_sol(a_3, d_3, e_3, N_2);
   }
   return 0;
 }

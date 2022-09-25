@@ -29,5 +29,7 @@ void jacobi_eigensolver_multiple(const arma::mat& A, double eps, const int maxit
 
 void three_lowest(const arma::vec& eigenvals, const arma::mat& eigenvecs);
 
+void analytical_sol(const double& a, const double& d, const double& e, const double& N);
+
 // End of include gurad
 #endif

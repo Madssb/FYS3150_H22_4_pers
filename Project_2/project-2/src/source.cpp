@@ -276,3 +276,36 @@ void three_lowest(const arma::vec& eigenvals, const arma::mat& eigenvecs){
   outfile << A << endl;
   outfile.close();
 }
+
+// Analytical eigenvalues and eigenvectors
+void analytical_sol(const double& a, const double& d, const double& e, const double& N){
+  arma::mat A = create_tridiag_mat(a, d, e, N);
+  arma::mat B = arma::mat(N+2, 3);
+  const double pi = 4. * atan(1.);
+
+  arma::vec eigenvals = arma::vec(N);
+  arma::mat eigenvecs = arma::mat(N,N);
+
+  for (int i = 0; i < N; i++){
+    eigenvals(i) = d + 2 * a * cos((i+1) * pi / (N+1));
+
+    for (int n = 0; n < N; n++){
+      double element = sin((n+1) * (i+1) * pi / (N+1));
+
+      eigenvecs.col(i)(n) = element;
+    }
+  }
+  arma::uvec indices = arma::sort_index(eigenvals);
+
+  for (int i = 0; i < 3; i++){
+    B(arma::span(1,N), i) = eigenvecs.col(indices(i));
+  }
+  string filename = "3_ANA_eigvecs_N_is_";
+  string mat_size = to_string(N);
+  string end_str = ".txt";
+  string fullFilename = filename + mat_size + end_str;
+  fstream outfile;
+  outfile.open(fullFilename, fstream::out | fstream::app);
+  outfile << B << endl;
+  outfile.close();
+}
