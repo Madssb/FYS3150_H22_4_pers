@@ -73,13 +73,13 @@ int main()
   fstream outfile;
 
   // Comment out below to write to file.
-  // for (int n = N_start; n <= N_stop; n++){
-  //   bool converged = false;
-  //   int iterations = 0;
-  //
-  //   arma::mat A_2 = create_tridiag_mat(a_2, d_2, e_2, n);
-  //   jacobi_eigensolver_multiple(A_2, eps, maxiter_2, iterations, converged, outfile);
-  // }
+  for (int n = N_start; n <= N_stop; n++){
+     bool converged = false;
+     int iterations = 0;
+  
+     arma::mat A_2 = create_tridiag_mat(a_2, d_2, e_2, n);
+     jacobi_eigensolver_multiple(A_2, eps, maxiter_2, iterations, converged, outfile);
+   }
 
   // Solving the discrete equation for n = 10 and n = 100.
   for (int i = 0; i <= 1; i++)
@@ -105,7 +105,7 @@ int main()
                        iterations_3, converged_3);
 
     // Uncomment below to write to file.
-    // three_lowest(eigenvalues_2, eigenvectors_2);
+    three_lowest(eigenvalues_2, eigenvectors_2);
     analytical_sol(a_3, d_3, e_3, N_2);
   }
   return 0;

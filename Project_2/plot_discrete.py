@@ -24,10 +24,9 @@ def plot_discrete(filename_1, filename_2):
     ax[-1].set_xlabel('$\hat{x}$')
     plt.tight_layout()
 
-plot_discrete('3_eigvecs_N_is_9_DONT_MODIFY.txt', '3_ANA_eigvecs_N_is_9_DONT_MODIFY.txt')
+plot_discrete('3_eigvecs_N_is_9.txt', '3_ANA_eigvecs_N_is_9.000000.txt')
 plt.savefig('n_is_10.pdf')
 
-plot_discrete('3_eigvecs_N_is_99_DONT_MODIFY.txt', '3_ANA_eigvecs_N_is_99_DONT_MODIFY.txt')
+plot_discrete('3_eigvecs_N_is_99.txt', '3_ANA_eigvecs_N_is_99.000000.txt')
 plt.savefig('n_is_100.pdf')
-
 plt.show()

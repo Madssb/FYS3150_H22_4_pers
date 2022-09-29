@@ -1,5 +1,6 @@
 #include "header.hpp"
 #include <iostream>
+using namespace std;
 
 // Find the element w/ largest absolute value of matrix A.
 // Since A is symmetric, we only scan through upper triangular
@@ -38,9 +39,9 @@ void ana_vs_arma_test(const double &a, const double &d, const double &e, const d
   // Setting up tridiagonal matrix A w/ signature (a,d,e).
   arma::mat A = create_tridiag_mat(a, d, e, N);
 
-  std::cout << std::endl
+  cout << std::endl
        << "Tridiagonal matrix A:" << std::endl;
-  std::cout << A << std::endl;
+  cout << A << std::endl;
 
   const double pi = 4. * atan(1.);
 
@@ -68,23 +69,23 @@ void ana_vs_arma_test(const double &a, const double &d, const double &e, const d
   arma::mat arma_eigenvecs_norm = arma::normalise(arma_eigenvecs, 1, 0);
   arma::mat ana_eigenvecs_norm = arma::normalise(ana_eigenvecs, 1, 0);
 
-  std::cout << "EIGENVALUES" << std::endl;
-  std::cout << "Armadillo:" << std::endl;
-  std::cout << arma_eigenvals << std::endl;
-  std::cout << "Analytical:" << std::endl;
-  std::cout << ana_eigenvals_sorted << std::endl;
+  cout << "EIGENVALUES" << std::endl;
+  cout << "Armadillo:" << std::endl;
+  cout << arma_eigenvals << std::endl;
+  cout << "Analytical:" << std::endl;
+  cout << ana_eigenvals_sorted << std::endl;
 
-  std::cout << "EIGENVECTORS" << std::endl;
-  std::cout << "Armadillo:" << std::endl;
-  std::cout << arma_eigenvecs_norm << std::endl;
-  std::cout << "Analytical:" << std::endl;
-  std::cout << ana_eigenvecs_norm << std::endl;
+  cout << "EIGENVECTORS" << std::endl;
+  cout << "Armadillo:" << std::endl;
+  cout << arma_eigenvecs_norm << std::endl;
+  cout << "Analytical:" << std::endl;
+  cout << ana_eigenvecs_norm << std::endl;
 
-  std::cout << "RELATIVE ERRORS" << std::endl;
-  std::cout << "Eigenvalues:" << std::endl;
-  std::cout << abs(ana_eigenvals_sorted - arma_eigenvals) / abs(arma_eigenvals) << std::endl;
-  std::cout << "Eigenvectors:" << std::endl;
-  std::cout << abs(ana_eigenvecs_norm - arma_eigenvecs_norm) / abs(arma_eigenvecs_norm) << std::endl;
+  cout << "RELATIVE ERRORS" << std::endl;
+  cout << "Eigenvalues:" << std::endl;
+  cout << abs(ana_eigenvals_sorted - arma_eigenvals) / abs(arma_eigenvals) << std::endl;
+  cout << "Eigenvectors:" << std::endl;
+  cout << abs(ana_eigenvecs_norm - arma_eigenvecs_norm) / abs(arma_eigenvecs_norm) << std::endl;
 }
 
 // Test function to test if max_offdiag_symm is working correctly.
@@ -101,16 +102,16 @@ void max_offdiag_symm_test()
   A(2, 1) = A(1, 2);
   A(3, 0) = A(0, 3);
 
-  std::cout << std::endl
+  cout << std::endl
        << "Matrix A:" << std::endl;
-  std::cout << A << std::endl;
+  cout << A << std::endl;
 
   max_offdiag = max_offdiag_symm(A, k, l);
 
-  std::cout << "Max off-diagonal absolute value:" << std::endl;
-  std::cout << max_offdiag << std::endl;
-  std::cout << "Element position:" << std::endl;
-  std::cout << "A(" << k + 1 << "," << l + 1 << ")" << std::endl;
+  cout << "Max off-diagonal absolute value:" << std::endl;
+  cout << max_offdiag << std::endl;
+  cout << "Element position:" << std::endl;
+  cout << "A(" << k + 1 << "," << l + 1 << ")" << std::endl;
   arma::mat R = arma::mat(4, 4, arma::fill::eye);
   int k_2 = 1;
   int l_2 = 2;
@@ -206,14 +207,14 @@ void jacobi_eigensolver(const arma::mat &A, double eps, arma::vec &eigenvalues,
 
   if (converged == false || iterations > maxiter)
   {
-    std::cout << std::endl
+    cout << std::endl
          << "Converged (1 is yes, 0 is no): " << converged << std::endl;
-    std::cout << "Max iterations: " << maxiter << std::endl;
-    std::cout << "Iterations: " << iterations << std::endl;
+    cout << "Max iterations: " << maxiter << std::endl;
+    cout << "Iterations: " << iterations << std::endl;
   }
   else
   {
-    std::cout << std::endl
+    cout << std::endl
          << "Converged in " << iterations << " iterations for A=(" << A.n_rows << "x" << A.n_rows << ")." << std::endl;
 
     eigenvalues = A_m.diag(0);
@@ -221,14 +222,14 @@ void jacobi_eigensolver(const arma::mat &A, double eps, arma::vec &eigenvalues,
   }
   if (A.n_rows <= 10)
   {
-    std::cout << std::endl
+    cout << std::endl
          << "Matrix A^(" << iterations << "):" << std::endl;
     // Printing out the matrix A_m where elements w/ value <= eps set to zero.
-    std::cout << A_m.clean(eps) << std::endl;
+    cout << A_m.clean(eps) << std::endl;
   }
   else
   {
-    std::cout << "Matrix is " << to_string(A.n_rows) << "x" << to_string(A.n_rows)
+    cout << "Matrix is " << to_string(A.n_rows) << "x" << to_string(A.n_rows)
          << ", skipping print to terminal." << std::endl;
   }
 }
@@ -267,10 +268,10 @@ void jacobi_eigensolver_multiple(const arma::mat &A, double eps, const int maxit
 
   if (converged == false || iterations > maxiter)
   {
-    std::cout << std::endl
+    cout << std::endl
          << "Converged (1 is yes, 0 is no): " << converged << std::endl;
-    std::cout << "Max iterations: " << maxiter << std::endl;
-    std::cout << "Iterations: " << iterations << std::endl;
+    cout << "Max iterations: " << maxiter << std::endl;
+    cout << "Iterations: " << iterations << std::endl;
   }
   else
   {
