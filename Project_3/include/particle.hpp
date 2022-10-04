@@ -12,8 +12,8 @@ class Particle
     // Member variables
     double q;       // Charge [e]
     double m;       // Mass [u]
-    arma::vec r;    // Position [micrometer]
-    arma:: vec v;   // Velocity [micrometer/microsecond]
+    arma::vec r;    // Position [mu*m]
+    arma:: vec v;   // Velocity [mu*s/mu*m]
 
     // Constructor
     Particle(double charge_in, double mass_in, arma::vec position_in,
