@@ -1,5 +1,5 @@
 // Code containing the definition of class Particle
-#include"particle.hpp"
+#include "particle.hpp"
 
 // Constructor
 Particle::Particle(double charge_in, double mass_in, arma::vec position_in,

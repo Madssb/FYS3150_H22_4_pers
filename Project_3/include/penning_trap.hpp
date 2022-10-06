@@ -2,9 +2,9 @@
 #ifndef __PenningTrap_hpp__
 #define __PenningTrap_hpp__
 
-#include<armadillo>
-#include<string>
-#include<vector>
+#include <armadillo>
+#include <string>
+#include <vector>
 #include "particle.hpp"
 
 class PenningTrap
@@ -27,19 +27,16 @@ class PenningTrap
   arma::vec external_E_field(arma::vec r);
 
   // External magnetic field at point r=(x,y,z)
-  arma::vec external_B_field(arma::vec r);
-
-  // Force on particle_i from particle_j
-  arma::vec force_particle(int i, int j);
+  arma::vec external_B_field(arma::vec v);
 
   // Total force on particle_i from external fields
   arma::vec total_force_external(int i);
 
   // Total force on particle_i from other particles
-  arma::vec total_force_particles(int i);
+  arma::vec total_force_particles(int i, arma::vec r);
 
   // Total force on particle_i from external field and other particles
-  arma::vec total_force(int i);
+  arma::vec total_force(int i, double q, arma::vec r, arma::vec v);
 
   // Evolve the system one time step using Runge-Kutta 4th order
   void evolve_RK4(double dt);

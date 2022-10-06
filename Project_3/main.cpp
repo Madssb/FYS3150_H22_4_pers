@@ -15,8 +15,5 @@ int main()
 
   PenningTrap trap = PenningTrap(B_0, V_0, d);
 
-
-
-
   return 0;
 }
