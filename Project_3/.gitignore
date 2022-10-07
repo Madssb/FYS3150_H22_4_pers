@@ -1,4 +1,8 @@
-#Files to be excluded
+# Files to be excluded
 
+# Text files and executables
 *.txt
 *.exe
+
+# Figures
+*.pdf
