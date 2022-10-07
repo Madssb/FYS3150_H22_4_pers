@@ -20,7 +20,7 @@ int main()
   double vx_0 = 0, vy_0 = 1, vz_0 = 0;
 
   arma::vec r_1 = arma::vec{x_0, y_0, z_0};
-  arma::vec r_2 = - r_1;
+  arma::vec r_2 = - .01 * r_1;
   arma::vec v_1 = arma::vec{vx_0, vy_0, vz_0};
   arma::vec v_2 = 2. * v_1;
 
@@ -30,8 +30,8 @@ int main()
   trap.add_particle(p_1);
   trap.add_particle(p_2);
 
-  int N = 3;
-  double dt = 1e-4;
+  int N = 1;
+  double dt = 1e-3;
   int steps = N / dt;
 
   arma::vec t = arma::linspace(0, N, steps);
