@@ -24,19 +24,23 @@ class PenningTrap
   void add_particle(Particle p_in);
 
   // External electric field at point r=(x,y,z)
-  arma::vec external_E_field(arma::vec r);
+  arma::mat external_E_field(arma::mat R);
 
   // External magnetic field at point r=(x,y,z)
-  arma::vec external_B_field(arma::vec v);
+  arma::mat external_B_field(arma::mat V);
+
+  // Force on particle_i from particle_j
+  arma::vec force_particle(arma::vec r_i, arma::vec r_j,
+                           double q_i, double q_j);
 
   // Total force on particle_i from external fields
-  arma::vec total_force_external(int i);
+  arma::mat total_force_external(arma::mat R, arma::mat V);
 
   // Total force on particle_i from other particles
-  arma::vec total_force_particles(int i, arma::vec r);
+  arma::mat total_force_particles(arma::mat R);
 
   // Total force on particle_i from external field and other particles
-  arma::vec total_force(int i, double q, arma::vec r, arma::vec v);
+  arma::mat total_force(arma::mat R, arma::mat V);
 
   // Evolve the system one time step using Runge-Kutta 4th order
   void evolve_RK4(double dt);

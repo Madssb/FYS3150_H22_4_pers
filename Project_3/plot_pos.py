@@ -2,7 +2,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-t, x, y, z = np.loadtxt('data.txt', unpack=True)
+t, z_num, z_ana = np.loadtxt('data_test.txt', unpack=True)
 
-plt.plot(t, z)
+plt.plot(t, z_num, label='Num')
+plt.plot(t, z_ana, label='Ana')
+plt.legend()
 plt.show()
