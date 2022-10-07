@@ -28,7 +28,7 @@ arma::mat PenningTrap::external_E_field(arma::mat R)
   for (int i = 0; i < N; i++)
   {
     arma::vec r = R.col(i);
-    E.col(i) = arma::vec{r(0), r(1), -2. * r(2)};
+    E.col(i) = A * arma::vec{r(0), r(1), -4. * r(2)};
   }
   return E;
 }
@@ -103,16 +103,27 @@ arma::mat PenningTrap::total_force_external(arma::mat R, arma::mat V)
 }
 
 // Total force on particle_i from external field and other particles
-arma::mat PenningTrap::total_force(arma::mat R, arma::mat V)
+arma::mat PenningTrap::total_force(arma::mat R, arma::mat V,
+                                   bool particle_interaction)
 {
-  arma::mat F_tot = PenningTrap::total_force_external(R, V)
-                  + PenningTrap::total_force_particles(R);
+  arma::mat F_tot;
+
+  if (particle_interaction)
+  {
+    F_tot = PenningTrap::total_force_external(R, V)
+    + PenningTrap::total_force_particles(R);
+  }
+
+  else
+  {
+    F_tot = PenningTrap::total_force_external(R, V);
+  }
 
   return F_tot;
 }
 
 // Evolve the system one time step using Runge-Kutta 4th order
-void PenningTrap::evolve_RK4(double dt)
+void PenningTrap::evolve_RK4(double dt, bool particle_interaction)
 {
 
   int N = particles.size();
@@ -129,25 +140,24 @@ void PenningTrap::evolve_RK4(double dt)
   {
     R.col(i) = particles[i].r;
     V.col(i) = particles[i].v;
-    // m(i) = particles[i].m;
   }
 
-  a = 1 / m * PenningTrap::total_force(R, V);
+  a = 1 / m * PenningTrap::total_force(R, V, particle_interaction);
 
   K1_v = dt * a;
   K1_r = dt * V;
 
-  a = 1 / m * total_force(R + 0.5 * K1_r, V + 0.5 * K1_v);
+  a = 1 / m * total_force(R + .5 * K1_r, V + .5 * K1_v, particle_interaction);
 
   K2_v = dt * a;
   K2_r = dt * (V + 0.5 * K1_v);
 
-  a = 1 / m * total_force(R + .5 * K2_r, V + .5 * K2_v);
+  a = 1 / m * total_force(R + .5 * K2_r, V + .5 * K2_v, particle_interaction);
 
   K3_v = dt * a;
   K3_r = dt * (V + .5 * K2_v);
 
-  a = 1 / m * total_force(R + K3_r, V + K3_v);
+  a = 1 / m * total_force(R + K3_r, V + K3_v, particle_interaction);
 
   K4_v = dt * a;
   K4_r = dt * (V + K3_v);
@@ -163,4 +173,4 @@ void PenningTrap::evolve_RK4(double dt)
 }
 
 // Evolve the system one time step using Forward Euler
-// void PenningTrap::evolve_FE(double dt)
+// void PenningTrap::evolve_FE(double dt, bool particle_interaction)

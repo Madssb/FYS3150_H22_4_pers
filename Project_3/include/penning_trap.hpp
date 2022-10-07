@@ -40,13 +40,13 @@ class PenningTrap
   arma::mat total_force_particles(arma::mat R);
 
   // Total force on particle_i from external field and other particles
-  arma::mat total_force(arma::mat R, arma::mat V);
+  arma::mat total_force(arma::mat R, arma::mat V, bool particle_interaction);
 
   // Evolve the system one time step using Runge-Kutta 4th order
-  void evolve_RK4(double dt);
+  void evolve_RK4(double dt, bool particle_interaction=true);
 
   // Evolve the system one time step using Forward Euler
-  void evolve_FE(double dt);
+  void evolve_FE(double dt, bool particle_interaction=true);
 };
 
 

@@ -1,4 +1,15 @@
-compile:
-	g++ testing.cpp src/particle.cpp src/penning_trap.cpp -std=c++11 -I include -o testing.exe -larmadillo
-run:
-	./testing.exe > data_test.txt
+all_single: compile_single run_single
+
+compile_single:
+	g++ testing_single.cpp src/particle.cpp src/penning_trap.cpp src/analytical_z.cpp -std=c++11 -I include -o testing_single.exe -larmadillo
+
+run_single:
+	./testing_single.exe > data_test_single.txt
+
+all_double: compile_double run_double
+
+compile_double:
+	g++ testing_double.cpp src/particle.cpp src/penning_trap.cpp src/analytical_z.cpp -std=c++11 -I include -o testing_double.exe -larmadillo
+
+run_double:
+	./testing_double.exe > data_test_double.txt
