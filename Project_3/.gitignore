@@ -1,0 +1,4 @@
+#Files to be excluded
+
+*.txt
+*.exe
