@@ -1,7 +1,7 @@
 // Code for testing functionality
 #include "particle.hpp"
 #include "penning_trap.hpp"
-#include "analytical_z.hpp"
+#include "analytical.hpp"
 #include <cmath>
 
 using namespace std;
@@ -14,7 +14,7 @@ int main()
   PenningTrap trap = PenningTrap(B_0, V_0, d);
 
   double q = 1.;
-  double m = 1.;
+  double m = 40.078;  // Ca+ ion
 
   double x_0 = 1., y_0 = 0., z_0 = 1.;
   double vx_0 = 0., vy_0 = 1., vz_0 = 0.;

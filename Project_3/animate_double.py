@@ -38,22 +38,20 @@ def animate(i):
 
     ax.clear()
 
-    plt.text(-4, 4, f'$t={t[i]:.3f}\,\mu$ s')
+    ax.plot(r1[:i*20+1, 0], r1[:i*20+1, 1], ls='dashed', color='red', lw=.5)
+    ax.plot(r1[i*20, 0], r1[i*20, 1], 'o', color='red', label='$P_1$')    # ms: markersize
 
-    ax.plot(r1[:i, 0], r1[:i, 1], color='red', lw=1)
-    ax.scatter(r1[i, 0], r1[i, 1], color='red', lw=1, label='$P_1$')
+    ax.plot(r2[:i*20+1, 0], r2[:i*20+1, 1], ls='dashed', color='royalblue', lw=.5)
+    ax.plot(r2[i*20, 0], r2[i*20, 1], 'o', color='royalblue', label='$P_2$')
 
-    ax.plot(r2[:i, 0], r2[:i, 1], color='royalblue', lw=1)
-    ax.scatter(r2[i, 0], r2[i, 1], color='royalblue', lw=1, label='$P_2$')
-
-    ax.set_title('Two particles in Penning trap')
+    ax.set_title(f'Two particles in Penning trap\n$t={t[i]:.3f}\,\mu s$')
     ax.set_xlabel('x [$\mu m$]')
     ax.set_ylabel('y [$\mu m$]')
 
-    ax.set_xlim([x_min, x_max])
-    ax.set_ylim([y_min, y_max])
+    ax.set_xlim([-40, 40])
+    ax.set_ylim([-40, 40])
     ax.legend()
 
-ani = animation.FuncAnimation(fig, animate, N, interval=1)
+ani = animation.FuncAnimation(fig, animate, N//20, interval=1)
 
 plt.show()
