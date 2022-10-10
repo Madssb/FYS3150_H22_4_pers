@@ -26,7 +26,7 @@ int main()
 
   trap.add_particle(p);
 
-  double total_time = 1.;
+  double total_time = 5;
 
   cout << "#" << setw(width) << "dt"
        << setw(width) << "time"
@@ -35,16 +35,23 @@ int main()
        << setw(width) << "rel_err"
        << endl;
 
-  for (int i = 1; i < 6; i++)
+  for (int i = 0; i < 5; i++)
   {
     double dt = pow(10, -i);
     int steps = total_time / dt;
     arma::vec t = arma::linspace(0, total_time, steps);
     trap.particles[0].r = r;
 
-    for (int j = 0; j < steps; j++)
+    cout << setw(width) << setprecision(prec) << dt
+         << setw(width) << setprecision(prec) << t(0)
+         << setw(width) << setprecision(prec) << arma::norm(r)
+         << setw(width) << setprecision(prec) << arma::norm(r)
+         << setw(width) << setprecision(prec) << 0
+         << endl;
+
+    for (int j = 1; j < steps; j++)
     {
-      trap.evolve_RK4(dt, true);
+      trap.evolve_FE(dt, true);
 
       arma::vec r_num = trap.particles[0].r;
       arma::vec r_ana = analytical_solution(r, v, p.q, B_0, p.m, V_0, d, t(j));

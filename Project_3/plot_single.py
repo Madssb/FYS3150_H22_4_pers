@@ -2,18 +2,36 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-t, z_num, z_ana = np.loadtxt('data_test_single.txt', unpack=True)
+t, x_num, y_num, z_num, x_ana, y_ana, z_ana = np.loadtxt('data_test_single.txt', unpack=True)
+dt = t[1] - t[0]
 
-plt.figure(figsize=(8, 4.5))
+fig = plt.figure(figsize=(8 * 1.4, 4.5 * 1.4))
+fig.suptitle('Position vector $\\vec{r}=(x,y,z)$' + f'\n$dt=${dt:.1e}$\,\mu s$')
 
-plt.title(f'Simulation for $t={np.ceil(t[-1])}\,\mu s$')
+ax1 = plt.subplot2grid((2, 4), (0, 0), colspan=2)
+ax2 = plt.subplot2grid((2, 4), (0, 2), colspan=2)
+ax3 = plt.subplot2grid((2, 4), (1, 1), colspan=2)
 
-plt.plot(t, z_num, color='red', lw=1, label='Num')
-plt.plot(t, z_ana, color='black', ls='dashed', lw=.5, label='Ana')
+ax1.set_title('Position in x-direction')
+ax1.plot(t, x_num, color='red', lw=1, label='Approx')
+ax1.plot(t, x_ana, color='black', ls='dashed', lw=1, label='Exact')
+ax1.set_xlabel('Time [$\mu s$]')
+ax1.set_ylabel('Position [$\mu m$]')
 
-plt.xlabel('t [$\mu s$]')
-plt.ylabel('z [$\mu m$]')
-plt.legend()
+ax2.set_title('Position in y-direction')
+ax2.plot(t, y_num, color='red', lw=1)
+ax2.plot(t, y_ana, color='black', ls='dashed', lw=1)
+ax2.set_xlabel('Time [$\mu s$]')
+ax2.set_ylabel('Position [$\mu m$]')
 
+
+ax3.set_title('Position in z-direction')
+ax3.plot(t, z_num, color='red', lw=1)
+ax3.plot(t, z_ana, color='black', ls='dashed', lw=1)
+ax3.set_xlabel('Time [$\mu s$]')
+ax3.set_ylabel('Position [$\mu m$]')
+
+
+plt.figlegend(loc='lower right')
+fig.tight_layout()
 plt.show()
-# plt.savefig('single_particle_z_dir.pdf')

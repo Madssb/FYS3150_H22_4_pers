@@ -33,21 +33,41 @@ int main()
   arma::vec t = arma::linspace(0, total_time, steps);
 
   cout << "#" << setw(width) << "Time"
-       << setw(width) << "Num"
-       << setw(width) << "Ana"
+       << setw(width) << "x_num"
+       << setw(width) << "y_num"
+       << setw(width) << "z_num"
+       << setw(width) << "x_ana"
+       << setw(width) << "y_ana"
+       << setw(width) << "z_ana"
        << endl;
 
-  for (int i = 0; i < steps; i++)
+  cout << setw(width) << setprecision(prec) << t(0)
+       << setw(width) << setprecision(prec) << x_0
+       << setw(width) << setprecision(prec) << y_0
+       << setw(width) << setprecision(prec) << z_0
+       << setw(width) << setprecision(prec) << x_0
+       << setw(width) << setprecision(prec) << y_0
+       << setw(width) << setprecision(prec) << z_0
+       << endl;
+
+
+  for (int i = 1; i < steps; i++)
   {
     trap.evolve_RK4(dt, true);
 
     arma::vec r_ana = analytical_solution(r, v, p.q, B_0, p.m, V_0, d, t(i));
 
-    double z_ana = r_ana[2];
+    double x_ana = r_ana[0], y_ana = r_ana[1], z_ana = r_ana[2];
+    double x_num = trap.particles[0].r[0];
+    double y_num = trap.particles[0].r[1];
     double z_num = trap.particles[0].r[2];
 
     cout << setw(width) << setprecision(prec) << t(i)
+         << setw(width) << setprecision(prec) << x_num
+         << setw(width) << setprecision(prec) << y_num
          << setw(width) << setprecision(prec) << z_num
+         << setw(width) << setprecision(prec) << x_ana
+         << setw(width) << setprecision(prec) << y_ana
          << setw(width) << setprecision(prec) << z_ana
          << endl;
   }

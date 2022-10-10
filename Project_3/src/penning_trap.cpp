@@ -142,7 +142,7 @@ void PenningTrap::evolve_RK4(double dt, bool particle_interaction)
     V.col(i) = particles[i].v;
   }
 
-  a = 1 / m * PenningTrap::total_force(R, V, particle_interaction);
+  a = 1 / m * total_force(R, V, particle_interaction);
 
   K1_v = dt * a;
   K1_r = dt * V;
@@ -173,4 +173,28 @@ void PenningTrap::evolve_RK4(double dt, bool particle_interaction)
 }
 
 // Evolve the system one time step using Forward Euler
-// void PenningTrap::evolve_FE(double dt, bool particle_interaction)
+void PenningTrap::evolve_FE(double dt, bool particle_interaction)
+{
+  int N = particles.size();
+  arma::mat R = arma::zeros(3, N);
+  arma::mat V = arma::zeros(3, N);
+  arma::mat a = arma::zeros(3, N);
+  double m = particles[0].m;
+
+  for (int i = 0; i < N; i++)
+  {
+    R.col(i) = particles[i].r;
+    V.col(i) = particles[i].v;
+  }
+
+  a = 1 / m * total_force(R, V, particle_interaction);
+
+  R += dt * V;
+  V += dt * a;
+
+  for (int i = 0; i < N; i++)
+  {
+    particles[i].r = R.col(i);
+    particles[i].v = V.col(i);
+  }
+}

@@ -51,7 +51,22 @@ int main()
        << setw(width) << "vz2"
        << endl;
 
-  for (int i = 0; i < steps; i++)
+  cout << setw(width) << t(0)
+       << setw(width) << r_1(0)
+       << setw(width) << r_2(0)
+       << setw(width) << r_1(1)
+       << setw(width) << r_2(1)
+       << setw(width) << r_1(2)
+       << setw(width) << r_2(2)
+       << setw(width) << v_1(0)
+       << setw(width) << v_2(0)
+       << setw(width) << v_1(1)
+       << setw(width) << v_2(1)
+       << setw(width) << v_1(2)
+       << setw(width) << v_2(2)
+       << endl;
+
+  for (int i = 1; i < steps; i++)
   {
     trap.evolve_RK4(dt, true);
 
