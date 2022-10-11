@@ -3,6 +3,7 @@
 #include "penning_trap.hpp"
 #include "analytical.hpp"
 #include <cmath>
+#include <fstream>
 
 using namespace std;
 
@@ -26,46 +27,76 @@ int main()
 
   trap.add_particle(p);
 
-  double total_time = 5;
+  double total_time = 10;
+  arma::vec dMax = arma::vec(5);
+  arma::vec h = arma::vec(5);
 
-  cout << "#" << setw(width) << "dt"
-       << setw(width) << "time"
-       << setw(width) << "r_ana"
-       << setw(width) << "r_num"
-       << setw(width) << "rel_err"
-       << endl;
+  ofstream outfile;
+  outfile.open("data_relerr.txt", ofstream::out | ofstream::trunc);
 
-  for (int i = 0; i < 5; i++)
+  outfile << "#" << setw(width) << "dt"
+          << setw(width) << "time"
+          << setw(width) << "r_ana"
+          << setw(width) << "r_num"
+          << setw(width) << "rel_err"
+          << endl;
+
+  for (int i = 1; i < 6; i++)
   {
     double dt = pow(10, -i);
     int steps = total_time / dt;
+
+    h(i-1) = dt;
+
     arma::vec t = arma::linspace(0, total_time, steps);
+
     trap.particles[0].r = r;
 
-    cout << setw(width) << setprecision(prec) << dt
-         << setw(width) << setprecision(prec) << t(0)
-         << setw(width) << setprecision(prec) << arma::norm(r)
-         << setw(width) << setprecision(prec) << arma::norm(r)
-         << setw(width) << setprecision(prec) << 0
-         << endl;
+    outfile << setw(width) << setprecision(prec) << dt
+            << setw(width) << setprecision(prec) << t(0)
+            << setw(width) << setprecision(prec) << arma::norm(r)
+            << setw(width) << setprecision(prec) << arma::norm(r)
+            << setw(width) << setprecision(prec) << 0
+            << endl;
 
     for (int j = 1; j < steps; j++)
     {
-      trap.evolve_FE(dt, true);
+      trap.evolve_RK4(dt, true);
 
       arma::vec r_num = trap.particles[0].r;
       arma::vec r_ana = analytical_solution(r, v, p.q, B_0, p.m, V_0, d, t(j));
 
-      double rel_err = arma::norm(arma::abs(r_num - r_ana) / arma::abs(r_ana));
+      double abs_err = arma::norm(r_num - r_ana);
+      double rel_err = abs_err / arma::norm(r_ana);
 
-      cout << setw(width) << setprecision(prec) << dt
-           << setw(width) << setprecision(prec) << t(j)
-           << setw(width) << setprecision(prec) << arma::norm(r_ana)
-           << setw(width) << setprecision(prec) << arma::norm(r_num)
-           << setw(width) << setprecision(prec) << rel_err
-           << endl;
+      if (abs_err > dMax(i - 1))
+      {
+        dMax(i - 1) = abs_err;
+      }
+
+      outfile << setw(width) << setprecision(prec) << dt
+              << setw(width) << setprecision(prec) << t(j)
+              << setw(width) << setprecision(prec) << arma::norm(r_ana)
+              << setw(width) << setprecision(prec) << arma::norm(r_num)
+              << setw(width) << setprecision(prec) << rel_err
+              << endl;
     }
   }
+  outfile.close();
+
+  double r_err = 0.;
+
+  for (int k = 1; k < 5; k++)
+  {
+    r_err += 1. / 4 * (log(dMax(k) / dMax(k-1)) / log(h(k) / h(k-1)));
+  }
+
+  cout << "Convergence rate for RK4: " << setprecision(4) << r_err << endl;
+
+  /* From terminal:
+  > Convergence rate for FE: -0.1444
+  > Convergence rate for RK4: -0.04394
+  */
 
   return 0;
 }

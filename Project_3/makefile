@@ -20,4 +20,4 @@ compile_relerr:
 	g++ rel_error.cpp src/particle.cpp src/penning_trap.cpp src/analytical.cpp -std=c++11 -I include -o rel_error.exe -larmadillo
 
 run_relerr:
-	./rel_error.exe > data_relerr.txt
+	./rel_error.exe
