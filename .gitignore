@@ -1,0 +1,11 @@
+# Files to be excluded
+
+# Text files and executables
+*.txt
+*.exe
+
+# Figures
+*.pdf
+*.gif
+
+.DS_Store
