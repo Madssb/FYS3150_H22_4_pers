@@ -28,7 +28,7 @@ arma::mat PenningTrap::external_E_field(arma::mat R)
   for (int i = 0; i < N; i++)
   {
     arma::vec r = R.col(i);
-    E.col(i) = A * arma::vec{r(0), r(1), -4. * r(2)};
+    E.col(i) = A * arma::vec{r(0), r(1), -2. * r(2)};
   }
   return E;
 }

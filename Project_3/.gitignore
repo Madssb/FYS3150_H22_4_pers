@@ -7,5 +7,6 @@
 # Figures
 *.pdf
 *.gif
+*.png
 
 .DS_Store

@@ -36,7 +36,7 @@ arma::mat PenningTrap::external_E_field(double t, arma::mat R)
 
     if (arma::norm(r) <= d)
     {
-      E.col(i) = A * arma::vec{r(0), r(1), -4. * r(2)};
+      E.col(i) = A * arma::vec{r(0), r(1), -2. * r(2)};
     }
 
     else
@@ -206,8 +206,16 @@ void PenningTrap::evolve_FE(double t, double dt, bool particle_interaction)
 
   for (int i = 0; i < N; i++)
   {
-    R.col(i) = particles[i].r;
-    V.col(i) = particles[i].v;
+    if (arma::norm(particles[i].r > d))
+    {
+      particles.erase(particles.begin() + i);
+      N -= 1;
+    }
+    else
+    {
+      R.col(i) = particles[i].r;
+      V.col(i) = particles[i].v;
+    }
   }
 
   a = 1 / m * total_force(t, R, V, particle_interaction);
@@ -227,14 +235,5 @@ int PenningTrap::count_particles()
 {
   int N = particles.size();
 
-  for (int i = 0; i < N; i++)
-  {
-    arma::vec r = particles[i].r;
-
-    if (arma::norm(r) > d)
-    {
-      particles.erase(particles.begin() + i);
-    }
-  }
-  return particles.size();
+  return N;
 }

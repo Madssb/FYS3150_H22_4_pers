@@ -25,7 +25,7 @@ run_relerr:
 all: compile run
 
 compile:
-	g++ main.cpp src/particle.cpp src/penning_trap_2.cpp -std=c++11 -I include -o main.exe -larmadillo
+	g++ -O2 main.cpp src/particle.cpp src/penning_trap_2.cpp -std=c++11 -I include -o main.exe -larmadillo
 
 run:
 	./main.exe

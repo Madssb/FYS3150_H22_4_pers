@@ -12,8 +12,8 @@ int main()
   const double T = 9.64852558 * 10;     // [u/(mu*s)e ]
   const double V = 9.64852558 * 1e7;    // [u(mu*m)^2/(mu*s)^2e]
   const double B_0 = 1. * T;            // Magnetic field constant
-  const double V_0 = 2.5e-3 * V;        // Electric field constant
-  const double d = 5e2;                 // [mu*m]
+  const double V_0 = 25e-3 * V;        // Electric field constant
+  const double d = 500;                 // [mu*m]
   const double mCa_plus = 40.078;       // Ca+ ion mass [u]
   const double q = 1.;                  // Charge of +1 e
 
@@ -26,12 +26,13 @@ int main()
   arma::arma_rng::set_seed_random();
 
   int total_time = 500;
-  double dt = .1;
+  double dt = 1.3e-2;
   double time_steps = ceil(total_time / dt);
 
-                          // The below values was for the first plot
-  double maxFreq = 0.7;   // 2.5;
-  double minFreq = 0.5;   // .2;
+  // double maxFreq = 0.7;
+  // double minFreq = 0.5;
+  double maxFreq = 2.5;
+  double minFreq = .2;
   double dw = .02;
   double freq_steps = ceil((maxFreq - minFreq) / dw);
 
@@ -68,7 +69,7 @@ int main()
 
       for (int l = 0; l < time_steps; l++)
       {
-        trap.evolve_RK4(t(l), dt, true);
+        trap.evolve_RK4(t(l), dt, false);
       }
 
       if (k != 0)

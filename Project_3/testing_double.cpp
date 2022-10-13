@@ -65,7 +65,7 @@ int main()
 
   for (int i = 1; i < steps; i++)
   {
-    trap.evolve_RK4(dt, true);
+    trap.evolve_RK4(dt, false);
 
     double x1 = trap.particles[0].r[0];
     double x2 = trap.particles[1].r[0];

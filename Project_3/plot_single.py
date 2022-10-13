@@ -36,6 +36,7 @@ ax3.set_ylabel('Position [$\mu m$]')
 
 plt.figlegend(loc='lower right')
 fig.tight_layout()
+plt.savefig('motion.png')
 
 plt.figure()
 plt.title(f'Position in z-direction\n$dt=${dt:.1e}$\,\mu s$, $\omega_z=${w_z:.3e} ' + '$(\mu s)^{-1}$')

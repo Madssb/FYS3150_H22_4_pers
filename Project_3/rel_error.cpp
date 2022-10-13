@@ -25,11 +25,9 @@ int main()
 
   Particle p = Particle(q, m, r, v);
 
-  trap.add_particle(p);
-
-  double total_time = 10;
-  arma::vec dMax = arma::vec(5);
-  arma::vec h = arma::vec(5);
+  double total_time = 50;
+  arma::vec dMax = arma::vec(4);
+  arma::vec h = arma::vec(4);
 
   ofstream outfile;
   outfile.open("data_relerr.txt", ofstream::out | ofstream::trunc);
@@ -41,15 +39,17 @@ int main()
           << setw(width) << "rel_err"
           << endl;
 
-  for (int i = 1; i < 6; i++)
+  for (int i = 1; i < 5; i++)
   {
-    double dt = pow(10, -i);
-    int steps = total_time / dt;
+    int steps = 2000 * pow(2, i);
+    double dt = total_time / steps;
 
     h(i-1) = dt;
 
     arma::vec t = arma::linspace(0, total_time, steps);
 
+    trap.particles.clear();
+    trap.add_particle(p);
     trap.particles[0].r = r;
 
     outfile << setw(width) << setprecision(prec) << dt
@@ -61,6 +61,7 @@ int main()
 
     for (int j = 1; j < steps; j++)
     {
+      // trap.evolve_FE(dt, true);
       trap.evolve_RK4(dt, true);
 
       arma::vec r_num = trap.particles[0].r;
@@ -86,16 +87,17 @@ int main()
 
   double r_err = 0.;
 
-  for (int k = 1; k < 5; k++)
+  for (int k = 1; k < 4; k++)
   {
-    r_err += 1. / 4 * (log(dMax(k) / dMax(k-1)) / log(h(k) / h(k-1)));
+    r_err += 1. / 3 * (log(dMax(k) / dMax(k-1)) / log(h(k) / h(k-1)));
   }
 
+  // cout << "Convergence rate for FE: " << setprecision(4) << r_err << endl;
   cout << "Convergence rate for RK4: " << setprecision(4) << r_err << endl;
 
   /* From terminal:
-  > Convergence rate for FE: -0.1444
-  > Convergence rate for RK4: -0.04394
+  > Convergence rate for FE: 1.395
+  > Convergence rate for RK4: 1
   */
 
   return 0;
