@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-w_z = np.sqrt(2 * 2.5e-3 / (40.078 * 500**2))
+w_z = np.sqrt(2 * 2.41e6 / (40.078 * 500**2))
 
 t, x_num, y_num, z_num, x_ana, y_ana, z_ana = np.loadtxt('data_test_single.txt', unpack=True)
 dt = t[1] - t[0]
@@ -38,10 +38,13 @@ plt.figlegend(loc='lower right')
 fig.tight_layout()
 
 plt.figure()
-plt.title(f'Position in z-direction\n$dt=${dt:.1e}$\,\mu s$, $\omega_z=${w_z:.3e}')
+plt.title(f'Position in z-direction\n$dt=${dt:.1e}$\,\mu s$, $\omega_z=${w_z:.3e} ' + '$(\mu s)^{-1}$')
 plt.plot(t, z_num, color='red', lw=1)
+plt.plot(t, z_ana, color='black', ls='dashed', lw=1, label='Exact')
 plt.xlabel('Time [$\mu s$]')
 plt.ylabel('Position [$\mu m$]')
-plt.savefig('single_zdir.pdf')
+plt.figlegend(loc='center right')
+# plt.savefig('single_zdir.pdf')
+# plt.savefig('single_zdir_with_exact.pdf')
 
 plt.show()
