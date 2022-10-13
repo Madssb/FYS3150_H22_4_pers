@@ -16,8 +16,8 @@ int main()
   double q = 1.;
   double m = 40.078;  // Ca+ ion
 
-  double x_0 = 1., y_0 = 0., z_0 = 1.;
-  double vx_0 = 0., vy_0 = 1., vz_0 = 0.;
+  double x_0 = 20., y_0 = 0., z_0 = 20.;
+  double vx_0 = 0., vy_0 = 25., vz_0 = 0.;
 
   arma::vec r = arma::vec{x_0, y_0, z_0};
   arma::vec v = arma::vec{vx_0, vy_0, vz_0};
@@ -26,7 +26,7 @@ int main()
 
   trap.add_particle(p);
 
-  int total_time = 100;
+  int total_time = 50;
   double dt = 1e-3;
   int steps = total_time / dt;
 

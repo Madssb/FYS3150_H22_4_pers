@@ -43,14 +43,16 @@ def animate(i):
 
     ax.plot3D(r1[:i*100+1, 0], r1[:i*100+1, 1], r1[:i*100+1, 2], color='red', lw=.25, ls='dashed')
     ax.scatter(r1[i*100, 0], r1[i*100, 1], r1[i*100, 2], color='red', lw=1, label='$P_1$')
+    ax.scatter(r1[0, 0], r1[0, 1], color='green', lw=1, label='$P_{1,0}$')
 
     ax.plot3D(r2[:i*100+1, 0], r2[:i*100+1, 1], r2[:i*100+1, 2], color='royalblue', lw=.25, ls='dashed')
     ax.scatter(r2[i*100, 0], r2[i*100, 1], r2[i*100, 2], color='royalblue', lw=1, label='$P_2$')
+    ax.scatter(r2[0, 0], r2[0, 1], color='black', lw=1, label='$P_{2,0}$')
 
     ax.set_title(f'Two particles in Penning trap\n$t={t[i*100]:.3f}\,\mu s$')
-    ax.set_xlabel('x [$\mu s$]')
-    ax.set_ylabel('y [$\mu s$]')
-    ax.set_zlabel('z [$\mu s$]')
+    ax.set_xlabel('x [$\mu m$]')
+    ax.set_ylabel('y [$\mu m$]')
+    ax.set_zlabel('z [$\mu m$]')
     ax.legend()
 
     ax.set_xlim3d([-40, 40])
