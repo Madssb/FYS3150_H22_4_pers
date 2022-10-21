@@ -26,6 +26,7 @@ arma::mat PenningTrap::external_E_field(double t, arma::mat R)
   int N = particles.size();
   arma::mat E = arma::mat(3, N);
 
+  // Time dependent electric field.
   double V_0_t = V_0 * (1. + f * cos(w_V * t));
 
   double A = V_0_t / (d * d);
@@ -34,6 +35,8 @@ arma::mat PenningTrap::external_E_field(double t, arma::mat R)
   {
     arma::vec r = R.col(i);
 
+    // Making sure the particle escapes the trap if
+    // it's distance from the center is greater than the trap.
     if (arma::norm(r) <= d)
     {
       E.col(i) = A * arma::vec{r(0), r(1), -2. * r(2)};
@@ -92,26 +95,35 @@ arma::mat PenningTrap::total_force_particles(arma::mat R)
   int N = particles.size();
 
   arma::mat F_tot = arma::mat(3, N);
+  arma::vec Fij;
 
   for (int i = 0; i < N; i++)
   {
     arma::vec r_i = R.col(i);
     double q_i = particles[i].q;
 
-    for (int j = 0; j < N; j++)
+    // Making use of Newton's 3rd law; The force on particle i from particle j
+    // is the same as the force on particle j from particle i, only with
+    // opposite sign.
+    for (int j = 0; j < i - 1; j++)
     {
-      if (j == i)
-      {}
+      double q_j = particles[j].q;
+      arma::vec r_j = R.col(j);
 
-        else
-        {
-          double q_j = particles[j].q;
-          arma::vec r_j = R.col(j);
-
-          F_tot.col(i) += force_particle(r_i, r_j, q_i, q_j);
-        }
+      if (arma::norm(r_i - r_j) < .3 * d)
+      {
+        Fij = force_particle(r_i, r_j, q_i, q_j);
       }
+
+      else
+      {
+        Fij = arma::vec{0, 0, 0};
+      }
+
+      F_tot.col(i) += Fij;
+      F_tot.col(j) -= Fij;
     }
+  }
     return F_tot;
   }
 
@@ -132,6 +144,7 @@ arma::mat PenningTrap::total_force(double t, arma::mat R, arma::mat V,
 {
   arma::mat F_tot;
 
+  // Function to include/exclude particle interaction
   if (particle_interaction)
   {
     F_tot = total_force_external(t, R, V) + total_force_particles(R);
@@ -170,12 +183,14 @@ void PenningTrap::evolve_RK4(double t, double dt, bool particle_interaction)
   K1_v = dt * a;
   K1_r = dt * V;
 
-  a = 1 / m * total_force(t + .5 * dt, R + .5 * K1_r, V + .5 * K1_v, particle_interaction);
+  a = 1 / m * total_force(t + .5 * dt, R + .5 * K1_r, V
+                            + .5 * K1_v, particle_interaction);
 
   K2_v = dt * a;
   K2_r = dt * (V + 0.5 * K1_v);
 
-  a = 1 / m * total_force(t + .5 * dt, R + .5 * K2_r, V + .5 * K2_v, particle_interaction);
+  a = 1 / m * total_force(t + .5 * dt, R + .5 * K2_r, V
+                            + .5 * K2_v, particle_interaction);
 
   K3_v = dt * a;
   K3_r = dt * (V + .5 * K2_v);
@@ -206,16 +221,8 @@ void PenningTrap::evolve_FE(double t, double dt, bool particle_interaction)
 
   for (int i = 0; i < N; i++)
   {
-    if (arma::norm(particles[i].r > d))
-    {
-      particles.erase(particles.begin() + i);
-      N -= 1;
-    }
-    else
-    {
-      R.col(i) = particles[i].r;
-      V.col(i) = particles[i].v;
-    }
+    R.col(i) = particles[i].r;
+    V.col(i) = particles[i].v;
   }
 
   a = 1 / m * total_force(t, R, V, particle_interaction);
@@ -235,5 +242,14 @@ int PenningTrap::count_particles()
 {
   int N = particles.size();
 
-  return N;
+  // Looping over particles backwards in order to not miss any particles 
+  for (int i = N - 1; i >= 0; i--)
+  {
+    if (arma::norm(particles[i].r) > d)
+    {
+      particles.erase(particles.begin() + i);
+    }
+  }
+
+  return particles.size();
 }

@@ -43,7 +43,8 @@ class PenningTrap
   arma::mat total_force_particles(arma::mat R);
 
   // Total force on particle_i from external field and other particles
-  arma::mat total_force(double t, arma::mat R, arma::mat V, bool particle_interaction);
+  arma::mat total_force(double t, arma::mat R, arma::mat V,
+                        bool particle_interaction);
 
   // Evolve the system one time step using Runge-Kutta 4th order
   void evolve_RK4(double t, double dt, bool particle_interaction=true);
@@ -53,6 +54,7 @@ class PenningTrap
 
   // Count number of particles still in the trap, ie. |r|<d
   int count_particles();
+
 };
 
 
