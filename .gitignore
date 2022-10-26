@@ -2,19 +2,10 @@
 
 # Text files and executables
 *.txt
-
-# Object files and executables
-*.o
 *.exe
 
 # Figures
 *.pdf
 *.gif
-*.png
 
 .DS_Store
-
-# Textfiles
-*.txt
-*.dat
-
