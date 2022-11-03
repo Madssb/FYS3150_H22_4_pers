@@ -15,12 +15,13 @@ using namespace arma;
 
 int main()
 {
-  vector<int> epsilon;
+  // Containing the energies per spins
+  vector<double> epsilon;
 
-  int L = 2;
-  int N = L * L;
-  double T = 1.;
-  int nsteps = 10;
+  int L = 20;        // Lattice length
+  int N = L * L;    // No. of spin particles
+  double T = 1.;    // Temperature [J/k]
+  int nsteps = 100;  // No. of MCMC cycles to perform
 
   mat lattice = create_lattice(L);
 
@@ -28,7 +29,7 @@ int main()
   {
     mcmc(lattice, L, T);
     int tempTotE = totE(lattice, L);
-    epsilon.push_back(tempTotE / N);
+    epsilon.push_back(1. / N * tempTotE);   // NB: Be aware of integer division!
   }
   // Writing to file
   int width = 15;
@@ -36,7 +37,7 @@ int main()
   ofstream outfile;
   outfile.open("energies.txt", ofstream::out | ofstream::trunc);
 
-  outfile << "#" << setw(width - 1) << "E(s)" << endl;
+  outfile << "#" << setw(width - 1) << "e(s)" << endl;
 
   for (int i = 0; i < epsilon.size(); i++)
   {
