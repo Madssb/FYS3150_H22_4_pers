@@ -29,6 +29,9 @@ int main(int argc, const char* argv[])
   double T = atof(argv[4]);     // Temperature [J/k]
   int N = L * L;                // No. of spin particles
 
+  // Analytical partition function for 2x2 lattice
+  double anaZ = 3 + 2 * cosh(8 / T) + exp(8 / T);
+
   // Containing the energies and  energies per spins
   vector<double> energy;
   vector<double> epsilon;
@@ -55,6 +58,7 @@ int main(int argc, const char* argv[])
     magnetization.push_back(magnetizationLattice(lattice));
     magnPerSpin.push_back(1. / N * magnetizationLattice(lattice));
   }
+  
   // Writing to file
   int width = 15;
 
