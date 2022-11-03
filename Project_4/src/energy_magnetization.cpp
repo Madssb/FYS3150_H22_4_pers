@@ -23,3 +23,10 @@ int totE(arma::mat& lattice, int L)
 
   return E;
 }
+
+int magnetizationLattice(arma::mat& lattice)
+{
+  int M = arma::accu(lattice);
+
+  return M;
+}

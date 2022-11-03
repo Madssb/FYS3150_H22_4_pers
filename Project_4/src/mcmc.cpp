@@ -9,19 +9,10 @@ Definition of the MCMC method.
 #include <map>
 #include <cmath>
 
-// Get seed from system clock
-unsigned int seed = std::chrono::system_clock::now().time_since_epoch().count();
-
-// Construct a Mersenne Twister 19937 RNG
-std::mt19937 generator;
-
 // Doing a full MCMC cycle by randomly selecting a spin, flipping it and
 // accept/reject according to the Metropolis algorithm
-void mcmc(arma::mat& lattice, int L, double T)
+int mcmc(arma::mat& lattice, int L, double T, std::mt19937& generator)
 {
-  // Setting seed
-  generator.seed(seed);
-
   // Construct a distribution of uniformly random integers in [0, L-1]
   std::uniform_int_distribution<int> randInt(0, L - 1);
 
@@ -57,5 +48,8 @@ void mcmc(arma::mat& lattice, int L, double T)
   if (r < A)
   {
     lattice = testLattice;
+    return energyDiff;
   }
+
+  return 0;
 }

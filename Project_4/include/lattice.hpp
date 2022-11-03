@@ -13,7 +13,4 @@ arma::mat create_lattice(int L);
 // Compute the energy of spin (i, j)
 int energySpin_ij(arma::mat& lattice, int L, int i, int j);
 
-// Compute the magnetization of lattice
-int magnetizationLattice(arma::mat& lattice, int L);
-
 #endif

@@ -8,7 +8,10 @@ the lattice
 
 #include <armadillo>
 
-// Calculate the total energy of the lattice 
+// Calculate the total energy of the lattice
 int totE(arma::mat& lattice, int L);
+
+// Compute the magnetization of lattice
+int magnetizationLattice(arma::mat& lattice);
 
 #endif
