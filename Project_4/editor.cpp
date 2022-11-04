@@ -12,8 +12,18 @@ using namespace std;
 
 int main()
 {
+    int A = 20;
 
+    int* ptr; 
+    ptr = &A;
+    cout << ptr << " " << *ptr << endl;
+    cout << A  << endl;
+
+    cout << "change" << endl;
+    *ptr = 10;
+
+    cout << ptr << " " << *ptr << endl;
+    cout << A  << endl;
     
-
-
+    return 0;
 }
