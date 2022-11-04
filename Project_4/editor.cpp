@@ -12,28 +12,26 @@ using namespace arma;
 class ising
 {
     public:
-
-
+    
     ising(int n);
 
-    arma::Mat<int> lattice;
+    arma::Mat<int> lattice;  //lagrer N x N lattice
 
     int N;  //N x N ising
     int M; //total magnetic
     double J;// coupling constant
     double E; //energi
 
-
     void print();
-    void flip();
+    void flip();  //flipper en tilfeldig spin
+
+    void Energi();
+    void Energi2x2();
 
     private:
 
-
     unsigned int seed;
     mt19937 generator;
-
-
 
     vector<int> spin;
     void generate_lattice();
@@ -77,10 +75,11 @@ void ising::generate_lattice()
             int val = spin[my_01_pdf(generator)];
             lattice(i, j) = val;
             M += val;
-
         }
     }
 
+    //Energi();
+    Energi2x2();
 }
 
 void ising::print()
@@ -102,6 +101,26 @@ void ising::flip()
     M += 2*lattice(nr1,nr2 );
 
 
+}
+
+void ising::Energi()
+{
+
+    for (int i = 0; i < N; i ++)
+    {
+        for (int j = 0; j < N; j++)
+        {
+            E += lattice(i, j) * lattice(i, (j+1)%N) + lattice(i, j) * lattice((i+1)%N, j);
+        }
+    }
+
+
+}
+
+void ising::Energi2x2()
+{
+    E += lattice(0, 0)* lattice(0, 1) + lattice(0, 0)* lattice(1, 0);
+    E += lattice(1, 1)* lattice(0, 1) + lattice(1, 1)* lattice(1, 0);
 }
 
 int main()
