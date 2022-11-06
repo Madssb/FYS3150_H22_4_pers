@@ -22,13 +22,26 @@ class ising
     double J;// coupling constant
     double E; //energi
 
+    double B; 
+
     void print();
     void flip();  //flipper en tilfeldig spin
 
-    void Energi();
-    void Energi2x2();
+    
+
+    void MCMC();
+    
+    static int MCMC_index;
+
+    vector<double> Es;  // energiene fra markov-kjeden
+    vector<int> Bs; //total magnet fra markov-kjeden
+
 
     private:
+
+
+    void Energi();
+    void Energi2x2();
 
     unsigned int seed;
     mt19937 generator;
@@ -41,6 +54,7 @@ class ising
 
 
 };
+int ising::MCMC_index = 0;
 
 ising::ising(int n)
 {
@@ -48,16 +62,20 @@ ising::ising(int n)
 
     lattice = arma::Mat<int>(N, N);
     J = 1;
-    M = 0;
-    E = 0;
+    B = 1.;
+    M = 0.;
+    E = 0.;
+    
 
     seed = chrono::system_clock::now().time_since_epoch().count();
   // Seed it with our seed
     generator.seed(seed);
 
-
     spin = {1, -1};
     generate_lattice();
+
+    Es = vector<double>(1000, 0.);
+    Bs = vector<int>(1000, 0);
 }
 
 void ising::generate_lattice()
@@ -78,8 +96,11 @@ void ising::generate_lattice()
         }
     }
 
-    //Energi();
-    Energi2x2();
+    Bs[MCMC_index] = M;
+
+
+    Energi();
+    //Energi2x2();
 }
 
 void ising::print()
@@ -110,9 +131,11 @@ void ising::Energi()
     {
         for (int j = 0; j < N; j++)
         {
-            E += lattice(i, j) * lattice(i, (j+1)%N) + lattice(i, j) * lattice((i+1)%N, j);
+            E = lattice(i, j) * lattice(i, (j+1)%N) + lattice(i, j) * lattice((i+1)%N, j);
         }
     }
+
+    
 
 
 }
@@ -123,14 +146,76 @@ void ising::Energi2x2()
     E += lattice(1, 1)* lattice(0, 1) + lattice(1, 1)* lattice(1, 0);
 }
 
+
+void ising::MCMC()
+{
+
+    //the intial state is already random
+
+    //flip it 
+    uniform_int_distribution<int> my_01_pdf(0,N-1);
+    int i = my_01_pdf(generator);
+    int j = my_01_pdf(generator);
+
+    int E1 = lattice(i, j) * lattice(i, (j+1)%N) + lattice(i, j) * lattice(i, (j-1)%N) + lattice(i, j) * lattice((i+1)%N, j) + lattice(i, j) * lattice((i-1)%N, j);
+    
+
+    lattice(i,j ) *= -1;
+    M += 2*lattice(i,j );
+
+    int E2 = lattice(i, j) * lattice(i, (j+1)%N) + lattice(i, j) * lattice(i, (j-1)%N) + lattice(i, j) * lattice((i+1)%N, j) + lattice(i, j) * lattice((i-1)%N, j);
+
+    int dE = (E2 - E1);
+    E += dE;
+
+    //latticen er flippa og vi har styr over energi forskjellen 
+
+    double p_diff = exp(-B*dE);
+
+    uniform_int_distribution<int> r(0,1);
+
+
+    double A;
+    if (p_diff > 1) {A = 1;}
+    else {A = p_diff;}
+
+    if (r(generator) <= A  )
+    {
+        //this is the new state
+        //lattice(i,j ) *= -1;
+        //M += 2*lattice(i,j );
+        //int dE = (E2 - E1);
+        //E += dE;
+
+        Es[MCMC_index] = E;
+        Bs[MCMC_index] = M;
+        MCMC_index += 1;
+    }
+
+    else
+    {
+        Es[MCMC_index] = E;
+        Bs[MCMC_index] = M; 
+        MCMC_index += 1;
+    }
+
+
+}
+
 int main()
 {
 
     ising test_ising(2);
 
-    test_ising.print();
-    test_ising.flip();
-    test_ising.print();
+
+    //for (double i: test_ising.Es ){
+        //std::cout << i << ' ';
+    //}
+
+
+    //test_ising.print();
+    //test_ising.flip();
+    //test_ising.print();
 
     return 0;
 }
