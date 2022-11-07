@@ -52,7 +52,7 @@ int main(int argc, const char* argv[])
 
   for (int n = 0; n < nCycles; n++)
   {
-    int deltaE = mcmc(lattice, L, T, generator);
+    mcmc(lattice, L, T, generator);
     int latticeEnergy = totE(lattice, L);
     energy.push_back(latticeEnergy);
     epsilon.push_back(1. / N * latticeEnergy);

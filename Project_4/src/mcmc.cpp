@@ -11,7 +11,7 @@ Definition of the MCMC method.
 
 // Doing a full MCMC cycle by randomly selecting a spin, flipping it and
 // accept/reject according to the Metropolis algorithm
-int mcmc(arma::mat& lattice, int L, double T, std::mt19937& generator)
+void mcmc(arma::mat& lattice, int L, double T, std::mt19937& generator)
 {
   // Construct a distribution of uniformly random integers in [0, L-1]
   std::uniform_int_distribution<int> randInt(0, L - 1);
@@ -30,7 +30,6 @@ int mcmc(arma::mat& lattice, int L, double T, std::mt19937& generator)
   dE[-8] = 1.;
 
   int N = L * L;
-  int diffE = 0;
 
   // Making a copy of the lattice and flipping the spin
   arma::mat testLattice = lattice;
@@ -55,7 +54,6 @@ int mcmc(arma::mat& lattice, int L, double T, std::mt19937& generator)
     if (r < A)
     {
       lattice = testLattice;
-      diffE += energyDiff;
     }
 
     else
@@ -63,6 +61,4 @@ int mcmc(arma::mat& lattice, int L, double T, std::mt19937& generator)
       testLattice(i, j) = spin;
     }
   }
-
-  return diffE;
 }

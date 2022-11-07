@@ -8,6 +8,6 @@ This is the header file of the Markov Chain Monte Carlo (MCMC) method
 #include <armadillo>
 
 // Doing a full MCMC cycle to the lattice
-int mcmc(arma::mat& lattice, int L, double T, std::mt19937& generator);
+void mcmc(arma::mat& lattice, int L, double T, std::mt19937& generator);
 
 #endif
