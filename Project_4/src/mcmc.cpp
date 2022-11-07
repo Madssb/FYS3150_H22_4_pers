@@ -29,27 +29,40 @@ int mcmc(arma::mat& lattice, int L, double T, std::mt19937& generator)
   dE[-4] = 1.;
   dE[-8] = 1.;
 
-  int i = randInt(generator);
-  int j = randInt(generator);
-  int spin = lattice(i, j);
-  int E_0 = energySpin_ij(lattice, L, i, j);
+  int N = L * L;
+  int diffE = 0;
 
   // Making a copy of the lattice and flipping the spin
   arma::mat testLattice = lattice;
-  testLattice(i, j) = -spin;
 
-  int E_1 = energySpin_ij(testLattice, L, i, j);
-  int energyDiff = E_1 - E_0;
-
-  // Checking if energyDiff is accepted or rejected
-  double r = randFloat(generator);
-  int A = dE[energyDiff];
-
-  if (r < A)
+  // Doing a full MC cycle
+  for (int n = 0; n < N; n++)
   {
-    lattice = testLattice;
-    return energyDiff;
+    int i = randInt(generator);
+    int j = randInt(generator);
+    int spin = lattice(i, j);
+    int E_0 = energySpin_ij(lattice, L, i, j);
+
+    testLattice(i, j) = -spin;
+
+    int E_1 = energySpin_ij(testLattice, L, i, j);
+    int energyDiff = E_1 - E_0;
+
+    // Checking if energyDiff is accepted or rejected
+    double r = randFloat(generator);
+    int A = dE[energyDiff];
+
+    if (r < A)
+    {
+      lattice = testLattice;
+      diffE += energyDiff;
+    }
+
+    else
+    {
+      testLattice(i, j) = spin;
+    }
   }
 
-  return 0;
+  return diffE;
 }

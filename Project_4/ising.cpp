@@ -25,7 +25,7 @@ int main(int argc, const char* argv[])
   generator.seed(seed);
 
   int L = atoi(argv[2]);        // Lattice length
-  int nsteps = atoi(argv[3]);   // No. of MCMC cycles
+  int nCycles = atoi(argv[3]);   // No. of MCMC cycles
   double T = atof(argv[4]);     // Temperature [J/k]
   int N = L * L;                // No. of spin particles
 
@@ -50,15 +50,16 @@ int main(int argc, const char* argv[])
   magnetization.push_back(initMagn);
   magnPerSpin. push_back(initMagnPerSpin);
 
-  for (int n = 0; n < nsteps; n++)
+  for (int n = 0; n < nCycles; n++)
   {
     int deltaE = mcmc(lattice, L, T, generator);
-    energy.push_back(energy[n] + deltaE);
-    epsilon.push_back(epsilon[n] + 1. / N * deltaE);
+    int latticeEnergy = totE(lattice, L);
+    energy.push_back(latticeEnergy);
+    epsilon.push_back(1. / N * latticeEnergy);
     magnetization.push_back(magnetizationLattice(lattice));
     magnPerSpin.push_back(1. / N * magnetizationLattice(lattice));
   }
-  
+
   // Writing to file
   int width = 15;
 
