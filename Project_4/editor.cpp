@@ -30,8 +30,8 @@ class ising
     
 
     void MCMC();
-    
-    static int MCMC_index;
+
+    int MCMC_index;
 
     vector<double> Es;  // energiene fra markov-kjeden
     vector<int> Bs; //total magnet fra markov-kjeden
@@ -54,7 +54,6 @@ class ising
 
 
 };
-int ising::MCMC_index = 0;
 
 ising::ising(int n)
 {
@@ -65,6 +64,8 @@ ising::ising(int n)
     B = 1.;
     M = 0.;
     E = 0.;
+
+    MCMC_index = 0;
     
 
     seed = chrono::system_clock::now().time_since_epoch().count();
@@ -96,11 +97,11 @@ void ising::generate_lattice()
         }
     }
 
-    Bs[MCMC_index] = M;
+    //Bs[MCMC_index] = M;
 
 
-    Energi();
-    //Energi2x2();
+    //Energi();
+    Energi2x2();
 }
 
 void ising::print()
@@ -121,6 +122,7 @@ void ising::flip()
     lattice(nr1,nr2 ) *= -1;
     M += 2*lattice(nr1,nr2 );
 
+    Energi2x2();
 
 }
 
@@ -142,14 +144,13 @@ void ising::Energi()
 
 void ising::Energi2x2()
 {
-    E += lattice(0, 0)* lattice(0, 1) + lattice(0, 0)* lattice(1, 0);
-    E += lattice(1, 1)* lattice(0, 1) + lattice(1, 1)* lattice(1, 0);
+    E = lattice(0, 0)* lattice(0, 1) + lattice(0, 0)* lattice(1, 0) + lattice(1, 1)* lattice(0, 1) + lattice(1, 1)* lattice(1, 0);
 }
 
 
 void ising::MCMC()
 {
-
+/*
     //the intial state is already random
 
     //flip it 
@@ -160,10 +161,10 @@ void ising::MCMC()
     int E1 = lattice(i, j) * lattice(i, (j+1)%N) + lattice(i, j) * lattice(i, (j-1)%N) + lattice(i, j) * lattice((i+1)%N, j) + lattice(i, j) * lattice((i-1)%N, j);
     
 
-    lattice(i,j ) *= -1;
-    M += 2*lattice(i,j );
+    //lattice(i,j ) *= -1;
+    //M += 2*lattice(i,j );
 
-    int E2 = lattice(i, j) * lattice(i, (j+1)%N) + lattice(i, j) * lattice(i, (j-1)%N) + lattice(i, j) * lattice((i+1)%N, j) + lattice(i, j) * lattice((i-1)%N, j);
+    int E2 = (E1*-1);
 
     int dE = (E2 - E1);
     E += dE;
@@ -182,8 +183,8 @@ void ising::MCMC()
     if (r(generator) <= A  )
     {
         //this is the new state
-        //lattice(i,j ) *= -1;
-        //M += 2*lattice(i,j );
+        lattice(i,j ) *= -1;
+        M += 2*lattice(i,j );
         //int dE = (E2 - E1);
         //E += dE;
 
@@ -198,24 +199,32 @@ void ising::MCMC()
         Bs[MCMC_index] = M; 
         MCMC_index += 1;
     }
-
+*/
 
 }
 
 int main()
 {
 
+    cout << "hei "<< endl;
+
     ising test_ising(2);
 
 
-    //for (double i: test_ising.Es ){
-        //std::cout << i << ' ';
-    //}
+    
+    test_ising.print();
+    test_ising.flip();
+    test_ising.print();
+    test_ising.flip();
+    test_ising.print();
+    test_ising.flip();
+    test_ising.print();
+    test_ising.flip();
+    test_ising.print();
+    test_ising.flip();
+    test_ising.print();
 
-
-    //test_ising.print();
-    //test_ising.flip();
-    //test_ising.print();
+    cout << "hei "<< endl;
 
     return 0;
 }
