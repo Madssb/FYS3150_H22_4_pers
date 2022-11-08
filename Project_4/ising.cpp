@@ -6,9 +6,12 @@ that have either spin up (+1) or spin down (-1).
 #include "lattice.hpp"
 #include "mcmc.hpp"
 #include "energy_magnetization.hpp"
+#include "expectation_values.hpp"
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <chrono>
+#include <string>
 
 using namespace std;
 using namespace arma;
@@ -25,7 +28,7 @@ int main(int argc, const char* argv[])
   generator.seed(seed);
 
   int L = atoi(argv[2]);        // Lattice length
-  int nCycles = atoi(argv[3]);   // No. of MCMC cycles
+  int nCycles = atoi(argv[3]);  // No. of MCMC cycles
   double T = atof(argv[4]);     // Temperature [J/k]
   int N = L * L;                // No. of spin particles
 
@@ -37,6 +40,7 @@ int main(int argc, const char* argv[])
   vector<double> epsilon;
   vector<double> magnetization;
   vector<double> magnPerSpin;
+  vector<double> expEpsilon;
 
   mat lattice = create_lattice(L);
 
@@ -48,7 +52,7 @@ int main(int argc, const char* argv[])
   energy.push_back(initEnergy);
   epsilon.push_back(initEpsilon);
   magnetization.push_back(initMagn);
-  magnPerSpin. push_back(initMagnPerSpin);
+  magnPerSpin.push_back(initMagnPerSpin);
 
   for (int n = 0; n < nCycles; n++)
   {
@@ -60,13 +64,17 @@ int main(int argc, const char* argv[])
     magnPerSpin.push_back(1. / N * magnetizationLattice(lattice));
   }
 
+  expEpsilon = expected_energy(epsilon, T);
+
   // Writing to file
   int width = 15;
 
   ofstream outfile;
   outfile.open("energies.txt", ofstream::out | ofstream::trunc);
 
-  outfile << "#" << setw(width - 1) << "e(s)"
+  outfile << "#" << setw(width - 1) << "nCycles"
+          << setw(width) << "e(s)"
+          << setw(width) << "<e>"
           << setw(width) << "E(s)"
           << setw(width) << "M(s)"
           << setw(width) << "m(s)"
@@ -74,7 +82,9 @@ int main(int argc, const char* argv[])
 
   for (int i = 0; i < epsilon.size(); i++)
   {
-    outfile << setw(width) << epsilon[i]
+    outfile << setw(width) << i
+            << setw(width) << epsilon[i]
+            << setw(width) << expEpsilon[i]
             << setw(width) << energy[i]
             << setw(width) << magnetization[i]
             << setw(width) << magnPerSpin[i]

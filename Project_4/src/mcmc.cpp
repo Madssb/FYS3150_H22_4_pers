@@ -5,7 +5,6 @@ Definition of the MCMC method.
 #include "mcmc.hpp"
 #include "lattice.hpp"
 #include <random>
-#include <chrono>
 #include <map>
 #include <cmath>
 
