@@ -64,7 +64,7 @@ int main(int argc, const char* argv[])
     magnPerSpin.push_back(1. / N * magnetizationLattice(lattice));
   }
 
-  expEpsilon = expected_energy(epsilon, T);
+  expEpsilon = expected_energy(epsilon, initEnergy, T);
 
   // Writing to file
   int width = 15;
