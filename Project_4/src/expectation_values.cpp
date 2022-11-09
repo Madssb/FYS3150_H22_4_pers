@@ -8,23 +8,26 @@ Source file for the functions to calculate expected values
 #include <cmath>
 
 // Calculate the expected energy
-std::vector<double> expected_energy(std::vector<double> epsilonEnergies,
-                                    double initEnergy, double T)
+void expected_energy(std::vector<double>& expEpsilon,
+                     std::vector<double>& expEpsilon_squared,
+                     std::vector<double> epsilonEnergies,
+                     double initEnergy, double T)
 {
   double N = epsilonEnergies.size();
-  std::vector<double> expEpsilon;
-  double expectedEnergy = initEnergy;
-  expEpsilon.push_back(initEnergy);
 
-  // Partition funct. for 2x2 case
-  double Z = 2 * (std::cosh(8 / T) + 3);
+  double expectedEnergy = initEnergy;
+  double expectedEnergy_squared = initEnergy * initEnergy;
+
+  expEpsilon.push_back(initEnergy);
+  expEpsilon_squared.push_back(initEnergy * initEnergy);
 
   for (int n = 1; n <= N; n++)
   {
     int E = epsilonEnergies[n];
     expectedEnergy += E;
-    expEpsilon.push_back(expectedEnergy / n);
-  }
+    expectedEnergy_squared += (E * E);
 
-  return expEpsilon;
+    expEpsilon.push_back(expectedEnergy / n);
+    expEpsilon_squared.push_back(expectedEnergy_squared / n);
+  }
 }
