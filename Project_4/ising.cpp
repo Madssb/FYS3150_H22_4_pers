@@ -39,6 +39,8 @@ int main(int argc, const char* argv[])
   vector<double> magnPerSpin;
   vector<double> expEpsilon;
   vector<double> expEpsilon_squared;
+  vector<double> expMagn;
+  vector<double> expMagn_squared;
 
   mat lattice = create_lattice(L);
 
@@ -55,13 +57,17 @@ int main(int argc, const char* argv[])
   for (int n = 0; n < nCycles; n++)
   {
     mcmc(lattice, L, T, generator);
+
     int latticeEnergy = totE(lattice, L);
     energy.push_back(latticeEnergy);
     epsilon.push_back(1. / N * latticeEnergy);
-    magnetization.push_back(magnetizationLattice(lattice));
-    magnPerSpin.push_back(1. / N * magnetizationLattice(lattice));
+
+    double magnLattice = magnetizationLattice(lattice);
+    magnetization.push_back(magnLattice);
+    magnPerSpin.push_back(1. / N * magnLattice);
   }
-  expected_energy(expEpsilon, expEpsilon_squared, epsilon, initEpsilon, T);
+  expected_values(expEpsilon, expEpsilon_squared, epsilon, magnPerSpin, expMagn,
+                  expMagn_squared, initMagnPerSpin, initEpsilon);
 
   // Writing to file
   int width = 15;
@@ -73,9 +79,9 @@ int main(int argc, const char* argv[])
           << setw(width) << "e(s)"
           << setw(width) << "<e>"
           << setw(width) << "<e^2>"
-          << setw(width) << "E(s)"
-          << setw(width) << "M(s)"
           << setw(width) << "m(s)"
+          << setw(width) << "<|m|>"
+          << setw(width) << "<m^2>"
           << endl;
 
   for (int i = 0; i < epsilon.size(); i++)
@@ -84,9 +90,9 @@ int main(int argc, const char* argv[])
             << setw(width) << epsilon[i]
             << setw(width) << expEpsilon[i]
             << setw(width) << expEpsilon_squared[i]
-            << setw(width) << energy[i]
-            << setw(width) << magnetization[i]
             << setw(width) << magnPerSpin[i]
+            << setw(width) << expMagn[i]
+            << setw(width) << expMagn_squared[i]
             << endl;
   }
 
