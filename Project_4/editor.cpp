@@ -22,7 +22,7 @@ class ising
     double J;// coupling constant
     double E; //energi
 
-    double B; 
+    double Bz; 
 
     void print();
     void flip();  //flipper en tilfeldig spin
@@ -30,6 +30,7 @@ class ising
     
 
     void MCMC();
+    void kjor_MCMC();
 
     int MCMC_index;
 
@@ -37,11 +38,16 @@ class ising
     vector<int> Bs; //total magnet fra markov-kjeden
 
 
+    void expectationvalue();
+
+
     private:
 
 
     void Energi();
     void Energi2x2();
+
+    int Energi2x2_();
 
     unsigned int seed;
     mt19937 generator;
@@ -61,7 +67,7 @@ ising::ising(int n)
 
     lattice = arma::Mat<int>(N, N);
     J = 1;
-    B = 1.;
+    Bz = 1.380e-23; //J/K;
     M = 0.;
     E = 0.;
 
@@ -147,10 +153,15 @@ void ising::Energi2x2()
     E = lattice(0, 0)* lattice(0, 1) + lattice(0, 0)* lattice(1, 0) + lattice(1, 1)* lattice(0, 1) + lattice(1, 1)* lattice(1, 0);
 }
 
+int ising::Energi2x2_()
+{
+    return lattice(0, 0)* lattice(0, 1) + lattice(0, 0)* lattice(1, 0) + lattice(1, 1)* lattice(0, 1) + lattice(1, 1)* lattice(1, 0);
+}
+
 
 void ising::MCMC()
 {
-/*
+
     //the intial state is already random
 
     //flip it 
@@ -158,8 +169,10 @@ void ising::MCMC()
     int i = my_01_pdf(generator);
     int j = my_01_pdf(generator);
 
-    int E1 = lattice(i, j) * lattice(i, (j+1)%N) + lattice(i, j) * lattice(i, (j-1)%N) + lattice(i, j) * lattice((i+1)%N, j) + lattice(i, j) * lattice((i-1)%N, j);
-    
+    //for N
+    //int E1 = lattice(i, j) * lattice(i, (j+1)%N) + lattice(i, j) * lattice(i, (j-1)%N) + lattice(i, j) * lattice((i+1)%N, j) + lattice(i, j) * lattice((i-1)%N, j);
+    //for N = 2
+    int E1 = Energi2x2_();
 
     //lattice(i,j ) *= -1;
     //M += 2*lattice(i,j );
@@ -167,11 +180,11 @@ void ising::MCMC()
     int E2 = (E1*-1);
 
     int dE = (E2 - E1);
-    E += dE;
+    //E += dE;
 
     //latticen er flippa og vi har styr over energi forskjellen 
 
-    double p_diff = exp(-B*dE);
+    double p_diff = exp(-Bz*dE);
 
     uniform_int_distribution<int> r(0,1);
 
@@ -186,6 +199,7 @@ void ising::MCMC()
         lattice(i,j ) *= -1;
         M += 2*lattice(i,j );
         //int dE = (E2 - E1);
+        E = Energi2x2_() + dE;
         //E += dE;
 
         Es[MCMC_index] = E;
@@ -195,36 +209,46 @@ void ising::MCMC()
 
     else
     {
+        E = Energi2x2_();
         Es[MCMC_index] = E;
         Bs[MCMC_index] = M; 
         MCMC_index += 1;
     }
-*/
 
+
+}
+
+void ising::kjor_MCMC()
+{
+    for (int i = 0; i < 1000-1; i++)
+    {
+        MCMC();
+    }
+}
+
+void ising::expectationvalue()
+{
+    ofstream file("Es.txt");
+
+    for (double data : Es)
+    {
+        file << data << endl;
+    }
+
+    file.close();
 }
 
 int main()
 {
 
-    cout << "hei "<< endl;
+    cout << "start "<< endl;
 
     ising test_ising(2);
+    test_ising.print();
+    test_ising.kjor_MCMC();
+    test_ising.expectationvalue();
 
-
-    
-    test_ising.print();
-    test_ising.flip();
-    test_ising.print();
-    test_ising.flip();
-    test_ising.print();
-    test_ising.flip();
-    test_ising.print();
-    test_ising.flip();
-    test_ising.print();
-    test_ising.flip();
-    test_ising.print();
-
-    cout << "hei "<< endl;
+    cout << "slutt "<< endl;
 
     return 0;
 }
