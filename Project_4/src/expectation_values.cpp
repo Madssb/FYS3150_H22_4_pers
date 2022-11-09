@@ -15,9 +15,12 @@ std::vector<double> expected_energy(std::vector<double> epsilonEnergies,
   std::vector<double> expEpsilon;
   double expectedEnergy = initEnergy;
 
+  // Partition funct. for 2x2 case
+  double Z = 4 * (std::cosh(8 / T) + 3);
+
   // Probabilities of energies in the 2x2 case
   std::map<int, double> probs;
-  std::cout << expectedEnergy << std::endl;
+
   probs[-2] = 1. / Z * std::exp(8 / T);
   probs[2] = 1. / Z * std::exp(-8 / T);
   probs[0] = 1. / Z;
