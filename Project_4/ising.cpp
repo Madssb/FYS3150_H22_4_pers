@@ -105,6 +105,17 @@ int main(int argc, const char* argv[])
             << setw(width) << suscept[i]
             << endl;
   }
+  
+  outfile << "#" << setw(width - 1) << "nCycles"
+          << setw(width) << "e(s)"
+          << setw(width) << "<e>"
+          << setw(width) << "<e^2>"
+          << setw(width) << "C_V"
+          << setw(width) << "m(s)"
+          << setw(width) << "<|m|>"
+          << setw(width) << "<m^2>"
+          << setw(width) << "X"
+          << endl;
 
   outfile.close();
 

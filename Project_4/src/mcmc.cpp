@@ -30,12 +30,13 @@ void mcmc(arma::mat& lattice, int L, double T, std::mt19937& generator)
 
   int N = L * L;
 
-  // Making a copy of the lattice and flipping the spin
-  arma::mat testLattice = lattice;
 
   // Doing a full MC cycle
   for (int n = 0; n < N; n++)
   {
+    // Making a copy of the lattice and flipping the spin
+    arma::mat testLattice = lattice;
+
     int i = randInt(generator);
     int j = randInt(generator);
     int spin = lattice(i, j);
@@ -54,10 +55,10 @@ void mcmc(arma::mat& lattice, int L, double T, std::mt19937& generator)
     {
       lattice = testLattice;
     }
-
-    else
-    {
-      testLattice(i, j) = spin;
-    }
+    //
+    // else
+    // {
+    //   testLattice(i, j) = spin;
+    // }
   }
 }
