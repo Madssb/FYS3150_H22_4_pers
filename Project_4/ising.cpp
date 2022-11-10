@@ -7,6 +7,7 @@ that have either spin up (+1) or spin down (-1).
 #include "mcmc.hpp"
 #include "energy_magnetization.hpp"
 #include "expectation_values.hpp"
+#include "heat_cap_susceptibility.hpp"
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -41,6 +42,8 @@ int main(int argc, const char* argv[])
   vector<double> expEpsilon_squared;
   vector<double> expMagn;
   vector<double> expMagn_squared;
+  vector<double> heatCap;
+  vector<double> suscept;
 
   mat lattice = create_lattice(L);
 
@@ -69,6 +72,9 @@ int main(int argc, const char* argv[])
   expected_values(expEpsilon, expEpsilon_squared, epsilon, magnPerSpin, expMagn,
                   expMagn_squared, initMagnPerSpin, initEpsilon);
 
+  heatCap_suscept(expEpsilon, expEpsilon_squared, expMagn, expMagn_squared,
+                  heatCap, suscept, N, T);
+
   // Writing to file
   int width = 15;
 
@@ -79,9 +85,11 @@ int main(int argc, const char* argv[])
           << setw(width) << "e(s)"
           << setw(width) << "<e>"
           << setw(width) << "<e^2>"
+          << setw(width) << "C_V"
           << setw(width) << "m(s)"
           << setw(width) << "<|m|>"
           << setw(width) << "<m^2>"
+          << setw(width) << "X"
           << endl;
 
   for (int i = 0; i < epsilon.size(); i++)
@@ -90,9 +98,11 @@ int main(int argc, const char* argv[])
             << setw(width) << epsilon[i]
             << setw(width) << expEpsilon[i]
             << setw(width) << expEpsilon_squared[i]
+            << setw(width) << heatCap[i]
             << setw(width) << magnPerSpin[i]
             << setw(width) << expMagn[i]
             << setw(width) << expMagn_squared[i]
+            << setw(width) << suscept[i]
             << endl;
   }
 
