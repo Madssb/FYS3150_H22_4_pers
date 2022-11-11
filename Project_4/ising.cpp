@@ -25,7 +25,7 @@ int main(int argc, const char* argv[])
 
   if (ordered_str == "ordered")
   {
-    ordered = true; 
+    ordered = true;
   }
 
   else
@@ -76,7 +76,7 @@ int main(int argc, const char* argv[])
 
   double avgEps, avgEps_sqrd, avgM, avgM_sqrd;
 
-  for (int n = 0; n < nCycles; n++)
+  for (int n = 1; n <= nCycles; n++)
   {
     mcmc(lattice, generator, L, E, M, T);
 
@@ -85,12 +85,12 @@ int main(int argc, const char* argv[])
     sumM += fabs(M);
     sumMM += (M * M);
 
-    avgEps = sumE / (nCycles * N);
-    avgEps_sqrd = sumEE / (nCycles * N * N);
-    avgM = sumM / (nCycles * N);
-    avgM_sqrd = sumMM / (nCycles * N * N);
+    avgEps = sumE / (n * N);
+    avgEps_sqrd = sumEE / (n * N * N);
+    avgM = sumM / (n * N);
+    avgM_sqrd = sumMM / (n * N * N);
 
-    outfile << setw(width) << n + 1
+    outfile << setw(width) << n
             << setw(width) << avgEps
             << setw(width) << avgM
             << setw(width) << N * (avgEps_sqrd - avgEps * avgEps) / (T * T)
