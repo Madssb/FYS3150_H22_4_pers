@@ -56,9 +56,9 @@ int main(int argc, const char* argv[])
 
     outfile << setw(width) << n + 1
             << setw(width) << E / N
-            << setw(width) << sumE / nCycles / N / N
+            << setw(width) << sumE / nCycles / N
             << setw(width) << sumEE / nCycles / N / N
-            << setw(width) << sumM / nCycles / N / N
+            << setw(width) << sumM / nCycles / N
             << setw(width) << sumMM / nCycles / N / N
             << endl;
   }
