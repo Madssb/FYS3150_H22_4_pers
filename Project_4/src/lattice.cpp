@@ -4,22 +4,33 @@ Initializing the lattice
 
 #include "lattice.hpp"
 
-arma::mat initialize_lattice(int L, double temp, double& E, double& M)
+arma::mat initialize_lattice(int L, double temp, double& E, double& M,
+                             bool ordered)
 {
-  // Setting RNG seed
-  arma::arma_rng::set_seed_random();
+  arma::mat lattice;
 
-  // Filling lattice with random spins
-  arma::mat lattice = arma::randi<arma::mat>(L, L, arma::distr_param(0, 1));
-
-  // Setting all 0s to -1s
-  for (int x = 0; x < L; x++)
+  if (ordered)
   {
-    for (int y = 0; y < L; y++)
+    lattice = arma::mat(L, L, arma::fill::ones);
+  }
+
+  else
+  {
+    // Setting RNG seed
+    arma::arma_rng::set_seed_random();
+
+    // Filling lattice with random spins
+    lattice = arma::randi<arma::mat>(L, L, arma::distr_param(0, 1));
+
+    // Setting all 0s to -1s
+    for (int x = 0; x < L; x++)
     {
-      if (lattice(x, y) == 0)
+      for (int y = 0; y < L; y++)
       {
-        lattice(x, y) = -1;
+        if (lattice(x, y) == 0)
+        {
+          lattice(x, y) = -1;
+        }
       }
     }
   }

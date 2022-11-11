@@ -6,6 +6,7 @@ Header file for initializing lattice
 
 #include <armadillo>
 
-arma::mat initialize_lattice(int L, double temp, double& E, double& M);
+arma::mat initialize_lattice(int L, double temp, double& E, double& M,
+                             bool ordered);
 
 #endif

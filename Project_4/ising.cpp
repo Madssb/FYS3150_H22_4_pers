@@ -8,6 +8,7 @@ Main code for simulating the Ising model
 #include <fstream>
 #include <iomanip>
 #include <chrono>
+#include <string>
 
 using namespace std;
 using namespace arma;
@@ -17,7 +18,20 @@ int main(int argc, const char* argv[])
   int L = atoi(argv[2]);        // Lattice length
   int nCycles = atoi(argv[3]);  // No. of MCMC cycles
   double T = atof(argv[4]);     // Temperature [J/k]
+  string ordered_str = argv[5]; // Weather the lattice is ordered or not
   int N = L * L;                // No. of spin particles
+
+  bool ordered;
+
+  if (ordered_str == "ordered")
+  {
+    ordered = true; 
+  }
+
+  else
+  {
+    ordered = false;
+  }
 
   int width = 15;
 
@@ -34,10 +48,24 @@ int main(int argc, const char* argv[])
   double heatCap = 0;
   double X = 0;
 
-  mat lattice = initialize_lattice(L, T, E, M);
+  mat lattice = initialize_lattice(L, T, E, M, ordered);
 
   ofstream outfile;
-  outfile.open("energies.txt", ofstream::out | ofstream::trunc);
+  string outfileName;
+
+  if (ordered)
+  {
+    outfileName = "ordered_" + to_string(L) +
+                  "by" + to_string(L) + "_lattice.txt";
+  }
+
+  if (!ordered)
+  {
+    outfileName = "unordered_" + to_string(L) +
+                   "by" + to_string(L) + "_lattice.txt";
+  }
+
+  outfile.open(outfileName, ofstream::out | ofstream::trunc);
 
   outfile << "#" << setw(width - 1) << "nCycles"
           << setw(width) << "<e>"
@@ -79,11 +107,14 @@ int main(int argc, const char* argv[])
 
   outfile.close();
 
-  cout << "Computed values after " << nCycles << " cycles:" << endl;
-  cout << "<e>: " << avgEps << endl;
-  cout << "<|m|>: " << avgM << endl;
-  cout << "C_V: " << N * (avgEps_sqrd - avgEps * avgEps) / (T * T) << endl;
-  cout << "X: " << N * (avgM_sqrd - avgM * avgM) / T << endl;
+  if (N == 4)
+  {
+    cout << "Computed values after " << nCycles << " cycles:" << endl;
+    cout << "<e>: " << avgEps << endl;
+    cout << "<|m|>: " << avgM << endl;
+    cout << "C_V: " << N * (avgEps_sqrd - avgEps * avgEps) / (T * T) << endl;
+    cout << "X: " << N * (avgM_sqrd - avgM * avgM) / T << endl;
+  }
 
   return 0;
 }
