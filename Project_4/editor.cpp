@@ -22,6 +22,8 @@ class ising
     double J;// coupling constant
     double E; //energi
 
+    int n; //antall skjeder
+
     double Bz; 
 
     void print();
@@ -34,6 +36,8 @@ class ising
 
     int MCMC_index;
 
+    int flip_index;
+    vector<double> acceptet_states;
     vector<double> Es;  // energiene fra markov-kjeden
     vector<int> Bs; //total magnet fra markov-kjeden
 
@@ -61,15 +65,16 @@ class ising
 
 };
 
-ising::ising(int n)
+ising::ising(int n_)
 {
-    N = n;
+    N = n_;
 
     lattice = arma::Mat<int>(N, N);
     J = 1;
     Bz = 1.380e-23; //J/K;
     M = 0.;
     E = 0.;
+    n = 10000;
 
     MCMC_index = 0;
     
@@ -81,8 +86,10 @@ ising::ising(int n)
     spin = {1, -1};
     generate_lattice();
 
-    Es = vector<double>(1000, 0.);
-    Bs = vector<int>(1000, 0);
+    Es = vector<double>(n, 0.);
+    Bs = vector<int>(n, 0);
+    //acceptet_states = vector<int>(n*N, 0);
+    flip_index = 0;
 }
 
 void ising::generate_lattice()
@@ -162,6 +169,10 @@ int ising::Energi2x2_()
 void ising::MCMC()
 {
 
+    int energi = 0;
+    for (int a = 0; a < N ; a++)
+    {
+
     //the intial state is already random
 
     //flip it 
@@ -174,10 +185,10 @@ void ising::MCMC()
     //for N = 2
     int E1 = Energi2x2_();
 
-    //lattice(i,j ) *= -1;
+    lattice(i,j ) *= -1;
     //M += 2*lattice(i,j );
 
-    int E2 = (E1*-1);
+    int E2 = Energi2x2_();
 
     int dE = (E2 - E1);
     //E += dE;
@@ -186,7 +197,7 @@ void ising::MCMC()
 
     double p_diff = exp(-Bz*dE);
 
-    uniform_int_distribution<int> r(0,1);
+    uniform_real_distribution<double> r(0,1);
 
 
     double A;
@@ -196,31 +207,46 @@ void ising::MCMC()
     if (r(generator) <= A  )
     {
         //this is the new state
-        lattice(i,j ) *= -1;
+        //lattice(i,j ) *= -1;
         M += 2*lattice(i,j );
+
         //int dE = (E2 - E1);
-        E = Energi2x2_() + dE;
+        E = E2; // E + dE;
+        energi += E2;
+        acceptet_states.push_back(E*1.);
+        flip_index += 1;
         //E += dE;
 
-        Es[MCMC_index] = E;
-        Bs[MCMC_index] = M;
-        MCMC_index += 1;
+        //Es[MCMC_index] = E;
+        //Bs[MCMC_index] = M;
+        //MCMC_index += 1;
     }
 
     else
     {
+        lattice(i,j ) *= -1;
         E = Energi2x2_();
-        Es[MCMC_index] = E;
-        Bs[MCMC_index] = M; 
-        MCMC_index += 1;
+        energi += Energi2x2_();
+
+        acceptet_states.push_back(E*1.);
+        flip_index += 1;
     }
+
+    }
+    Es[MCMC_index] = energi; ;//energi/N;
+    Bs[MCMC_index] = M;
+    MCMC_index += 1;
+
+    //cout << E << endl;
+
+
 
 
 }
 
 void ising::kjor_MCMC()
 {
-    for (int i = 0; i < 1000-1; i++)
+    for (int i = 0; i < n; i++)
     {
         MCMC();
     }
@@ -228,14 +254,25 @@ void ising::kjor_MCMC()
 
 void ising::expectationvalue()
 {
-    ofstream file("Es.txt");
+    ofstream file("expectationvalues.txt");
 
-    for (double data : Es)
+    
+
+    for (int i = 1; i < MCMC_index; i++)
     {
-        file << data << endl;
-    }
+        double energi = 0;
+        for (int j = 0; j < i; j++)
+        {
+            energi += Es[j];
 
+        }
+
+        file << i << " " << energi/i << endl;
+    }
+    
+    
     file.close();
+
 }
 
 int main()
@@ -245,8 +282,23 @@ int main()
 
     ising test_ising(2);
     test_ising.print();
+    cout << "middel "<< endl;
     test_ising.kjor_MCMC();
+
+
     test_ising.expectationvalue();
+    
+    cout << test_ising.acceptet_states[2]; 
+
+    ofstream file("Es.txt");
+    for (double data : test_ising.acceptet_states)
+    {
+        file << data << endl;
+    }
+    file.close();
+
+
+
 
     cout << "slutt "<< endl;
 
