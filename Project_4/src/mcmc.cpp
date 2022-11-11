@@ -1,16 +1,14 @@
 /*
-Definition of the MCMC method.
+Perform one MCMC cycle
 */
 
 #include "mcmc.hpp"
-#include "lattice.hpp"
 #include <random>
 #include <map>
 #include <cmath>
 
-// Doing a full MCMC cycle by randomly selecting a spin, flipping it and
-// accept/reject according to the Metropolis algorithm
-void mcmc(arma::mat& lattice, int L, double T, std::mt19937& generator)
+void mcmc(arma::mat& lattice, std::mt19937& generator, int L, double& E,
+          double& M, double T)
 {
   // Construct a distribution of uniformly random integers in [0, L-1]
   std::uniform_int_distribution<int> randInt(0, L - 1);
@@ -28,37 +26,31 @@ void mcmc(arma::mat& lattice, int L, double T, std::mt19937& generator)
   dE[-4] = 1.;
   dE[-8] = 1.;
 
-  int N = L * L;
-
-
-  // Doing a full MC cycle
-  for (int n = 0; n < N; n++)
+  for (int x = 0; x < L; x++)
   {
-    // Making a copy of the lattice and flipping the spin
-    arma::mat testLattice = lattice;
-
-    int i = randInt(generator);
-    int j = randInt(generator);
-    int spin = lattice(i, j);
-    int E_0 = energySpin_ij(lattice, L, i, j);
-
-    testLattice(i, j) = -spin;
-
-    int E_1 = energySpin_ij(testLattice, L, i, j);
-    int energyDiff = E_1 - E_0;
-
-    // Checking if energyDiff is accepted or rejected
-    double r = randFloat(generator);
-    int A = dE[energyDiff];
-
-    if (r < A)
+    for(int y = 0; y < L; y++)
     {
-      lattice = testLattice;
+      int ix = randInt(generator);
+      int iy = randInt(generator);
+
+      int spin = lattice(ix, iy);
+      int up = lattice((ix + L - 1) % L, iy);
+      int down = lattice((ix + 1) % L, iy);
+      int left = lattice(ix, (iy + L - 1) % L);
+      int right = lattice(ix, (iy + 1) % L);
+
+      int deltaE = 2 * spin * (up + down + left + right);
+      double r = randFloat(generator);
+
+      double A = dE[deltaE];
+
+      if(r < A)
+      {
+        lattice(ix, iy) *= -1;
+
+        M += (double) 2 * lattice(ix, iy);
+        E += (double) deltaE;
+      }
     }
-    //
-    // else
-    // {
-    //   testLattice(i, j) = spin;
-    // }
   }
 }

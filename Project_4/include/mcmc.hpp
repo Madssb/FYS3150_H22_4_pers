@@ -1,5 +1,5 @@
 /*
-This is the header file of the Markov Chain Monte Carlo (MCMC) method
+Header file for the Markov Chain Monte Carlo (MCMC) method
 */
 
 #ifndef __MCMC_hpp__
@@ -7,7 +7,8 @@ This is the header file of the Markov Chain Monte Carlo (MCMC) method
 
 #include <armadillo>
 
-// Doing a full MCMC cycle to the lattice
-void mcmc(arma::mat& lattice, int L, double T, std::mt19937& generator);
+// Perform one MCMC cycle, ie. N attempted spin flips
+void mcmc(arma::mat& lattice, std::mt19937& generator, int L, double& E,
+          double& M, double T);
 
 #endif

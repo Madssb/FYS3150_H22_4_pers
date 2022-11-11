@@ -1,16 +1,11 @@
 /*
-Header file containing declarations of functions to initialize a LxL lattice
-containing random spins (+-1), and doing calculations on it
+Header file for initializing lattice
 */
-
 #ifndef __Lattice_hpp__
 #define __Lattice_hpp__
+
 #include <armadillo>
 
-// Creating LxL lattice
-arma::mat create_lattice(int L);
-
-// Compute the energy of spin (i, j)
-int energySpin_ij(arma::mat& lattice, int L, int i, int j);
+arma::mat initialize_lattice(int L, double temp, double& E, double& M);
 
 #endif

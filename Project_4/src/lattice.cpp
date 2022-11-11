@@ -1,59 +1,42 @@
 /*
-Definition of the initialization and computing functions of the lattice
+Initializing the lattice
 */
 
 #include "lattice.hpp"
 
-// Creating lattice
-arma::mat create_lattice(int L)
+arma::mat initialize_lattice(int L, double temp, double& E, double& M)
 {
-  // Setting seed of RNG
+  // Setting RNG seed
   arma::arma_rng::set_seed_random();
 
   // Filling lattice with random spins
   arma::mat lattice = arma::randi<arma::mat>(L, L, arma::distr_param(0, 1));
 
   // Setting all 0s to -1s
-  for (int i = 0; i < L; i++)
+  for (int x = 0; x < L; x++)
   {
-    for (int j = 0; j < L; j++)
+    for (int y = 0; y < L; y++)
     {
-      if (lattice(i, j) == 0)
+      if (lattice(x, y) == 0)
       {
-        lattice(i, j) = -1;
+        lattice(x, y) = -1;
       }
     }
   }
 
-  return lattice;
-}
-
-// Computing energy of spin (i, j)
-int energySpin_ij(arma::mat& lattice, int L, int i, int j)
-{
-  int spin = lattice(i, j);
-  int spinLeft = lattice(i, (j - 1 + L) % L);
-  int spinRight = lattice(i, (j + 1) % L);
-  int spinUp = lattice((i - 1 + L) % L, j);
-  int spinDown = lattice((i + 1) % L, j);
-
-  int E = -spin * (spinLeft + spinRight + spinUp + spinDown);
-
-  return E;
-}
-
-// Computing magnetization of lattice
-int magnetizationLattice(arma::mat& lattice, int L)
-{
-  int M = 0;
-
-  for (int i = 0; i < L; i++)
+  // Computing initial energy and magnetization
+  for (int x = 0; x < L; x++)
   {
-    for (int j = 0; j < L; j++)
+    for (int y = 0; y < L; y++)
     {
-      M += lattice(i, j);
+      double spin = lattice(x, y);
+      double up = lattice((x + 1) % L, y);
+      double down = lattice(x, (y + 1) % L);
+
+      E -= spin * (up + down);
+      M += spin;
     }
   }
 
-  return M;
+  return lattice;
 }
