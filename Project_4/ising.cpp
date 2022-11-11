@@ -31,6 +31,8 @@ int main(int argc, const char* argv[])
   double sumEE = 0;
   double sumM = 0;
   double sumMM = 0;
+  double heatCap = 0;
+  double X = 0;
 
   mat lattice = initialize_lattice(L, T, E, M);
 
@@ -38,12 +40,13 @@ int main(int argc, const char* argv[])
   outfile.open("energies.txt", ofstream::out | ofstream::trunc);
 
   outfile << "#" << setw(width - 1) << "nCycles"
-          << setw(width) << "e"
           << setw(width) << "<e>"
-          << setw(width) << "<e^2>"
           << setw(width) << "<|m|>"
-          << setw(width) << "<m^2>"
+          << setw(width) << "C_V"
+          << setw(width) << "X"
           << endl;
+
+  double avgEps, avgEps_sqrd, avgM, avgM_sqrd;
 
   for (int n = 0; n < nCycles; n++)
   {
@@ -54,24 +57,33 @@ int main(int argc, const char* argv[])
     sumM += fabs(M);
     sumMM += (M * M);
 
+    avgEps = sumE / (nCycles * N);
+    avgEps_sqrd = sumEE / (nCycles * N * N);
+    avgM = sumM / (nCycles * N);
+    avgM_sqrd = sumMM / (nCycles * N * N);
+
     outfile << setw(width) << n + 1
-            << setw(width) << E / N
-            << setw(width) << sumE / nCycles / N
-            << setw(width) << sumEE / nCycles / N / N
-            << setw(width) << sumM / nCycles / N
-            << setw(width) << sumMM / nCycles / N / N
+            << setw(width) << avgEps
+            << setw(width) << avgM
+            << setw(width) << N * (avgEps_sqrd - avgEps * avgEps) / (T * T)
+            << setw(width) << N * (avgM_sqrd - avgM * avgM) / T
             << endl;
   }
 
   outfile << "#" << setw(width - 1) << "nCycles"
-          << setw(width) << "e"
           << setw(width) << "<e>"
-          << setw(width) << "<e^2>"
           << setw(width) << "<|m|>"
-          << setw(width) << "<m^2>"
+          << setw(width) << "C_V"
+          << setw(width) << "X"
           << endl;
 
   outfile.close();
+
+  cout << "Computed values after " << nCycles << " cycles:" << endl;
+  cout << "<e>: " << avgEps << endl;
+  cout << "<|m|>: " << avgM << endl;
+  cout << "C_V: " << N * (avgEps_sqrd - avgEps * avgEps) / (T * T) << endl;
+  cout << "X: " << N * (avgM_sqrd - avgM * avgM) / T << endl;
 
   return 0;
 }
