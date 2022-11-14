@@ -17,12 +17,20 @@ class ising
 
     arma::Mat<int> lattice;  //lagrer N x N lattice
 
-    int N;  //N x N ising
+    int l;  //l x l ising
     int M; //total magnetic
     double J;// coupling constant
     double E; //energi
+    int N; //l*l
+    double T; //temperatur
 
-    int n; //antall skjeder
+    int n; //antall cycles
+
+    double avg_E, avg_EE, avg_M, avg_MM; 
+
+
+
+    double Energi_; //total energi fra alle flippene 
 
     double Bz; 
 
@@ -44,8 +52,10 @@ class ising
 
     void expectationvalue();
 
-
+    void metropolis();
     private:
+
+    std::map<int, double> dE;
 
 
     void Energi();
@@ -59,6 +69,8 @@ class ising
     vector<int> spin;
     void generate_lattice();
 
+    
+
 
 
 
@@ -67,14 +79,25 @@ class ising
 
 ising::ising(int n_)
 {
-    N = n_;
+    l = n_;
 
-    lattice = arma::Mat<int>(N, N);
+    lattice = arma::Mat<int>(l, l);
     J = 1;
     Bz = 1.380e-23; //J/K;
     M = 0.;
     E = 0.;
-    n = 10000;
+    N = l*l;
+    n = 700;
+    T = 1.;
+
+    avg_E =  avg_EE =  avg_M = avg_MM =  0;
+
+    dE[8] = std::exp(-8 / T);
+    dE[4] = std::exp(-4 / T);
+    dE[0] = 1.;
+    dE[-4] = 1.;
+    dE[-8] = 1.;
+
 
     MCMC_index = 0;
     
@@ -88,8 +111,56 @@ ising::ising(int n_)
 
     Es = vector<double>(n, 0.);
     Bs = vector<int>(n, 0);
-    //acceptet_states = vector<int>(n*N, 0);
+    //acceptet_states = vector<int>(n*N*N, 0);
     flip_index = 0;
+}
+
+
+void ising::metropolis()
+{
+
+    //for all spins
+    std::uniform_real_distribution<double> r(0., 1.);
+
+    for (int i = 0; i < N; i++) 
+    {
+        //random position
+        uniform_int_distribution<int> my_01_pdf(0,l-1);
+        int x = my_01_pdf(generator);
+        int y = my_01_pdf(generator);
+        //cout << "y, x: " <<  y << " " << x << endl;
+
+        //energy difference 
+        //cout << lattice(y, x) << " " << lattice(y, (x+1 + l)%l)  << endl;
+        //cout << lattice(y, x) << " " << lattice(y, (x-1 + l)%l) << endl;
+        //cout << lattice(y, x) << " " << lattice((y+1+ l)%l, x) << endl;
+        //cout << lattice(y, x) << " " << lattice((y-1+ l)%l, x) << endl;
+
+        //int E1 = Energi2x2_();
+        int E1 = lattice(y, x) * lattice(y, (x+1+ l)%l) + lattice(y, x) * lattice(y, (x-1+ l)%l) + lattice(y, x) * lattice((y+1+ l)%l, x) + lattice(y, x) * lattice((y-1+ l)%l, x);
+
+        int E2 = E1*-1;
+        int deltaE = E2 - E1; 
+        //cout << deltaE << endl;
+        
+        //test
+        if (r(generator) <= dE[deltaE]) //accept
+        {
+            //update E and M 
+            lattice(y, x) *= -1;
+            M += 2*lattice(y, x);
+            E += deltaE;
+        }
+
+        //else keep old konfiguaration
+
+
+        
+
+
+    }
+
+
 }
 
 void ising::generate_lattice()
@@ -100,9 +171,9 @@ void ising::generate_lattice()
     //generator.seed(seed);
     uniform_int_distribution<int> my_01_pdf(0,1);
 
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < l; i++)
     {
-        for (int j = 0; j < N; j++)
+        for (int j = 0; j < l; j++)
         {
             int val = spin[my_01_pdf(generator)];
             lattice(i, j) = val;
@@ -111,10 +182,8 @@ void ising::generate_lattice()
     }
 
     //Bs[MCMC_index] = M;
-
-
-    //Energi();
-    Energi2x2();
+    Energi();
+    //Energi2x2();
 }
 
 void ising::print()
@@ -128,7 +197,7 @@ void ising::print()
 void ising::flip()
 {
 
-    uniform_int_distribution<int> my_01_pdf(0,N-1);
+    uniform_int_distribution<int> my_01_pdf(0,l-1);
     int nr1 = my_01_pdf(generator);
     int nr2 = my_01_pdf(generator);
 
@@ -140,13 +209,12 @@ void ising::flip()
 }
 
 void ising::Energi()
-{
-
-    for (int i = 0; i < N; i ++)
+{ 
+    for (int i = 0; i < l; i ++)
     {
-        for (int j = 0; j < N; j++)
+        for (int j = 0; j < l; j++)
         {
-            E = lattice(i, j) * lattice(i, (j+1)%N) + lattice(i, j) * lattice((i+1)%N, j);
+            E += lattice(i, j) * lattice(i, (j+1)%l) + lattice(i, j) * lattice((i+1)%l, j);
         }
     }
 
@@ -166,108 +234,38 @@ int ising::Energi2x2_()
 }
 
 
-void ising::MCMC()
-{
-
-    int energi = 0;
-    for (int a = 0; a < N ; a++)
-    {
-
-    //the intial state is already random
-
-    //flip it 
-    uniform_int_distribution<int> my_01_pdf(0,N-1);
-    int i = my_01_pdf(generator);
-    int j = my_01_pdf(generator);
-
-    //for N
-    //int E1 = lattice(i, j) * lattice(i, (j+1)%N) + lattice(i, j) * lattice(i, (j-1)%N) + lattice(i, j) * lattice((i+1)%N, j) + lattice(i, j) * lattice((i-1)%N, j);
-    //for N = 2
-    int E1 = Energi2x2_();
-
-    lattice(i,j ) *= -1;
-    //M += 2*lattice(i,j );
-
-    int E2 = Energi2x2_();
-
-    int dE = (E2 - E1);
-    //E += dE;
-
-    //latticen er flippa og vi har styr over energi forskjellen 
-
-    double p_diff = exp(-Bz*dE);
-
-    uniform_real_distribution<double> r(0,1);
-
-
-    double A;
-    if (p_diff > 1) {A = 1;}
-    else {A = p_diff;}
-
-    if (r(generator) <= A  )
-    {
-        //this is the new state
-        //lattice(i,j ) *= -1;
-        M += 2*lattice(i,j );
-
-        //int dE = (E2 - E1);
-        E = E2; // E + dE;
-        energi += E2;
-        acceptet_states.push_back(E*1.);
-        flip_index += 1;
-        //E += dE;
-
-        //Es[MCMC_index] = E;
-        //Bs[MCMC_index] = M;
-        //MCMC_index += 1;
-    }
-
-    else
-    {
-        lattice(i,j ) *= -1;
-        E = Energi2x2_();
-        energi += Energi2x2_();
-
-        acceptet_states.push_back(E*1.);
-        flip_index += 1;
-    }
-
-    }
-    Es[MCMC_index] = energi; ;//energi/N;
-    Bs[MCMC_index] = M;
-    MCMC_index += 1;
-
-    //cout << E << endl;
-
-
-
-
-}
-
 void ising::kjor_MCMC()
 {
-    for (int i = 0; i < n; i++)
+    //ofstream file("expectationvalues.txt");
+
+    int N = l*l;
+    for (int i = 1; i < n; i++)
     {
-        MCMC();
+        double norm = 1./i;
+        //MCMC();
+        metropolis(); //endrer E += dE lxl ganger 
+        avg_E += E;
+        avg_EE += E*E;
+        avg_M += M;
+        avg_M += M*M;
+
+        cout << i << "  " << avg_E*norm/N << "    " << avg_EE*norm/N/N << "   " << avg_M*norm/N/N << "    " << avg_MM*norm/N/N << endl;
+
     }
+
+    //file.close();
 }
 
 void ising::expectationvalue()
 {
     ofstream file("expectationvalues.txt");
 
-    
-
-    for (int i = 1; i < MCMC_index; i++)
+    double E_ = 0. ;
+    for (int i = 1; i < MCMC_index ; i++)
     {
-        double energi = 0;
-        for (int j = 0; j < i; j++)
-        {
-            energi += Es[j];
+        E_ += Es[i];
 
-        }
-
-        file << i << " " << energi/i << endl;
+        file << i << " " << E_/i/(l*l) << endl;
     }
     
     
@@ -278,27 +276,14 @@ void ising::expectationvalue()
 int main()
 {
 
-    cout << "start "<< endl;
+    
 
     ising test_ising(2);
     test_ising.print();
-    cout << "middel "<< endl;
+
+    cout << "start "<< endl;
+
     test_ising.kjor_MCMC();
-
-
-    test_ising.expectationvalue();
-    
-    cout << test_ising.acceptet_states[2]; 
-
-    ofstream file("Es.txt");
-    for (double data : test_ising.acceptet_states)
-    {
-        file << data << endl;
-    }
-    file.close();
-
-
-
 
     cout << "slutt "<< endl;
 
