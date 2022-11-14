@@ -68,7 +68,7 @@ ising::ising(int n_)
     M = 0.;
     E = 0.;
     N = l*l;
-    n = 1000;
+    n = 1000000;
     T = 1.;
 
     avg_E =  avg_EE =  avg_M = avg_MM =  0.;
@@ -112,8 +112,8 @@ void ising::metropolis()
         {
             //update E and M 
             lattice(y, x) *= -1;
-            cout << M << "  " << (double) 2*lattice(y, x) << endl;
-            M += (double) 2*lattice(y, x);
+            //cout << M << "  " << (double) 2*lattice(y, x) << endl;
+            M += 2*lattice(y, x);
             E += deltaE;
         }
 
@@ -139,9 +139,8 @@ void ising::generate_lattice()
         }
     }
 
-    //Bs[MCMC_index] = M;
     Energi();
-    //Energi2x2();
+
 }
 
 void ising::print()
@@ -176,13 +175,13 @@ void ising::kjor_MCMC()
     {
         double norm = 1./i;
         //MCMC();
-        metropolis(); //endrer E += dE lxl ganger 
+        metropolis(); //endrer E += dE og M lxl ganger 
         avg_E += E;
         avg_EE += E*E;
         avg_M += std::abs(M);
         avg_MM += M*M;
 
-        file << i << "  " << avg_E*norm/N << "    " << avg_EE*norm/N/N << "   " << avg_M*norm << "    " << avg_MM*norm/N/N << endl;
+        file << i << "  " << avg_E*norm/N << "    " << avg_EE*norm/N/N << "   " << avg_M*norm/N << "    " << avg_MM*norm/N/N << endl;
         //file << i << "  " << avg_E*norm/N << "    " << avg_EE*norm/N/N << endl;
 
     }
