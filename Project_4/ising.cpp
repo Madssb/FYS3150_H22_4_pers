@@ -56,13 +56,13 @@ int main(int argc, const char* argv[])
   if (ordered)
   {
     outfileName = "ordered_" + to_string(L) +
-                  "by" + to_string(L) + "_lattice.txt";
+                  "by" + to_string(L) + "_lattice_temp_" + to_string((int) T) + ".txt";
   }
 
   if (!ordered)
   {
     outfileName = "unordered_" + to_string(L) +
-                   "by" + to_string(L) + "_lattice.txt";
+                   "by" + to_string(L) + "_lattice_temp_" + to_string((int) T) + ".txt";
   }
 
   outfile.open(outfileName, ofstream::out | ofstream::trunc);
