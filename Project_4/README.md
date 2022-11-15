@@ -1,4 +1,8 @@
 # Project 4
+##### Notes:
+- The `<ordered/unordered>` should be passed as either `ordered` or `unordered`.
+- Temperature must be passed in unit Kelvin
+
 ##### Parallel coding
 To build:
 ```
