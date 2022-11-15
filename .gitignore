@@ -3,9 +3,11 @@
 # Text files and executables
 *.txt
 *.exe
+*.o
 
 # Figures
 *.pdf
 *.gif
+*.png
 
 .DS_Store

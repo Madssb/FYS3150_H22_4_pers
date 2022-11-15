@@ -20,7 +20,7 @@ def analyticalValues():
 
     return e, e_sqrd, m, m_sqrd, C_V, X
 
-def plotConvergence(filename, L, T, include_analytical=None):
+def plotConvergence(filename, L, T, include_analytical=None, parallel=None):
     '''
     Take a .txt file with computed values and plot the
     evolment with number of MCMC cycles
@@ -30,7 +30,12 @@ def plotConvergence(filename, L, T, include_analytical=None):
 
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(10.6, 6), sharex=True)
 
-    fig.suptitle(f'{L}x{L} lattice at T={T:.1f} K')
+    if parallel == True:
+
+        fig.suptitle(f'{L}x{L} lattice at T={T:.1f} K\nfrom parallel coding')
+
+    else:
+        fig.suptitle(f'{L}x{L} lattice at T={T:.1f} K')
 
     ax1.set_title('Energy per spin')
     ax1.plot(nCycles, eps, lw=1, color='red', label=r'$\overline{\epsilon}$')
@@ -139,15 +144,17 @@ def burnIn(filename1, filename2, L, T1, T2, save=None):
     plt.subplots_adjust(hspace=0, wspace=0)
 
 
-# plotConvergence('../unordered_2by2_lattice_temp_1.txt', 2, 1,  include_analytical=True)
+plotConvergence('../unordered_2by2_lattice_temp_1.txt', 2, 1,  include_analytical=True)
+# plotConvergence('../parallel_unordered_20by20_lattice_temp_2.txt', 20, 2.4)
+plotConvergence('../parallel_unordered_2by2_lattice_temp_1.txt', 2, 1, include_analytical=True, parallel=True)
 # plotOrderedUnordered('../unordered_20by20_lattice_temp_2.txt', '../ordered_20by20_lattice_temp_2.txt', 20, 2.4)
 # burnIn('../unordered_20by20_lattice_temp_1.txt', '../unordered_20by20_lattice_temp_2.txt', 20, 1, 2.4)
 
 T1BurnInIdx = 50000
 T2BurnInIdx = 100000
 
-histogram('../unordered_20by20_lattice_temp_1.txt', 20, 1, T1BurnInIdx)
-histogram('../unordered_20by20_lattice_temp_2.txt', 20, 2.4, T2BurnInIdx)
+# histogram('../unordered_20by20_lattice_temp_1.txt', 20, 1, T1BurnInIdx)
+# histogram('../unordered_20by20_lattice_temp_2.txt', 20, 2.4, T2BurnInIdx)
 
 
 plt.show()
