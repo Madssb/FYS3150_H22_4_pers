@@ -59,7 +59,6 @@ int main(int argc, const char* argv[])
     vec L_list = vec{40, 60, 80, 100};
 
     results = cube(6, 2, 4);
-    double time;
 
     #ifdef _OPENMP
     {
@@ -123,30 +122,23 @@ int main(int argc, const char* argv[])
               results(t, 1, l) = X / nCyclesPerThread;
             }
           }
-          }
 
           auto t2 = chrono::high_resolution_clock::now();
           double duration = chrono::duration<double>(t2 - t1).count();
 
-          #pragma omp critical
-          {
-            time = weight * duration;
-
-            cout << "Completed simulation for L=" << L_phase << "x" << L_phase
-                 << " after " << int(time) / 60
-                 << " min, "  << int(time) % 60
-                 << " sec"
-                 << endl;
-          }
+          cout << "Finished " << L_phase << "x" << L_phase
+               << " after " << int(duration) / 60
+               << " min, "  << int(duration) % 60
+               << " sec"
+               << endl;
         }
       }
-
-      results.save(outputFilename, raw_ascii);
     }
-   }
 
+    #endif
+  }
 
-  #else
+  else
   {
     results = cube(nCyclesPerThread, 4, threads);
 
@@ -202,11 +194,7 @@ int main(int argc, const char* argv[])
         }
       }
     }
-  }
 
-
-    // If the flag -fopenmp is not passed during compiling, the
-    // program will run in series
     #else
     {
       mt19937 generator;
@@ -241,15 +229,11 @@ int main(int argc, const char* argv[])
     }
 
     #endif
-    }
-    #endif
-    }
+  }
 
-    // Saving the results to matrix in raw ascii (mostly to avoid the
-    // header of the matrix)
-    results.save(outputFilename, raw_ascii);
-
-
+  // Saving the results to matrix in raw ascii (mostly to avoid the
+  // header of the matrix)
+  results.save(outputFilename, raw_ascii);
 
   return 0;
 }

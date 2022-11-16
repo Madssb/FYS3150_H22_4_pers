@@ -247,9 +247,9 @@ def plotPhase(filename):
 # plotOrderedUnordered('../unordered_20by20_lattice_temp_2.txt', '../ordered_20by20_lattice_temp_2.txt', 20, 2.4)
 # burnIn('../unordered_20by20_lattice_temp_1.txt', '../unordered_20by20_lattice_temp_2.txt', 20, 1, 2.4)
 # plotParallel('../parallel_L2_T1.txt', 2, 1, 1000000, threads=4)
-# plotParallel('../parallel_L20_T2.txt', 20, 2.5, 1000000, threads=4)
+plotParallel('../parallel_L20_T2.txt', 20, 2.5, 1000000, threads=4)
 # plotParallel('../L20_T2.txt', 20, 2.5, 1000000)
-plotPhase('../test.txt', )
+# plotPhase('../test.txt')
 
 T1BurnInIdx = 50000
 T2BurnInIdx = 100000
