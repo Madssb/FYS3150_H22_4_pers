@@ -8,6 +8,3 @@ link:
 
 build-parallel:
 	g++ -O2 ising.cpp src/lattice.cpp src/mcmc.cpp -I include -std=c++11 -Xpreprocessor -fopenmp -o ising.exe -larmadillo -lomp
-
-export:
-	export OMP_NUM_THREADS=4

@@ -146,81 +146,110 @@ def burnIn(filename1, filename2, L, T1, T2, save=None):
 
 def plotParallel(filename, L, T, nruns, include_analytical=None, threads=None):
 
-    fig, axes = plt.subplots(2, 2, figsize=(10.6, 6), sharex=True)
-    fig.suptitle(f'{L}x{L} lattice at T={T:.1f} K')
-    ax = axes.flatten()
+    fig, ax = plt.subplots(2, 1, figsize=(10.6, 6), sharex=True)
+    title = f'{L}x{L} lattice at T={T:.1f} K'
 
     labels = np.array([r'$\epsilon$', 'm', r'$C_V$', r'$\chi$'])
     cycles = np.linspace(1, nruns, nruns)
 
     if threads != None:
 
-        e1, m1, c1, x1 = np.loadtxt(filename, max_rows=nruns, unpack=True)
-        e2, m2, c2, x2 = np.loadtxt(filename, skiprows=nruns, max_rows=nruns, unpack=True)
-        e3, m3, c3, x3 = np.loadtxt(filename, skiprows=2 * nruns, max_rows=nruns, unpack=True)
-        e4, m4, c4, x4 = np.loadtxt(filename, skiprows=3 * nruns, max_rows=nruns, unpack=True)
+        fig.suptitle(title + f'\nfrom {threads} threads')
+
+        e1, m1, _, __ = np.loadtxt(filename, max_rows=nruns, unpack=True)
+        e2, m2, _, __ = np.loadtxt(filename, skiprows=nruns, max_rows=nruns, unpack=True)
+        e3, m3, _, __ = np.loadtxt(filename, skiprows=2 * nruns, max_rows=nruns, unpack=True)
+        e4, m4, _, __ = np.loadtxt(filename, skiprows=3 * nruns, max_rows=nruns, unpack=True)
 
         e = np.array([e1, e2, e3, e4])
         m = np.array([m1, m2, m3, m4])
-        c = np.array([c1, c2, c3, c4])
-        x = np.array([x1, x2, x3, x4])
 
-        vals = np.array([e, m, c, x])
+        ebase = e[0, -1]
+        emin = e.min() - ebase
+        emax = e.max() - ebase
+        elim = [e.min() + abs(emin * .5), e.max() - abs(emax * .95)]
+
+        mbase = m[0, -1]
+        mmin = m.min() - mbase
+        mmax = m.max() - mbase
+        mlim = [m.min() + abs(mmin * .3), m.max() - abs(mmax * .3)]
+
+        vals = np.array([e, m])
 
         for i in range(len(ax)):
             for j in range(len(e)):
 
                 val = vals[i, j, :]
 
-                ax[i].plot(cycles, val, lw=1)
+                ax[i].plot(cycles, val, lw=.75)
 
     else:
 
-        e, m, c, x = np.loadtxt(filename, unpack=True)
+        fig.suptitle(title)
 
-        vals = np.array([e, m, c, x])
+        e, m, _, __ = np.loadtxt(filename, unpack=True)
+        elim = []
+        mlim = []
+
+        vals = np.array([e, m])
 
         for i in range(len(ax)):
 
             val = vals[i]
 
-            ax[i].plot(cycles, val, lw=1)
+            ax[i].plot(cycles, val, lw=.75)
 
     ax[0].tick_params(axis='y', direction='in')
-    ax0t = ax[0].secondary_xaxis('top')
-    ax0t.tick_params(axis='x', direction='in')
-    ax0t.set_xticklabels([])
 
-    ax1r = ax[1].secondary_yaxis('right')
-    ax1r.tick_params(axis='y', direction='in')
-    ax[1].set_yticklabels([])
-    ax[1].tick_params(axis='y', direction='inout')
+    ax[1].tick_params(axis='both', direction='in')
     ax1t = ax[1].secondary_xaxis('top')
-    ax1t.tick_params(axis='x', direction='in')
+    ax1t.tick_params(axis='x', direction='inout')
     ax1t.set_xticklabels([])
 
-    ax[2].tick_params(axis='both', direction='in')
-    ax2t = ax[2].secondary_xaxis('top')
-    ax2t.tick_params(axis='x', direction='inout')
-    ax2t.set_xticklabels([])
+    ax[0].set_ylim(elim)
+    ax[0].set_ylabel('Energy per spin [J]')
 
-    ax3r = ax[3].secondary_yaxis('right')
-    ax3r.tick_params(axis='y', direction='in')
-    ax[3].set_yticklabels([])
-    ax[3].tick_params(axis='x', direction='in')
-    ax3t = ax[3].secondary_xaxis('top')
-    ax3t.tick_params(axis='x', direction='inout')
-    ax3t.set_xticklabels([])
+    ax[1].set_ylim(mlim)
+    ax[1].set_xlabel('No. of cycles')
+    ax[1].set_ylabel('Magnetization')
 
     plt.subplots_adjust(hspace=0, wspace=0)
 
+def plotPhase(filename):
+
+    N = 6
+    L = [40, 60, 80, 100]
+    T = np.linspace(2.1, 2.4, N)
+
+    c1, x1 = np.loadtxt(filename, max_rows=N, unpack=True)
+    c2, x2 = np.loadtxt(filename, skiprows=N, max_rows=N, unpack=True)
+    c3, x3 = np.loadtxt(filename, skiprows=2*N, max_rows=N, unpack=True)
+    c4, x4 = np.loadtxt(filename, skiprows=3*N, max_rows=N, unpack=True)
+
+    c = np.array([c1, c2, c3, c4])
+    x = np.array([x1, x2, x3, x4])
+
+    vals = np.array([c, x])
+
+    fig, ax = plt.subplots(2, 1, figsize=(10, 5))
+
+    for i in range(len(ax)):
+        for j in range(len(c)):
+
+            val = vals[i, j, :]
+
+            ax[i].plot(T, val, lw=.75, label=f'L={L[j]}')
+            ax[i].legend()
+
+    fig.tight_layout()
 
 # plotConvergence('../unordered_2by2_lattice_temp_1.txt', 2, 1,  include_analytical=True)
 # plotOrderedUnordered('../unordered_20by20_lattice_temp_2.txt', '../ordered_20by20_lattice_temp_2.txt', 20, 2.4)
 # burnIn('../unordered_20by20_lattice_temp_1.txt', '../unordered_20by20_lattice_temp_2.txt', 20, 1, 2.4)
 # plotParallel('../parallel_L2_T1.txt', 2, 1, 1000000, threads=4)
-plotParallel('../parallel_L20_T2.txt', 20, 2.5, 1000000, threads=4)
+# plotParallel('../parallel_L20_T2.txt', 20, 2.5, 1000000, threads=4)
 # plotParallel('../L20_T2.txt', 20, 2.5, 1000000)
+plotPhase('../test.txt', )
 
 T1BurnInIdx = 50000
 T2BurnInIdx = 100000
