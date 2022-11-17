@@ -217,39 +217,41 @@ def plotParallel(filename, L, T, nruns, include_analytical=None, threads=None):
 
 def plotPhase(filename):
 
-    N = 6
+    N = 10
     L = [40, 60, 80, 100]
     T = np.linspace(2.1, 2.4, N)
 
     c1, x1 = np.loadtxt(filename, max_rows=N, unpack=True)
-    c2, x2 = np.loadtxt(filename, skiprows=N, max_rows=N, unpack=True)
-    c3, x3 = np.loadtxt(filename, skiprows=2*N, max_rows=N, unpack=True)
-    c4, x4 = np.loadtxt(filename, skiprows=3*N, max_rows=N, unpack=True)
+    # c2, x2 = np.loadtxt(filename, skiprows=N, max_rows=N, unpack=True)
+    # c3, x3 = np.loadtxt(filename, skiprows=2*N, max_rows=N, unpack=True)
+    # c4, x4 = np.loadtxt(filename, skiprows=3*N, max_rows=N, unpack=True)
+    plt.plot(T, c1)
+    # plt.plot(T, x1)
+    # c = np.array([c1, c2, c3, c4])
+    # x = np.array([x1, x2, x3, x4])
+    #
+    # vals = np.array([c, x])
+    #
+    # fig, ax = plt.subplots(2, 1, figsize=(10, 5))
+    #
+    # for i in range(len(ax)):
+    #     for j in range(len(c)):
+    #
+    #         val = vals[i, j, :]
+    #
+    #         ax[i].plot(T, val, lw=.75, label=f'L={L[j]}')
+    #         ax[i].legend()
 
-    c = np.array([c1, c2, c3, c4])
-    x = np.array([x1, x2, x3, x4])
-
-    vals = np.array([c, x])
-
-    fig, ax = plt.subplots(2, 1, figsize=(10, 5))
-
-    for i in range(len(ax)):
-        for j in range(len(c)):
-
-            val = vals[i, j, :]
-
-            ax[i].plot(T, val, lw=.75, label=f'L={L[j]}')
-            ax[i].legend()
-
-    fig.tight_layout()
+    # fig.tight_layout()
 
 # plotConvergence('../unordered_2by2_lattice_temp_1.txt', 2, 1,  include_analytical=True)
+# plotConvergence('../unordered_20by20_lattice_temp_1.txt', 20, 1)
 # plotOrderedUnordered('../unordered_20by20_lattice_temp_2.txt', '../ordered_20by20_lattice_temp_2.txt', 20, 2.4)
 # burnIn('../unordered_20by20_lattice_temp_1.txt', '../unordered_20by20_lattice_temp_2.txt', 20, 1, 2.4)
 # plotParallel('../parallel_L2_T1.txt', 2, 1, 1000000, threads=4)
-plotParallel('../parallel_L20_T2.txt', 20, 2.5, 1000000, threads=4)
+# plotParallel('../parallel_L20_T2.txt', 20, 2.5, 1000000, threads=4)
 # plotParallel('../L20_T2.txt', 20, 2.5, 1000000)
-# plotPhase('../test.txt')
+plotPhase('../test.txt')
 
 T1BurnInIdx = 50000
 T2BurnInIdx = 100000
