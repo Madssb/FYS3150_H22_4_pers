@@ -20,15 +20,17 @@ def analyticalValues():
 
     return e, e_sqrd, m, m_sqrd, C_V, X
 
-def plotConvergence(filename, L, T, include_analytical=None, parallel=None):
+def plotConvergence(filename, L, T, cycles=1000000, include_analytical=None):
     '''
     Take a .txt file with computed values and plot the
     evolment with number of MCMC cycles
     '''
 
-    nCycles, eps, magn, C_V, X = np.loadtxt(filename, unpack=True)
+    nCycles = np.linspace(1, cycles, cycles)
 
-    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(10.6, 6), sharex=True)
+    e, m, c, x = np.loadtxt(filename, unpack=True)
+
+    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(12, 6.75), sharex=True)
 
     if parallel == True:
 
@@ -38,20 +40,20 @@ def plotConvergence(filename, L, T, include_analytical=None, parallel=None):
         fig.suptitle(f'{L}x{L} lattice at T={T:.1f} K')
 
     ax1.set_title('Energy per spin')
-    ax1.plot(nCycles, eps, lw=1, color='red', label=r'$\overline{\epsilon}$')
+    ax1.plot(nCycles, e, lw=1, color='red', label=r'$\overline{\epsilon}$')
     ax1.set_ylabel('[J]')
 
     ax2.set_title('Magnetization per spin')
-    ax2.plot(nCycles, magn, lw=1, color='royalblue', label='$\\overline{m}$')
+    ax2.plot(nCycles, m, lw=1, color='royalblue', label='$\\overline{m}$')
     ax2.set_ylabel('M')
 
     ax3.set_title('Specific heat capacity')
-    ax3.plot(nCycles, C_V, lw=1, color='black', label='$\\overline{C_V}$')
+    ax3.plot(nCycles, c, lw=1, color='black', label='$\\overline{C_V}$')
     ax3.set_ylabel('$C_V$')
     ax3.set_xlabel('No. of cycles')
 
     ax4.set_title('Susceptibility')
-    ax4.plot(nCycles, X, lw=1, color='green', label='$\\overline{\chi}$')
+    ax4.plot(nCycles, x, lw=1, color='green', label='$\\overline{\chi}$')
     ax4.set_ylabel('$\chi$')
     ax4.set_xlabel('No. of cycles')
 
@@ -71,41 +73,51 @@ def plotConvergence(filename, L, T, include_analytical=None, parallel=None):
     ax3.legend()
     ax4.legend()
 
-    plt.tight_layout()
+    fig.tight_layout()
 
-def plotOrderedUnordered(orderedFilename, unorderedFilename, L, T, save=None):
+def plotOrderedUnordered(cycles=1000000, save=None):
 
-    oCycles, oEps, oMagn, _, __ = np.loadtxt(orderedFilename, unpack=True)
-    uCycles, uEps, uMagn, _, __ = np.loadtxt(unorderedFilename, unpack=True)
+    nCycles = np.linspace(1, cycles, cycles)
 
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 5), sharex=True)
-    fig.suptitle(f'{L}x{L} lattice at T={T:.1f} K')
+    fig, axes = plt.subplots(2, 2, figsize=(12, 6.75), sharex=True)
+    fig.suptitle('20x20 lattice')
 
-    ax1.plot(oCycles, oEps, color='red', lw=1, label='$\epsilon$ for ordered lattice')
-    ax1.tick_params(axis='y', direction='in')
-    ax1t = ax1.secondary_xaxis('top')
-    ax1t.tick_params(axis='x', direction='in')
-    ax1t.set_xticklabels([])
-    ax1.legend()
+    T = ['1', '2']
+    colors = ['red', 'royalblue']
+    labels = ['1', '2.4']
+    ylabels = [r'Energy $[J]$', 'Magnetization']
 
-    ax2.plot(uCycles, uEps, color='black', lw=1, label='$\epsilon$ for unordered lattice')
-    ax2.tick_params(axis='both', direction='in')
-    ax2t = ax2.secondary_xaxis('top')
-    ax2t.tick_params(axis='x', direction='inout')
-    ax2t.set_xticklabels([])
-    ax2.legend()
+    for i in range(2):
 
-    plt.subplots_adjust(hspace=0)
+        filename = 'L20_T' + T[i] + '.txt'
+
+        for j in range(2):
+
+            val = np.loadtxt(filename, usecols=j)
+
+            axes[i, j].plot(nCycles, val, color=colors[i], lw=1, label=f'T={labels[i]}')
+            axes[i, j].set_xlabel('Cycles')
+            axes[i, j].set_ylabel(ylabels[j])
+            axes[i, j].legend()
+
+    fig.subplots_adjust(hspace=0)
 
 
-def histogram(filename, L, T, burnIn, save=None):
 
-    _, eps, __, ___, ____ = np.loadtxt(filename, unpack=True)
 
-    eps = eps[burnIn:]
+def histogram(ordered_unordered, burnIn=0, save=None):
 
-    plt.figure()
-    plt.hist(eps, bins='auto', density=True, color='royalblue', alpha=1, fill=True)
+    fig, axes = plt.subplots(2, 1, figsize=(12, 6.75))
+
+    T = ['1', '2']
+
+    for i in range(2):
+
+        filename = ordered_unordered + '_L20_T' + T[i] + '.txt'
+        e = np.loadtxt(filename, usecols=1)
+        eBurn = e[burnIn:]
+
+        axes[i].hist(eBurn, bins='sqrt', density=True, color='royalblue', alpha=1, fill=True)
 
 
 def burnIn(filename1, filename2, L, T1, T2, save=None):
@@ -215,49 +227,48 @@ def plotParallel(filename, L, T, nruns, include_analytical=None, threads=None):
 
     plt.subplots_adjust(hspace=0, wspace=0)
 
-def plotPhase(filename):
+def plotPhase(burn_in=None):
 
-    N = 10
+    N = 6
     L = [40, 60, 80, 100]
     T = np.linspace(2.1, 2.4, N)
 
-    c1, x1 = np.loadtxt(filename, max_rows=N, unpack=True)
-    # c2, x2 = np.loadtxt(filename, skiprows=N, max_rows=N, unpack=True)
-    # c3, x3 = np.loadtxt(filename, skiprows=2*N, max_rows=N, unpack=True)
-    # c4, x4 = np.loadtxt(filename, skiprows=3*N, max_rows=N, unpack=True)
-    plt.plot(T, c1)
-    # plt.plot(T, x1)
-    # c = np.array([c1, c2, c3, c4])
-    # x = np.array([x1, x2, x3, x4])
-    #
-    # vals = np.array([c, x])
-    #
-    # fig, ax = plt.subplots(2, 1, figsize=(10, 5))
-    #
-    # for i in range(len(ax)):
-    #     for j in range(len(c)):
-    #
-    #         val = vals[i, j, :]
-    #
-    #         ax[i].plot(T, val, lw=.75, label=f'L={L[j]}')
-    #         ax[i].legend()
+    fig, axes = plt.subplots(2, 2, figsize=(10.6, 6))
+    ax = axes.flatten()
 
-    # fig.tight_layout()
+    lines = ['solid', 'dotted', 'dashed', 'dashdot']
+    ylabels=[r'$<\epsilon>$', r'$<|m|>$', r'$C_V$', r'$\chi$']
 
-# plotConvergence('../unordered_2by2_lattice_temp_1.txt', 2, 1,  include_analytical=True)
-# plotConvergence('../unordered_20by20_lattice_temp_1.txt', 20, 1)
-# plotOrderedUnordered('../unordered_20by20_lattice_temp_2.txt', '../ordered_20by20_lattice_temp_2.txt', 20, 2.4)
+    for i in range(4):
+
+        filename = 'phase_L' + f'{L[i]}' + '.txt'
+
+        for j in range(4):
+
+            val = np.loadtxt(filename, usecols=j)
+
+            ax[j].plot(T, val, color='black', lw=.75, ls=lines[i], label=f'{L[i]}x{L[i]}')
+            ax[j].set_xlabel(r'Temperature $[T/k_B]$')
+            ax[j].set_ylabel(ylabels[j])
+            ax[j].legend()
+
+    fig.tight_layout()
+
+
+# plotConvergence('L2_T1.txt', 2, 1, include_analytical=True)
+# plotOrderedUnordered()
 # burnIn('../unordered_20by20_lattice_temp_1.txt', '../unordered_20by20_lattice_temp_2.txt', 20, 1, 2.4)
 # plotParallel('../parallel_L2_T1.txt', 2, 1, 1000000, threads=4)
 # plotParallel('../parallel_L20_T2.txt', 20, 2.5, 1000000, threads=4)
 # plotParallel('../L20_T2.txt', 20, 2.5, 1000000)
-plotPhase('../test.txt')
+# plotParallel('../test_1.txt', 60, 2.5, 100000, threads=4)
+# plotPhase()
 
 T1BurnInIdx = 50000
 T2BurnInIdx = 100000
 
-# histogram('../unordered_20by20_lattice_temp_1.txt', 20, 1, T1BurnInIdx)
-# histogram('../unordered_20by20_lattice_temp_2.txt', 20, 2.4, T2BurnInIdx)
+histogram('ordered', 50000)
+histogram('unordered', 50000)
 
 
 plt.show()

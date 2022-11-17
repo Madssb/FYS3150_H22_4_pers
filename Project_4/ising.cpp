@@ -55,10 +55,10 @@ int main(int argc, const char* argv[])
 
   if (simulationType == "phasetransition")
   {
-    int numTempElements = 10;
+    int numTempElements = 6;
     vec tempList = linspace(2.1, 2.4, numTempElements);
 
-    mat phaseRes = mat(numTempElements, 2);
+    mat phaseRes = mat(numTempElements, 4);
 
     #ifdef _OPENMP
     {
@@ -70,28 +70,29 @@ int main(int argc, const char* argv[])
         unsigned int threadSeed = baseSeed + threadID;
         generator.seed(threadSeed);
 
-        mat threadLattice;
-        double T_phase;
-        double threadE, threadM;
-        double sumE, sumEE, sumM, sumMM;
-        double avgEps, avgEps_sqrd, avgM, avgM_sqrd;
-        double heatCap, X;
-
         // Timing algorithm
         auto t1 = chrono::high_resolution_clock::now();
 
         #pragma omp for
         for (int t = 0; t < numTempElements; t++)
         {
-          T_phase = tempList(t);
-          threadE = 0;
-          threadM = 0;
-          sumE = 0;
-          sumM = 0;
-          sumMM = 0;
-          threadLattice = initialize_lattice(L, T_phase, threadE, threadM, false);
+          int burnIn = nCyclesPerThread / 10;
 
-          for (int n = 0; n < nCyclesPerThread; n++)
+          double T_phase = tempList(t);
+          double threadE = 0, threadM = 0;
+          double sumE = 0, sumEE = 0, sumM = 0, sumMM = 0;
+          double avgE = 0, avgEE = 0, avgM = 0, avgMM = 0;
+          double avg_e = 0, avg_m = 0;
+          double heatCap = 0, X = 0;
+
+          mat threadLattice = initialize_lattice(L, T_phase, threadE, threadM, false);
+
+          for (int burn = 0; burn < burnIn; burn++)
+          {
+            mcmc(threadLattice, generator, L, threadE, threadM, T_phase);
+          }
+
+          for (int n = burnIn; n < nCyclesPerThread; n++)
           {
             mcmc(threadLattice, generator, L, threadE, threadM, T_phase);
 
@@ -101,16 +102,21 @@ int main(int argc, const char* argv[])
             sumMM += threadM * threadM;
           }
 
-          avgEps = sumE / nCyclesPerThread;
-          avgEps_sqrd = sumEE / nCyclesPerThread;
-          avgM = sumM / nCyclesPerThread;
-          avgM_sqrd = sumMM / nCyclesPerThread;
+          avg_e = sumE / (nCyclesPerThread - burnIn * N);
+          avg_m = sumM / (nCyclesPerThread - burnIn * N);
 
-          heatCap = (avgEps_sqrd - avgEps * avgEps) / (N * T_phase * T_phase);
-          X = (avgM_sqrd - avgM * avgM) / (N * T_phase);
+          avgE = sumE / (nCyclesPerThread - burnIn);
+          avgEE = sumEE / (nCyclesPerThread - burnIn);
+          avgM = sumM / (nCyclesPerThread - burnIn);
+          avgMM = sumMM / (nCyclesPerThread - burnIn);
 
-          phaseRes(t, 0) = heatCap;
-          phaseRes(t, 1) = X;
+          heatCap = (avgEE - avgE * avgE) / (N * T_phase * T_phase);
+          X = (avgMM - avgM * avgM) / (N * T_phase);
+
+          phaseRes(t, 0) = avg_e;
+          phaseRes(t, 1) = avg_m;
+          phaseRes(t, 2) = heatCap;
+          phaseRes(t, 3) = X;
 
           auto t2 = chrono::high_resolution_clock::now();
           double duration = chrono::duration<double>(t2 - t1).count();
