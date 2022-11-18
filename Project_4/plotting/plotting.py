@@ -3,6 +3,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 def analyticalValues():
     '''
@@ -20,7 +21,7 @@ def analyticalValues():
 
     return e, e_sqrd, m, m_sqrd, C_V, X
 
-def plotConvergence(filename, L, T, cycles=1000000, include_analytical=None):
+def plotConvergence(filename, L, T, cycles=1000000, include_analytical=None, parallel=None):
     '''
     Take a .txt file with computed values and plot the
     evolment with number of MCMC cycles
@@ -75,21 +76,21 @@ def plotConvergence(filename, L, T, cycles=1000000, include_analytical=None):
 
     fig.tight_layout()
 
-def plotOrderedUnordered(cycles=1000000, save=None):
+def plotOrderedUnordered(ordered_unordered, cycles=1000000, save=None):
 
     nCycles = np.linspace(1, cycles, cycles)
 
     fig, axes = plt.subplots(2, 2, figsize=(12, 6.75), sharex=True)
     fig.suptitle('20x20 lattice')
 
-    T = ['1', '2']
+    T = [1, 2]
     colors = ['red', 'royalblue']
     labels = ['1', '2.4']
     ylabels = [r'Energy $[J]$', 'Magnetization']
 
     for i in range(2):
 
-        filename = 'L20_T' + T[i] + '.txt'
+        filename = ordered_unordered + f'_L20_T{T[i]}.txt'
 
         for j in range(2):
 
@@ -103,21 +104,23 @@ def plotOrderedUnordered(cycles=1000000, save=None):
     fig.subplots_adjust(hspace=0)
 
 
-
-
-def histogram(ordered_unordered, burnIn=0, save=None):
+def histogram(ordered_unordered, L=20, burnIn=0, save=None):
 
     fig, axes = plt.subplots(2, 1, figsize=(12, 6.75))
+    fig.suptitle('Probability density from ' + ordered_unordered + ' state')
 
     T = ['1', '2']
 
     for i in range(2):
 
-        filename = ordered_unordered + '_L20_T' + T[i] + '.txt'
-        e = np.loadtxt(filename, usecols=1)
+        filename = ordered_unordered + '_L' + f'{L}' + '_T' + T[i] + '.txt'
+        e = np.loadtxt(filename, usecols=4)
         eBurn = e[burnIn:]
 
-        axes[i].hist(eBurn, bins='sqrt', density=True, color='royalblue', alpha=1, fill=True)
+        axes[i].hist(eBurn, bins='auto', histtype='stepfilled', density=True, color='royalblue', alpha=1)
+        axes[i].set_title('T=' + T[i] + ' K')
+
+    fig.tight_layout()
 
 
 def burnIn(filename1, filename2, L, T1, T2, save=None):
@@ -168,10 +171,10 @@ def plotParallel(filename, L, T, nruns, include_analytical=None, threads=None):
 
         fig.suptitle(title + f'\nfrom {threads} threads')
 
-        e1, m1, _, __ = np.loadtxt(filename, max_rows=nruns, unpack=True)
-        e2, m2, _, __ = np.loadtxt(filename, skiprows=nruns, max_rows=nruns, unpack=True)
-        e3, m3, _, __ = np.loadtxt(filename, skiprows=2 * nruns, max_rows=nruns, unpack=True)
-        e4, m4, _, __ = np.loadtxt(filename, skiprows=3 * nruns, max_rows=nruns, unpack=True)
+        e1, m1, _, __, ___, ____ = np.loadtxt(filename, max_rows=nruns, unpack=True)
+        e2, m2, _, __, ___, ____ = np.loadtxt(filename, skiprows=nruns, max_rows=nruns, unpack=True)
+        e3, m3, _, __, ___, ____ = np.loadtxt(filename, skiprows=2 * nruns, max_rows=nruns, unpack=True)
+        e4, m4, _, __, ___, ____ = np.loadtxt(filename, skiprows=3 * nruns, max_rows=nruns, unpack=True)
 
         e = np.array([e1, e2, e3, e4])
         m = np.array([m1, m2, m3, m4])
@@ -218,18 +221,19 @@ def plotParallel(filename, L, T, nruns, include_analytical=None, threads=None):
     ax1t.tick_params(axis='x', direction='inout')
     ax1t.set_xticklabels([])
 
-    ax[0].set_ylim(elim)
+    # ax[0].set_ylim(elim)
     ax[0].set_ylabel('Energy per spin [J]')
 
-    ax[1].set_ylim(mlim)
+    # ax[1].set_ylim(mlim)
     ax[1].set_xlabel('No. of cycles')
     ax[1].set_ylabel('Magnetization')
 
     plt.subplots_adjust(hspace=0, wspace=0)
 
-def plotPhase(burn_in=None):
 
-    N = 6
+def plotPhase(burn_in=None, save=None):
+
+    N = 8
     L = [40, 60, 80, 100]
     T = np.linspace(2.1, 2.4, N)
 
@@ -241,7 +245,7 @@ def plotPhase(burn_in=None):
 
     for i in range(4):
 
-        filename = 'phase_L' + f'{L[i]}' + '.txt'
+        filename = 'phase_L' + f'{L[i]}_v2.txt'
 
         for j in range(4):
 
@@ -254,21 +258,25 @@ def plotPhase(burn_in=None):
 
     fig.tight_layout()
 
+    if save == True:
 
-# plotConvergence('L2_T1.txt', 2, 1, include_analytical=True)
-# plotOrderedUnordered()
+        plt.savefig('../figures/phase_transition_v2.png')
+
+
+# plotConvergence('unordered_L2_T1.txt', 2, 1, include_analytical=True)
+# plotConvergence('unordered_L20_T2.txt', 20, 2.4)
+# plotOrderedUnordered('unordered')
 # burnIn('../unordered_20by20_lattice_temp_1.txt', '../unordered_20by20_lattice_temp_2.txt', 20, 1, 2.4)
-# plotParallel('../parallel_L2_T1.txt', 2, 1, 1000000, threads=4)
+plotParallel('../parallel_L40_v2.txt', 40, 1, 1000000, threads=4)
 # plotParallel('../parallel_L20_T2.txt', 20, 2.5, 1000000, threads=4)
 # plotParallel('../L20_T2.txt', 20, 2.5, 1000000)
 # plotParallel('../test_1.txt', 60, 2.5, 100000, threads=4)
 # plotPhase()
 
-T1BurnInIdx = 50000
-T2BurnInIdx = 100000
 
-histogram('ordered', 50000)
-histogram('unordered', 50000)
+burnInIDX = 250000
 
+# histogram('ordered', burnIn=burnInIDX)
+# histogram('unordered', burnIn=burnInIDX)
 
 plt.show()

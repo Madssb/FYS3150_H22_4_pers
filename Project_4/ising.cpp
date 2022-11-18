@@ -44,8 +44,6 @@ int main(int argc, const char* argv[])
   double E = 0;
   double M = 0;
 
-  mat lattice = initialize_lattice(L, T, E, M, ordered);
-
   // Storing values to matrix
   cube results;
 
@@ -53,12 +51,16 @@ int main(int argc, const char* argv[])
   // seeds per thread or as seed for serial computing
   unsigned int baseSeed = std::chrono::system_clock::now().time_since_epoch().count();
 
+  mat lattice = initialize_lattice(L, T, E, M, ordered);
+
   if (simulationType == "phasetransition")
   {
     int numTempElements = 6;
     vec tempList = linspace(2.1, 2.4, numTempElements);
 
     mat phaseRes = mat(numTempElements, 4);
+    double burnIn = nCyclesPerThread / 4.;
+    double numSamples = nCyclesPerThread - burnIn;
 
     #ifdef _OPENMP
     {
@@ -68,6 +70,7 @@ int main(int argc, const char* argv[])
 
         mt19937 generator;
         unsigned int threadSeed = baseSeed + threadID;
+
         generator.seed(threadSeed);
 
         // Timing algorithm
@@ -76,7 +79,6 @@ int main(int argc, const char* argv[])
         #pragma omp for
         for (int t = 0; t < numTempElements; t++)
         {
-          int burnIn = nCyclesPerThread / 10;
 
           double T_phase = tempList(t);
           double threadE = 0, threadM = 0;
@@ -102,13 +104,13 @@ int main(int argc, const char* argv[])
             sumMM += threadM * threadM;
           }
 
-          avg_e = sumE / (nCyclesPerThread - burnIn * N);
-          avg_m = sumM / (nCyclesPerThread - burnIn * N);
+          avg_e = sumE / (numSamples * N);
+          avg_m = sumM / (numSamples * N);
 
-          avgE = sumE / (nCyclesPerThread - burnIn);
-          avgEE = sumEE / (nCyclesPerThread - burnIn);
-          avgM = sumM / (nCyclesPerThread - burnIn);
-          avgMM = sumMM / (nCyclesPerThread - burnIn);
+          avgE = sumE / numSamples;
+          avgEE = sumEE / numSamples;
+          avgM = sumM / numSamples;
+          avgMM = sumMM / numSamples;
 
           heatCap = (avgEE - avgE * avgE) / (N * T_phase * T_phase);
           X = (avgMM - avgM * avgM) / (N * T_phase);
@@ -121,10 +123,10 @@ int main(int argc, const char* argv[])
           auto t2 = chrono::high_resolution_clock::now();
           double duration = chrono::duration<double>(t2 - t1).count();
 
-          cout << "Finished computation for T=" << T_phase
-               << " K after " << int(duration) / 60
-               << " min, "    << int(duration) % 60
-               << " sec"
+          cout << "Part " << t + 1
+               << " finished in "
+               << int(duration) / 60 << " min, "
+               << int(duration) % 60 << " sec"
                << endl;
         }
       }
@@ -137,7 +139,7 @@ int main(int argc, const char* argv[])
 
   else
   {
-    results = cube(nCyclesPerThread, 4, threads);
+    results = cube(nCyclesPerThread, 6, threads);
 
     // If the -fopenmp flag is passed to the compiler, the code
     // will run in parallel
@@ -150,6 +152,7 @@ int main(int argc, const char* argv[])
 
         mt19937 generator;
         unsigned int threadSeed = baseSeed + threadID;
+
         generator.seed(threadSeed);
 
         // Each thread gets their own copy of the lattice to work with
@@ -162,7 +165,9 @@ int main(int argc, const char* argv[])
         double sumEE = 0;
         double sumM = 0;
         double sumMM = 0;
-        double avgEps, avgEps_sqrd, avgM, avgM_sqrd, heatCap, X;
+        double avgE, avgEE, avgM, avgMM;
+        double avg_e, avg_m;
+        double heatCap, X;
 
         // Parallelized for loop. Note that only the first loop is
         // parallelized.
@@ -178,15 +183,19 @@ int main(int argc, const char* argv[])
             sumM += fabs(threadM);
             sumMM += (threadM * threadM);
 
-            avgEps = sumE / (n * N);
-            avgEps_sqrd = sumEE / (n * N * N);
-            avgM = sumM / (n * N);
-            avgM_sqrd = sumMM / (n * N * N);
-            heatCap = N * (avgEps_sqrd - avgEps * avgEps) / (T * T);
-            X = N * (avgM_sqrd - avgM * avgM) / T;
+            avg_e = sumE / (n * N);
+            avg_m = sumM / (n * N);
+
+            avgE = sumE / n;
+            avgEE = sumEE / n;
+            avgM = sumM / n;
+            avgMM = sumMM / n;
+
+            heatCap = (avgEE - avgE * avgE) / (T * T);
+            X = (avgMM - avgM * avgM) / T;
 
             // Saving results to individual slices belonging to each thread
-            results.slice(i).row(n - 1) = rowvec{avgEps, avgM, heatCap, X};
+            results.slice(i).row(n - 1) = rowvec{avg_e, avg_m, heatCap, X, threadE / N, threadM / N};
           }
         }
       }
@@ -203,7 +212,9 @@ int main(int argc, const char* argv[])
       double sumEE = 0;
       double sumM = 0;
       double sumMM = 0;
-      double avgEps, avgEps_sqrd, avgM, avgM_sqrd, heatCap, X;
+      double avgE, avgEE, avgM, avgMM;
+      double avg_e, avg_ee, avg_m, avg_mm;
+      double heatCap, X;
 
       for (int n = 1; n <= nCyclesPerThread; n++)
       {
@@ -214,14 +225,20 @@ int main(int argc, const char* argv[])
         sumM += fabs(serialM);
         sumMM += (serialM * serialM);
 
-        avgEps = sumE / (n * N);
-        avgEps_sqrd = sumEE / (n * N * N);
-        avgM = sumM / (n * N);
-        avgM_sqrd = sumMM / (n * N * N);
-        heatCap = N * (avgEps_sqrd - avgEps * avgEps) / (T * T);
-        X = N * (avgM_sqrd - avgM * avgM) / T;
+        avg_e = sumE / (n * N);
+        avg_ee = sumEE / (n * N * N);
+        avg_m = sumM / (n * N);
+        avg_mm = sumMM / (n * N * N);
 
-        results.slice(0).row(n - 1) = rowvec{avgEps, avgM, heatCap, X};
+        avgE = sumE / n;
+        avgEE = sumEE / n;
+        avgM = sumM / n;
+        avgMM = sumMM / n;
+
+        heatCap = (avgEE - avgE * avgE) / (N * T * T);
+        X = (avgMM - avgM * avgM) / (N * T);
+
+        results.slice(0).row(n - 1) = rowvec{avg_e, avg_m, heatCap, X, serialE / N, serialM / N};
       }
     }
 
