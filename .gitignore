@@ -1,7 +1,5 @@
 # Files NOT to be excluded
 !Project_4/figures/
-*.pdf
-*.txt
 
 # Files to be excluded
 
