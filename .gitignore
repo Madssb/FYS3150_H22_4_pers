@@ -1,4 +1,5 @@
 # Files to be excluded
+!Project_4/plotting/*.pdf
 
 # Text files and executables
 *.txt
