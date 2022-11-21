@@ -7,7 +7,7 @@ in the same folder as this program.
 
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import linregress as reg
+import scipy.stats as stats 
 
 def analyticalValues(T):
     '''
