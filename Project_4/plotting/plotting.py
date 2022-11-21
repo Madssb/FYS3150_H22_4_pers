@@ -1,25 +1,30 @@
-# Code to visualize how estimates of <e> and <|m|> evolve with the number of
-# MCMC cycles
+'''
+All of the programs in this file will need to have the .txt files in the same
+folder as the program itself. They will use them to produce different plots
+depending on the function. All plots will be saved to a folder called figures/
+in the same folder as this program.
+'''
 
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def analyticalValues():
+def analyticalValues(T):
     '''
     Return the analytical values of energy and magnetization per spin,
     specific heat cap. and susceptibility for 2x2 case
     '''
 
     # Expected values for <e>, <e^2>, <|m|> and <m^2>
-    e = -2 * np.sinh(8) / (np.cosh(8) + 3)
-    e_sqrd = 4 * np.cosh(8) / (np.cosh(8) + 3)
-    m = 1. / 2 * (np.exp(8) + 2) / (np.cosh(8) +3)
-    m_sqrd = 1. / 2 * (np.exp(8) + 1) / (np.cosh(8) + 3)
+    e = -2 * np.sinh(8 / T) / (np.cosh(8 / T) + 3)
+    e_sqrd = 4 * np.cosh(8 / T) / (np.cosh(8 / T) + 3)
+    m = 1. / 2 * (np.exp(8 / T) + 2) / (np.cosh(8 / T) +3)
+    m_sqrd = 1. / 2 * (np.exp(8 / T) + 1) / (np.cosh(8 / T) + 3)
     C_V = 4 * (e_sqrd - e**2)
     X = 4 * (m_sqrd - m**2)
 
     return e, e_sqrd, m, m_sqrd, C_V, X
+
 
 def plotConvergence(filename, L, T, cycles=1000000, include_analytical=None, parallel=None, save=None):
     '''
@@ -32,13 +37,6 @@ def plotConvergence(filename, L, T, cycles=1000000, include_analytical=None, par
     e, m, c, x, _, __ = np.loadtxt(filename, unpack=True)
 
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(10, 4), sharex=True)
-
-    if parallel == True:
-
-        fig.suptitle(f'{L}x{L} lattice at T={T:.1f} K\nfrom parallel coding')
-
-    else:
-        fig.suptitle(f'{L}x{L} lattice at T={T:.1f} K')
 
     ax1.plot(nCycles, e, lw=1, color='red', label=r'$\overline{\epsilon}$')
     ax1.set_xscale('log')
@@ -62,7 +60,7 @@ def plotConvergence(filename, L, T, cycles=1000000, include_analytical=None, par
 
     if(include_analytical == True):
 
-        e, e_sqrd, m, m_sqrd, C_V, X = analyticalValues()
+        e, e_sqrd, m, m_sqrd, C_V, X = analyticalValues(T)
 
         y = np.ones(len(nCycles))
 
@@ -82,19 +80,21 @@ def plotConvergence(filename, L, T, cycles=1000000, include_analytical=None, par
 
         plt.savefig(f'../figures/convergence_L{L}_T{int(T)}.pdf')
 
-'''########################################################################'''
 
 def plotOrderedUnordered(ordered_unordered, cycles=1000000, save=None):
+    '''
+    This function plots the observables computed on two systems; one where all
+    of the spins has been set to +1 and one where they are randomly initialized
+    '''
 
     nCycles = np.linspace(1, cycles, cycles)
 
-    fig, axes = plt.subplots(2, 2, figsize=(12, 6.75), sharex=True)
-    fig.suptitle('20x20 lattice')
+    fig, axes = plt.subplots(2, 2, figsize=(10, 4), sharex=True)
 
     T = [1, 2]
     colors = ['red', 'royalblue']
     labels = ['1', '2.4']
-    ylabels = [r'Energy $[J]$', 'Magnetization']
+    ylabels = [r'$[J]$', r'$<|m|>$']
 
     for i in range(2):
 
@@ -104,19 +104,34 @@ def plotOrderedUnordered(ordered_unordered, cycles=1000000, save=None):
 
             val = np.loadtxt(filename, usecols=j)
 
-            axes[i, j].plot(nCycles, val, color=colors[i], lw=1, label=f'T={labels[i]}')
-            axes[i, j].set_xlabel('Cycles')
-            axes[i, j].set_ylabel(ylabels[j])
-            axes[i, j].set_xscale('log')
+            axes[i, j].plot(nCycles, val, color=colors[i], lw=1, label=f'T={T[i]}\n{ordered_unordered}')
+            axes[i, j].set_xlabel('No. of cycles')
+
+            if j == 1 or j == 3:
+
+                axes[i, j].tick_params(axis='y', which='both', labelleft=False, labelright=True, right=True, left=False)
+                axes[i, j].set_ylabel(ylabels[j], labelpad= -40 * 8 - 13)
+
+            else:
+
+                axes[i, j].set_ylabel(ylabels[j])
+                axes[i, j].set_xscale('log')
+
             axes[i, j].legend()
 
-    fig.subplots_adjust(hspace=0)
+    fig.subplots_adjust(hspace=0, wspace=0)
+
+    if save == True:
+
+        plt.savefig('../figures/' + ordered_unordered + '_L20.pdf')
 
 
 def histogram(ordered_unordered, L=20, burnIn=0, save=None):
+    '''
+    Creating normalized histograms from either ordered or unordered systems
+    '''
 
-    fig, axes = plt.subplots(2, 1, figsize=(12, 6.75))
-    fig.suptitle('Probability density from ' + ordered_unordered + ' state')
+    fig, axes = plt.subplots(1, 2, figsize=(10.6, 6))
 
     T = ['1', '2']
 
@@ -127,169 +142,94 @@ def histogram(ordered_unordered, L=20, burnIn=0, save=None):
         eBurn = e[burnIn:]
 
         axes[i].hist(eBurn, bins='auto', histtype='stepfilled', density=True, color='royalblue', alpha=1)
-        axes[i].set_title('T=' + T[i] + ' K')
+        axes[i].set_xlabel(r'Temperature [J/k$_B$]', fontsize=18)
+
+    axes[0].set_ylabel('Frequency', fontsize=18)
+    axes[0].tick_params(axis='both', which='both', labelsize=18)
+
+    axes[1].tick_params(axis='y', which='both', labelleft=False, labelright=True, right=True, left=False, labelsize=18)
+    axes[1].tick_params(axis='x', which='both', labelsize=18)
+
+    plt.subplots_adjust(wspace=0)
 
     if save == True:
 
         plt.savefig('../figures/pdf_' + f'{L}.pdf')
 
-    fig.tight_layout()
 
+def plotPhase(wide_narrow, start_temp=2.1, stop_temp=2.4, n_points=6, burn_in=None, save=None, include_160=None):
+    '''
+    This function plots <e>, <|m|>, C_V and X in hopes of seeing signs of
+    phase transition
+    '''
 
-def burnIn(filename1, filename2, L, T1, T2, save=None):
+    if include_160 == True:
 
-    nCycles1, eps1, magn1, _, __ = np.loadtxt(filename1, unpack=True)
-    nCycles2, eps2, magn2, _, __ = np.loadtxt(filename2, unpack=True)
-
-    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, sharex=True, figsize=(8, 4.5))
-
-    ax1.set_title(f'T={T1} K')
-    ax1.plot(nCycles1, eps1, color='red', lw=1, label=r'$\varepsilon$')
-    ax1.legend()
-
-    ax2.set_title(f'T={T2} K')
-    ax2.plot(nCycles2, eps2, color='red', lw=1, label=r'$\varepsilon$')
-    ax2r = ax2.secondary_yaxis('right')
-    ax2r.tick_params('y')
-    ax2.set_yticks([])
-    ax2.legend()
-
-    ax3.plot(nCycles1, magn1, color='black', lw=1, label='<|m|>')
-    ax3t = ax3.secondary_xaxis('top')
-    ax3t.tick_params('x', direction='inout')
-    ax3t.set_xticklabels([])
-    ax3.legend()
-
-    ax4.plot(nCycles2, magn2, color='black', lw=1, label='<|m|>')
-    ax4t = ax4.secondary_xaxis('top')
-    ax4t.tick_params('x', direction='inout')
-    ax4t.set_xticklabels([])
-    ax4r = ax4.secondary_yaxis('right')
-    ax4r.tick_params('y')
-    ax4.set_yticks([])
-    ax4.legend()
-
-    plt.subplots_adjust(hspace=0, wspace=0)
-
-
-def plotParallel(filename, L, T, nruns, include_analytical=None, threads=None):
-
-    fig, ax = plt.subplots(2, 1, figsize=(10.6, 6), sharex=True)
-    title = f'{L}x{L} lattice at T={T:.1f} K'
-
-    labels = np.array([r'$\epsilon$', 'm', r'$C_V$', r'$\chi$'])
-    cycles = np.linspace(1, nruns, nruns)
-
-    if threads != None:
-
-        fig.suptitle(title + f'\nfrom {threads} threads')
-
-        e1, m1, _, __, ___, ____ = np.loadtxt(filename, max_rows=nruns, unpack=True)
-        e2, m2, _, __, ___, ____ = np.loadtxt(filename, skiprows=nruns, max_rows=nruns, unpack=True)
-        e3, m3, _, __, ___, ____ = np.loadtxt(filename, skiprows=2 * nruns, max_rows=nruns, unpack=True)
-        e4, m4, _, __, ___, ____ = np.loadtxt(filename, skiprows=3 * nruns, max_rows=nruns, unpack=True)
-
-        e = np.array([e1, e2, e3, e4])
-        m = np.array([m1, m2, m3, m4])
-
-        ebase = e[0, -1]
-        emin = e.min() - ebase
-        emax = e.max() - ebase
-        elim = [e.min() + abs(emin * .5), e.max() - abs(emax * .95)]
-
-        mbase = m[0, -1]
-        mmin = m.min() - mbase
-        mmax = m.max() - mbase
-        mlim = [m.min() + abs(mmin * .3), m.max() - abs(mmax * .3)]
-
-        vals = np.array([e, m])
-
-        for i in range(len(ax)):
-            for j in range(len(e)):
-
-                val = vals[i, j, :]
-
-                ax[i].plot(cycles, val, lw=.75)
+        L = [60, 80, 100, 160]
 
     else:
 
-        fig.suptitle(title)
+        L = [40, 60, 80, 100]
 
-        e, m, _, __ = np.loadtxt(filename, unpack=True)
-        elim = []
-        mlim = []
+    T = np.linspace(start_temp, stop_temp, n_points)
 
-        vals = np.array([e, m])
-
-        for i in range(len(ax)):
-
-            val = vals[i]
-
-            ax[i].plot(cycles, val, lw=.75)
-
-    ax[0].tick_params(axis='y', direction='in')
-
-    ax[1].tick_params(axis='both', direction='in')
-    ax1t = ax[1].secondary_xaxis('top')
-    ax1t.tick_params(axis='x', direction='inout')
-    ax1t.set_xticklabels([])
-
-    # ax[0].set_ylim(elim)
-    ax[0].set_ylabel('Energy per spin [J]')
-
-    # ax[1].set_ylim(mlim)
-    ax[1].set_xlabel('No. of cycles')
-    ax[1].set_ylabel('Magnetization')
-
-    plt.subplots_adjust(hspace=0, wspace=0)
-
-
-def plotPhase(burn_in=None, save=None):
-
-    N = 6
-    L = [40, 60, 80, 100]
-    T = np.linspace(2.1, 2.4, N)
-
-    fig, axes = plt.subplots(2, 2, figsize=(10.6, 6))
+    fig, axes = plt.subplots(2, 2, figsize=(10, 4.5), sharex=True)
     ax = axes.flatten()
 
     lines = ['solid', 'dotted', 'dashed', 'dashdot']
-    ylabels=[r'$<\epsilon>$', r'$<|m|>$', r'$C_V$', r'$\chi$']
+    ylabels=[r'$\langle\epsilon\rangle$', r'$\langle|m|\rangle$', r'$C_V$', r'$\chi$']
 
     for i in range(4):
 
-        filename = 'phase_L' + f'{L[i]}_v2.txt'
+        filename = wide_narrow + '_phase_L' + f'{L[i]}.txt'
 
         for j in range(4):
 
             val = np.loadtxt(filename, usecols=j)
 
             ax[j].plot(T, val, color='black', lw=.75, ls=lines[i], label=f'{L[i]}x{L[i]}')
-            ax[j].set_xlabel(r'Temperature $[T/k_B]$')
-            ax[j].set_ylabel(ylabels[j])
-            ax[j].legend()
+            ax[j].set_xlabel(r'Temperature [J/k$_B$]')
 
-    fig.tight_layout()
+            if i == 1 or i == 3:
+
+                ax[i].tick_params(axis='y', which='both', labelleft=False, labelright=True, right=True, left=False)
+                ax[i].set_ylabel(ylabels[j], labelpad= -40 * 8 - 8)
+
+            else:
+
+                ax[j].set_ylabel(ylabels[j])
+
+    ax[0].legend()
+
+    plt.subplots_adjust(hspace=0, wspace=0)
 
     if save == True:
 
-        plt.savefig('../figures/phase_transition.pdf')
+        plt.savefig(f'../figures/{wide_narrow}_phase_transition.pdf')
 
+
+# print(analyticalValues(1)[4:])
+# print(analyticalValues(2.4)[4:])
 
 # plotConvergence('unordered_L2_T1.txt', 2, 1, include_analytical=True, save=True)
 # plotConvergence('unordered_L20_T2.txt', 20, 2.4, save=True)
-# plotOrderedUnordered('ordered')
-# burnIn('../unordered_20by20_lattice_temp_1.txt', '../unordered_20by20_lattice_temp_2.txt', 20, 1, 2.4)
-# plotParallel('../parallel_L40_v2.txt', 40, 1, 1000000, threads=4)
-# plotParallel('../parallel_L20_T2.txt', 20, 2.5, 1000000, threads=4)
-# plotParallel('../L20_T2.txt', 20, 2.5, 1000000)
-# plotParallel('../test_1.txt', 60, 2.5, 100000, threads=4)
-# plotPhase(save=True)
 
+# plotOrderedUnordered('ordered', save=True)
+# plotOrderedUnordered('unordered', save=True)
 
 burnInIDX = 250000
 
 # histogram('ordered', burnIn=burnInIDX)
-# histogram('unordered', burnIn=burnInIDX)
+# histogram('unordered', burnIn=burnInIDX, save=True)
+
+# plotParallel('../parallel_L40_v2.txt', 40, 1, 1000000, threads=4)
+# plotParallel('../parallel_L20_T2.txt', 20, 2.5, 1000000, threads=4)
+# plotParallel('../L20_T2.txt', 20, 2.5, 1000000)
+# plotParallel('../test_1.txt', 60, 2.5, 100000, threads=4)
+
+# plotPhase('wide', n_points=10)
+# plotPhase('narrow', n_points=10, start_temp=2.2, stop_temp=2.35)
+# plotPhase('wide', n_points=10, save=True)
+plotPhase('narrow', n_points=10, start_temp=2.2, stop_temp=2.35, save=True)
 
 plt.show()

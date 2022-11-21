@@ -55,10 +55,26 @@ int main(int argc, const char* argv[])
 
   if (simulationType == "phasetransition")
   {
-    int numTempElements = 6;
-    vec tempList = linspace(2.1, 2.4, numTempElements);
+    // The program will ask the user for temperature range
+    double startTemp, stopTemp;
+    int numTempElements_2;
+
+    cout << "Enter low bound of temperature range: ";
+    cin >> startTemp;
+    cout << "And now, highest: ";
+    cin >> stopTemp;
+    cout << "Finally, enter the number of temperature elements to be simulated: ";
+    cin >> numTempElements_2;
+    cout << "Temperature ranges from " << startTemp << " to " << stopTemp
+         << ", with dT=" << (stopTemp - startTemp) / numTempElements_2 << "\n"
+         << endl;
+
+    int numTempElements = numTempElements_2;
+    vec tempList = linspace(startTemp, stopTemp, numTempElements);
 
     mat phaseRes = mat(numTempElements, 4);
+
+    // The program will ignore the 1/4 first samples
     double burnIn = nCyclesPerThread / 4.;
     double numSamples = nCyclesPerThread - burnIn;
 
@@ -66,6 +82,12 @@ int main(int argc, const char* argv[])
     {
       #pragma omp parallel
       {
+        /*
+        Inside the parallel region, each thread will have their own RNG and
+        will work on one temperature. The final results for specific heat cap.
+        and susceptibility is stored by each thread to the corresponding row
+        in the result matrix "phaseRes".
+        */
         const int threadID = omp_get_thread_num();
 
         mt19937 generator;
@@ -89,11 +111,13 @@ int main(int argc, const char* argv[])
 
           mat threadLattice = initialize_lattice(L, T_phase, threadE, threadM, false);
 
+          // Starting burn in
           for (int burn = 0; burn < burnIn; burn++)
           {
             mcmc(threadLattice, generator, L, threadE, threadM, T_phase);
           }
 
+          // Samples are drawn from here
           for (int n = burnIn; n < nCyclesPerThread; n++)
           {
             mcmc(threadLattice, generator, L, threadE, threadM, T_phase);
@@ -123,11 +147,15 @@ int main(int argc, const char* argv[])
           auto t2 = chrono::high_resolution_clock::now();
           double duration = chrono::duration<double>(t2 - t1).count();
 
+          // Printing to screen in order to follow progress
           cout << "Part " << t + 1
                << " finished in "
                << int(duration) / 60 << " min, "
                << int(duration) % 60 << " sec"
+               << "\nParts remaining: " << numTempElements_2 - 1 << "\n"
                << endl;
+
+          numTempElements_2 -= 1;
         }
       }
     }
