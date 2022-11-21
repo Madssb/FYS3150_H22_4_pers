@@ -7,7 +7,7 @@ in the same folder as this program.
 
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
+from scipy.stats import linregress as reg
 
 def analyticalValues(T):
     '''
@@ -208,6 +208,43 @@ def plotPhase(wide_narrow, start_temp=2.1, stop_temp=2.4, n_points=6, burn_in=No
         plt.savefig(f'../figures/{wide_narrow}_phase_transition.pdf')
 
 
+def criticalTemperature(wide_narrow, save=None):
+    '''
+    Estimate the critical temperature of a system of infinate
+    lattice size.
+    '''
+
+    if wide_narrow == 'wide':
+
+        temps = np.linspace(2.1, 2.4, 10)
+
+    else:
+
+        temps = np.linspace(2.2, 2.35, 10)
+
+    fig, ax = plt.subplots(figsize=(7, 7))
+
+    L = np.array([40, 60, 80, 100])
+    tc = np.zeros(len(L))
+
+    for i in range(len(L)):
+
+        filename = wide_narrow + f'_phase_L{L[i]}.txt'
+
+        c = np.loadtxt(filename, usecols=2)
+
+        idx = np.where(c == np.max(c))[0][0]
+        tc[i] = temps[idx]
+
+    linreg = reg(1 / L, tc)
+    a = linreg.slope
+    b = linreg.intercept
+
+    ax.plot(L, a / L + b, color='black', lw=1)
+
+
+
+
 # print(analyticalValues(1)[4:])
 # print(analyticalValues(2.4)[4:])
 
@@ -230,6 +267,8 @@ burnInIDX = 250000
 # plotPhase('wide', n_points=10)
 # plotPhase('narrow', n_points=10, start_temp=2.2, stop_temp=2.35)
 # plotPhase('wide', n_points=10, save=True)
-plotPhase('narrow', n_points=10, start_temp=2.2, stop_temp=2.35, save=True)
+# plotPhase('narrow', n_points=10, start_temp=2.2, stop_temp=2.35, save=True)
+
+criticalTemperature('wide')
 
 plt.show()
