@@ -3,9 +3,16 @@
 # Text files and executables
 *.txt
 *.exe
+*.o
 
 # Figures
 *.pdf
 *.gif
+*.png
 
+# Don't know it, don't want it
 .DS_Store
+
+# Want the folder containing the figures in specified folder to be INcluded.
+# This is done by !subfolder/subsubfolder/.../
+!Project_4/figures/*
