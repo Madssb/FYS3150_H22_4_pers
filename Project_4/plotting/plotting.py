@@ -31,7 +31,7 @@ def plotConvergence(filename, L, T, cycles=1000000, include_analytical=None, par
 
     e, m, c, x, _, __ = np.loadtxt(filename, unpack=True)
 
-    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(12, 6.75), sharex=True)
+    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(10, 4), sharex=True)
 
     if parallel == True:
 
@@ -40,26 +40,24 @@ def plotConvergence(filename, L, T, cycles=1000000, include_analytical=None, par
     else:
         fig.suptitle(f'{L}x{L} lattice at T={T:.1f} K')
 
-    ax1.set_title('Energy per spin')
     ax1.plot(nCycles, e, lw=1, color='red', label=r'$\overline{\epsilon}$')
     ax1.set_xscale('log')
     ax1.set_ylabel('[J]')
 
-    ax2.set_title('Magnetization per spin')
     ax2.plot(nCycles, m, lw=1, color='royalblue', label='$\\overline{m}$')
     ax2.set_xscale('log')
-    ax2.set_ylabel('M')
+    ax2.tick_params(axis='y', which='both', labelleft=False, labelright=True, right=True, left=False)
+    ax2.set_ylabel(r'$<|m|>$', labelpad=-40 * 8 - 8)
 
-    ax3.set_title('Specific heat capacity')
     ax3.plot(nCycles, c, lw=1, color='black', label='$\\overline{C_V}$')
-    ax3.set_ylabel('$C_V$')
+    ax3.set_ylabel(r'$C_V$')
     ax3.set_xscale('log')
     ax3.set_xlabel('No. of cycles')
 
-    ax4.set_title('Susceptibility')
     ax4.plot(nCycles, x, lw=1, color='green', label='$\\overline{\chi}$')
     ax4.set_xscale('log')
-    ax4.set_ylabel('$\chi$')
+    ax4.tick_params(axis='y', which='both', labelleft=False, labelright=True, right=True, left=False)
+    ax4.set_ylabel(r'$\chi$', labelpad= -40 * 8 - 8)
     ax4.set_xlabel('No. of cycles')
 
     if(include_analytical == True):
@@ -78,11 +76,13 @@ def plotConvergence(filename, L, T, cycles=1000000, include_analytical=None, par
     ax3.legend()
     ax4.legend()
 
-    fig.tight_layout()
+    plt.subplots_adjust(hspace=0, wspace=0)
 
     if save == True:
 
         plt.savefig(f'../figures/convergence_L{L}_T{int(T)}.pdf')
+
+'''########################################################################'''
 
 def plotOrderedUnordered(ordered_unordered, cycles=1000000, save=None):
 
@@ -276,8 +276,8 @@ def plotPhase(burn_in=None, save=None):
         plt.savefig('../figures/phase_transition.pdf')
 
 
-# plotConvergence('unordered_L2_T1.txt', 2, 1, include_analytical=True)
-# plotConvergence('unordered_L20_T2.txt', 20, 2.4)
+# plotConvergence('unordered_L2_T1.txt', 2, 1, include_analytical=True, save=True)
+# plotConvergence('unordered_L20_T2.txt', 20, 2.4, save=True)
 # plotOrderedUnordered('ordered')
 # burnIn('../unordered_20by20_lattice_temp_1.txt', '../unordered_20by20_lattice_temp_2.txt', 20, 1, 2.4)
 # plotParallel('../parallel_L40_v2.txt', 40, 1, 1000000, threads=4)
