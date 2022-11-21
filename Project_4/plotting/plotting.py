@@ -21,7 +21,7 @@ def analyticalValues():
 
     return e, e_sqrd, m, m_sqrd, C_V, X
 
-def plotConvergence(filename, L, T, cycles=1000000, include_analytical=None, parallel=None):
+def plotConvergence(filename, L, T, cycles=1000000, include_analytical=None, parallel=None, save=None):
     '''
     Take a .txt file with computed values and plot the
     evolment with number of MCMC cycles
@@ -79,6 +79,10 @@ def plotConvergence(filename, L, T, cycles=1000000, include_analytical=None, par
     ax4.legend()
 
     fig.tight_layout()
+
+    if save == True:
+
+        plt.savefig(f'../figures/convergence_L{L}_T{int(T)}.pdf')
 
 def plotOrderedUnordered(ordered_unordered, cycles=1000000, save=None):
 
