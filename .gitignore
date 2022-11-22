@@ -3,9 +3,14 @@
 # Text files and executables
 *.txt
 *.exe
+*.o
 
 # Figures
 *.pdf
 *.gif
+*.png
+
+# Including figure folder 
+!Project_4/figures*
 
 .DS_Store
