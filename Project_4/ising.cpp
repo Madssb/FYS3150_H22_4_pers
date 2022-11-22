@@ -21,7 +21,7 @@ int main(int argc, const char* argv[])
 {
   const int threads = atoi(argv[2]);          // No. of threads
   const int L = atoi(argv[3]);                // Lattice length
-  const int nCyclesPerThread = atoi(argv[4]); // No. of MCMC cycles per thread
+  const int nCycles = atoi(argv[4]);          // No. of MCMC cycles per thread
   const double T = atof(argv[5]);             // Temperature [J/k]
   const string ordered_str = argv[6];         // Weather the lattice is ordered or not
   const string outputFilename = argv[7];      // Filename for output
@@ -75,8 +75,8 @@ int main(int argc, const char* argv[])
     mat phaseRes = mat(numTempElements, 4);
 
     // The program will ignore the 1/4 first samples
-    double burnIn = nCyclesPerThread / 4.;
-    double numSamples = nCyclesPerThread - burnIn;
+    double burnIn = nCycles / 4.;
+    double numSamples = nCycles - burnIn;
 
     #ifdef _OPENMP
     {
@@ -118,7 +118,7 @@ int main(int argc, const char* argv[])
           }
 
           // Samples are drawn from here
-          for (int n = burnIn; n < nCyclesPerThread; n++)
+          for (int n = burnIn; n < nCycles; n++)
           {
             mcmc(threadLattice, generator, L, threadE, threadM, T_phase);
 
@@ -167,12 +167,15 @@ int main(int argc, const char* argv[])
 
   else
   {
-    results = cube(nCyclesPerThread, 6, threads);
-
     // If the -fopenmp flag is passed to the compiler, the code
     // will run in parallel
     #ifdef _OPENMP
     {
+      int nCyclesPerThread = nCycles / threads;
+      cout << nCyclesPerThread << endl;
+
+      results = cube(nCyclesPerThread, 6, threads);
+
       // Start parallell region
       #pragma omp parallel
       {
@@ -231,6 +234,8 @@ int main(int argc, const char* argv[])
 
     #else
     {
+      results = cube(nCycles, 6, threads);
+
       mt19937 generator;
       generator.seed(baseSeed);
 
@@ -244,7 +249,7 @@ int main(int argc, const char* argv[])
       double avg_e, avg_ee, avg_m, avg_mm;
       double heatCap, X;
 
-      for (int n = 1; n <= nCyclesPerThread; n++)
+      for (int n = 1; n <= nCycles; n++)
       {
         mcmc(lattice, generator, L, serialE, serialM, T);
 
