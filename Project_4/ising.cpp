@@ -172,7 +172,6 @@ int main(int argc, const char* argv[])
     #ifdef _OPENMP
     {
       int nCyclesPerThread = nCycles / threads;
-      cout << nCyclesPerThread << endl;
 
       results = cube(nCyclesPerThread, 6, threads);
 
@@ -196,9 +195,9 @@ int main(int argc, const char* argv[])
         double sumEE = 0;
         double sumM = 0;
         double sumMM = 0;
-        double avgE, avgEE, avgM, avgMM;
-        double avg_e, avg_m;
-        double heatCap, X;
+        double avgE = 0, avgEE = 0, avgM = 0, avgMM = 0;
+        double avg_e = 0, avg_m = 0;
+        double heatCap = 0, X = 0;
 
         // Parallelized for loop. Note that only the first loop is
         // parallelized.

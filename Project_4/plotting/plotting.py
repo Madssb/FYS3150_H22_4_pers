@@ -20,8 +20,8 @@ def analyticalValues(T):
     e_sqrd = 4 * np.cosh(8 / T) / (np.cosh(8 / T) + 3)
     m = 1. / 2 * (np.exp(8 / T) + 2) / (np.cosh(8 / T) +3)
     m_sqrd = 1. / 2 * (np.exp(8 / T) + 1) / (np.cosh(8 / T) + 3)
-    C_V = 4 * (e_sqrd - e**2)
-    X = 4 * (m_sqrd - m**2)
+    C_V = 4. / T**2 * (e_sqrd - e**2)
+    X = 4. / T * (m_sqrd - m**2)
 
     return e, e_sqrd, m, m_sqrd, C_V, X
 
@@ -38,21 +38,21 @@ def plotConvergence(filename, L, T, cycles=1000000, include_analytical=None, par
 
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(10, 4), sharex=True)
 
-    ax1.plot(nCycles, e, lw=1, color='red', label=r'$\overline{\epsilon}$')
+    ax1.plot(nCycles, e, lw=1, color='red', label=r'$\langle\epsilon\rangle$')
     ax1.set_xscale('log')
     ax1.set_ylabel('[J]')
 
-    ax2.plot(nCycles, m, lw=1, color='royalblue', label='$\\overline{m}$')
+    ax2.plot(nCycles, m, lw=1, color='royalblue', label=r'$\langle|m|\rangle$')
     ax2.set_xscale('log')
     ax2.tick_params(axis='y', which='both', labelleft=False, labelright=True, right=True, left=False)
     ax2.set_ylabel(r'$<|m|>$', labelpad=-40 * 8 - 8)
 
-    ax3.plot(nCycles, c, lw=1, color='black', label='$\\overline{C_V}$')
+    ax3.plot(nCycles, c, lw=1, color='black', label=r'$C_V$')
     ax3.set_ylabel(r'$C_V$')
     ax3.set_xscale('log')
     ax3.set_xlabel('No. of cycles')
 
-    ax4.plot(nCycles, x, lw=1, color='green', label='$\\overline{\chi}$')
+    ax4.plot(nCycles, x, lw=1, color='green', label=r'$\chi$')
     ax4.set_xscale('log')
     ax4.tick_params(axis='y', which='both', labelleft=False, labelright=True, right=True, left=False)
     ax4.set_ylabel(r'$\chi$', labelpad= -40 * 8 - 8)
@@ -64,10 +64,10 @@ def plotConvergence(filename, L, T, cycles=1000000, include_analytical=None, par
 
         y = np.ones(len(nCycles))
 
-        ax1.plot(nCycles, y * e, color='green', lw=1, ls='dashed', label='$<\\varepsilon>$')
-        ax2.plot(nCycles, y * m, color='black', lw=1, ls='dashed', label='<|m|>')
-        ax3.plot(nCycles, y * C_V, color='royalblue', lw=1, ls='dashed', label=r'$C_V^{analytical}$')
-        ax4.plot(nCycles, y * X, color='red', lw=1, ls='dashed', label=r'$\chi^{analytical}$')
+        ax1.plot(nCycles, y * e, color='green', lw=1, ls='dashed', label='Analytical')
+        ax2.plot(nCycles, y * m, color='black', lw=1, ls='dashed', label='Analytical')
+        ax3.plot(nCycles, y * C_V, color='royalblue', lw=1, ls='dashed', label='Analytical')
+        ax4.plot(nCycles, y * X, color='red', lw=1, ls='dashed', label='Analytical')
 
     ax1.legend()
     ax2.legend()
@@ -239,15 +239,51 @@ def criticalTemperature(wide_narrow, save=None):
     linreg = stats.linregress(1 / L, tc)
     linefit = np.poly1d(linreg[:2])
 
-    ax.plot(L, linefit(L), color='black', lw=1, label='Linefit')
+    ax.plot(L, linefit(1 / L), color='black', lw=1, label='Linefit')
+
+
+def timing(save=None):
+    '''
+    Simple function to visualize timing of serial vs. parallel
+    '''
+    threads, t = np.loadtxt('timing.txt', unpack=True)
+
+    speedup = np.zeros(len(t))
+
+    for i in range(len(t)):
+
+        speedup[i] = t[0] / t[i]
+
+    fig, ax = plt.subplots(figsize=(8, 4))
+
+    ax.plot(threads, t, color='black', lw=1, marker='x')
+
+    for i in range(len(t)):
+
+        x = threads[i]
+        y = t[i]
+        text = f'SU={t[0] / y:.3f}'
+
+        ax.text(x + .1, y, text)
+
+    ax.set_xticks(threads)
+    ax.tick_params(axis='both')
+    ax.set_xlabel('Threads')
+    ax.set_ylabel('Time [s]')
+    ax.set_xlim([.9, 4.75])
+
+    if save == True:
+
+        plt.savefig('../figures/timing.pdf')
 
 
 
 
-print(analyticalValues(1))
-print(analyticalValues(2.4))
+# print(analyticalValues(1))
+# print(analyticalValues(2.4))
 
 # plotConvergence('unordered_L2_T1.txt', 2, 1, include_analytical=True, save=True)
+# plotConvergence('unordered_L2_T2.txt', 2, 2.4, include_analytical=True, save=True)
 # plotConvergence('unordered_L20_T2.txt', 20, 2.4, save=True)
 
 # plotOrderedUnordered('ordered', save=True)
@@ -255,7 +291,7 @@ print(analyticalValues(2.4))
 
 burnInIDX = 250000
 
-# histogram('ordered', burnIn=burnInIDX)
+# histogram('ordered')
 # histogram('unordered', burnIn=burnInIDX, save=True)
 
 # plotParallel('../parallel_L40_v2.txt', 40, 1, 1000000, threads=4)
@@ -268,11 +304,7 @@ burnInIDX = 250000
 # plotPhase('wide', n_points=10, save=True)
 # plotPhase('narrow', n_points=10, start_temp=2.2, stop_temp=2.35, save=True)
 
-<<<<<<< HEAD
-criticalTemperature('narrow')
-# timing(save=True)
-=======
-criticalTemperature('wide')
->>>>>>> 378e2ddcbfd98492013fc1d5c42af0be91e35f9a
+# criticalTemperature('narrow')
+timing(save=True)
 
 plt.show()
