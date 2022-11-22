@@ -40,12 +40,12 @@ def plotConvergence(filename, L, T, cycles=1000000, include_analytical=None, par
 
     ax1.plot(nCycles, e, lw=1, color='red', label=r'$\langle\epsilon\rangle$')
     ax1.set_xscale('log')
-    ax1.set_ylabel('[J]')
+    ax1.set_ylabel(r'$\langle\epsilon\rangle$')
 
     ax2.plot(nCycles, m, lw=1, color='royalblue', label=r'$\langle|m|\rangle$')
     ax2.set_xscale('log')
     ax2.tick_params(axis='y', which='both', labelleft=False, labelright=True, right=True, left=False)
-    ax2.set_ylabel(r'$<|m|>$', labelpad=-40 * 8 - 8)
+    ax2.set_ylabel(r'$\langle|m|\rangle$', labelpad=-40 * 8 - 8)
 
     ax3.plot(nCycles, c, lw=1, color='black', label=r'$C_V$')
     ax3.set_ylabel(r'$C_V$')
@@ -94,7 +94,7 @@ def plotOrderedUnordered(ordered_unordered, cycles=1000000, save=None):
     T = [1, 2]
     colors = ['red', 'royalblue']
     labels = ['1', '2.4']
-    ylabels = [r'$[J]$', r'$<|m|>$']
+    ylabels = [r'$\langle\epsilon\rangle$', r'$\langle|m|\rangle$']
 
     for i in range(2):
 
@@ -144,7 +144,7 @@ def histogram(ordered_unordered, L=20, burnIn=0, save=None):
         axes[i].hist(eBurn, bins='auto', histtype='stepfilled', density=True, stacked=True, color='royalblue', alpha=1)
         axes[i].set_xlabel(r'Energy [J]', fontsize=18)
 
-    axes[0].set_ylabel('Frequency', fontsize=18)
+    axes[0].set_ylabel('Prob. density', fontsize=18)
     axes[0].tick_params(axis='both', which='both', labelsize=18)
 
     axes[1].tick_params(axis='y', which='both', labelleft=False, labelright=True, right=True, left=False, labelsize=18)
