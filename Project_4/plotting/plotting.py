@@ -285,8 +285,8 @@ def timing(save=None):
 
 
 
-# print(analyticalValues(1)[4:])
-# print(analyticalValues(2.4)[4:])
+print(analyticalValues(1))
+print(analyticalValues(2.4))
 
 # plotConvergence('unordered_L2_T1.txt', 2, 1, include_analytical=True, save=True)
 # plotConvergence('unordered_L20_T2.txt', 20, 2.4, save=True)
@@ -305,7 +305,7 @@ burnInIDX = 250000
 # plotPhase('wide', n_points=10, save=True)
 # plotPhase('narrow', n_points=10, start_temp=2.2, stop_temp=2.35, save=True)
 
-# criticalTemperature('narrow')
+criticalTemperature('narrow')
 # timing(save=True)
 
 plt.show()
