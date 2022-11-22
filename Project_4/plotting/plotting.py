@@ -7,7 +7,7 @@ in the same folder as this program.
 
 import numpy as np
 import matplotlib.pyplot as plt
-from  scipy.stats import linregress as reg
+import scipy.stats as stats
 
 def analyticalValues(T):
     '''
@@ -208,7 +208,7 @@ def plotPhase(wide_narrow, start_temp=2.1, stop_temp=2.4, n_points=6, burn_in=No
         plt.savefig(f'../figures/{wide_narrow}_phase_transition.pdf')
 
 
-def criticalTemperature(wide_narrow, L_large=1e100, save=None):
+def criticalTemperature(wide_narrow, save=None):
     '''
     Estimate the critical temperature of a system of infinate
     lattice size.
@@ -236,51 +236,10 @@ def criticalTemperature(wide_narrow, L_large=1e100, save=None):
         idx = np.where(c == np.max(c))[0][0]
         tc[i] = temps[idx]
 
-    linreg = reg(1 / L, tc)
+    linreg = stats.linregress(1 / L, tc)
+    linefit = np.poly1d(linreg[:2])
 
-    a = linreg.slope
-    b = linreg.intercept
-
-    estimate = a / L_large + b
-
-    print(f'Estimated T_c for L={L_large:.1e}: {estimate:.3f} J/k_B')
-
-    ax.plot(L, a / L + b, color='black', lw=1)
-
-
-def timing(save=None):
-    '''
-    Simple function to visualize timing of serial vs. parallel
-    '''
-    threads, t = np.loadtxt('timing.txt', unpack=True)
-
-    speedup = np.zeros(len(t))
-
-    for i in range(len(t)):
-
-        speedup[i] = t[0] / t[i]
-
-    fig, ax = plt.subplots(figsize=(8, 6.5))
-
-    ax.plot(threads, t, color='black', lw=1, marker='x')
-
-    for i in range(len(t)):
-
-        x = threads[i]
-        y = t[i]
-        text = f'SU={t[0] / y:.3f}'
-
-        ax.text(x + .1, y, text, fontsize=14)
-
-    ax.set_xticks(threads)
-    ax.tick_params(axis='both', labelsize=16)
-    ax.set_xlabel('Threads', fontsize=18)
-    ax.set_ylabel('Time [s]', fontsize=18)
-    ax.set_xlim([.9, 4.75])
-
-    if save == True:
-
-        plt.savefig('../figures/timing.pdf')
+    ax.plot(L, linefit(L), color='black', lw=1, label='Linefit')
 
 
 
@@ -299,13 +258,16 @@ burnInIDX = 250000
 # histogram('ordered', burnIn=burnInIDX)
 # histogram('unordered', burnIn=burnInIDX, save=True)
 
+# plotParallel('../parallel_L40_v2.txt', 40, 1, 1000000, threads=4)
+# plotParallel('../parallel_L20_T2.txt', 20, 2.5, 1000000, threads=4)
+# plotParallel('../L20_T2.txt', 20, 2.5, 1000000)
+# plotParallel('../test_1.txt', 60, 2.5, 100000, threads=4)
 
 # plotPhase('wide', n_points=10)
 # plotPhase('narrow', n_points=10, start_temp=2.2, stop_temp=2.35)
 # plotPhase('wide', n_points=10, save=True)
 # plotPhase('narrow', n_points=10, start_temp=2.2, stop_temp=2.35, save=True)
 
-# criticalTemperature('narrow')
-# timing(save=True)
+criticalTemperature('wide')
 
 plt.show()
