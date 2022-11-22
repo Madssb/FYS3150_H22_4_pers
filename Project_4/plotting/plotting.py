@@ -131,7 +131,7 @@ def histogram(ordered_unordered, L=20, burnIn=0, save=None):
     Creating normalized histograms from either ordered or unordered systems
     '''
 
-    fig, axes = plt.subplots(1, 2, figsize=(10.6, 6))
+    fig, axes = plt.subplots(1, 2, figsize=(12, 6))
 
     T = ['1', '2']
 
@@ -141,8 +141,8 @@ def histogram(ordered_unordered, L=20, burnIn=0, save=None):
         e = np.loadtxt(filename, usecols=4)
         eBurn = e[burnIn:]
 
-        axes[i].hist(eBurn, bins='auto', histtype='stepfilled', density=True, color='royalblue', alpha=1)
-        axes[i].set_xlabel(r'Temperature [J/k$_B$]', fontsize=18)
+        axes[i].hist(eBurn, bins='auto', histtype='stepfilled', density=True, stacked=True, color='royalblue', alpha=1)
+        axes[i].set_xlabel(r'Energy [J]', fontsize=18)
 
     axes[0].set_ylabel('Frequency', fontsize=18)
     axes[0].tick_params(axis='both', which='both', labelsize=18)
@@ -182,6 +182,14 @@ def plotPhase(wide_narrow, start_temp=2.1, stop_temp=2.4, n_points=6, burn_in=No
     for i in range(4):
 
         filename = wide_narrow + '_phase_L' + f'{L[i]}.txt'
+
+        e = np.loadtxt(filename, usecols=2)
+        idx = np.where(e == np.max(e))[0][0]
+
+        tc = T[idx]
+
+        print(f'\nT_c(L={L[i]})={tc:.3f} J/k_B, at ' + wide_narrow)
+        print(f'C_V at T_c: {e[idx]}')
 
         for j in range(4):
 
@@ -239,7 +247,9 @@ def criticalTemperature(wide_narrow, save=None):
     linreg = stats.linregress(1 / L, tc)
     linefit = np.poly1d(linreg[:2])
 
-    ax.plot(L, linefit(1 / L), color='black', lw=1, label='Linefit')
+    ax.plot(1 / L, linefit(1 / L), color='black', lw=1, label='Linefit')
+    ax.scatter(1 / L, tc)
+    print(linreg.intercept, '+-' , linreg.intercept_stderr)
 
 
 def timing(save=None):
@@ -279,32 +289,24 @@ def timing(save=None):
 
 
 
-# print(analyticalValues(1))
-# print(analyticalValues(2.4))
+print(analyticalValues(1))
+print(analyticalValues(2.4))
 
-# plotConvergence('unordered_L2_T1.txt', 2, 1, include_analytical=True, save=True)
-# plotConvergence('unordered_L2_T2.txt', 2, 2.4, include_analytical=True, save=True)
-# plotConvergence('unordered_L20_T2.txt', 20, 2.4, save=True)
+plotConvergence('unordered_L2_T1.txt', 2, 1, include_analytical=True, save=True)
+plotConvergence('unordered_L2_T2.txt', 2, 2.4, include_analytical=True, save=True)
+plotConvergence('unordered_L20_T2.txt', 20, 2.4, save=True)
 
-# plotOrderedUnordered('ordered', save=True)
-# plotOrderedUnordered('unordered', save=True)
+plotOrderedUnordered('ordered', save=True)
+plotOrderedUnordered('unordered', save=True)
 
 burnInIDX = 250000
 
-# histogram('ordered')
-# histogram('unordered', burnIn=burnInIDX, save=True)
+histogram('unordered', burnIn=burnInIDX, save=True)
+plotPhase('wide', n_points=10, save=True)
+plotPhase('narrow', n_points=10, start_temp=2.2, stop_temp=2.35, save=True)
 
-# plotParallel('../parallel_L40_v2.txt', 40, 1, 1000000, threads=4)
-# plotParallel('../parallel_L20_T2.txt', 20, 2.5, 1000000, threads=4)
-# plotParallel('../L20_T2.txt', 20, 2.5, 1000000)
-# plotParallel('../test_1.txt', 60, 2.5, 100000, threads=4)
-
-# plotPhase('wide', n_points=10)
-# plotPhase('narrow', n_points=10, start_temp=2.2, stop_temp=2.35)
-# plotPhase('wide', n_points=10, save=True)
-# plotPhase('narrow', n_points=10, start_temp=2.2, stop_temp=2.35, save=True)
-
-# criticalTemperature('narrow')
 timing(save=True)
+
+criticalTemperature('narrow')
 
 plt.show()
