@@ -9,13 +9,6 @@
 *.pdf
 *.gif
 *.png
-<<<<<<< HEAD
-
-# Including figure folder 
-!Project_4/figures*
-=======
->>>>>>> 72fff329a974c604d3bf62074ad0d4cd1407628b
-
 # Don't know it, don't want it
 .DS_Store
 
