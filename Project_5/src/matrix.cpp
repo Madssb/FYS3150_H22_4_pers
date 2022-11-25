@@ -21,6 +21,9 @@ Matrix::Matrix(double h_in, double dt_in, double T_in)
   V.zeros(M - 2, M - 2);
   S.zeros(M - 2, M - 2, N);
 
+  u_new = U.as_col();
+  u_current = U.as_col();
+
   A.zeros((M - 2) * (M - 2), (M - 2) * (M - 2));
   B.zeros((M - 2) * (M - 2), (M - 2) * (M - 2));
 }
@@ -31,11 +34,52 @@ int Matrix::index_k(int i, int j)
   return i + (M - 2) * j;
 }
 
+// Set potential barriers
 void Matrix::set_potential(std::string filename, double V_0)
 {
+  // Extracting potenital parameters from file
+  arma::rowvec params;
+  params.load(filename, arma::raw_ascii);
 
+  int n_slits = params(0);        // No.  of slits
+  double x_pos = params(1);       // Position (center) at the x axis
+  double x_width = params(2);     // Width of barrier along x axis
+  double app = params(3);         // Apperture
+  double c_length = params(4);    // Length of (one of the) center barrier(s)
+
+  int n_center = n_slits - 1; // No. of center barriers
+  double e_length = .5 * (1. - c_length - n_slits * app);
+
+  double xi, yi;
+
+  for (int i = 0; i < M - 2; i++)
+  {
+    yi = (i + 1) * h;
+
+    for (int j = 0; j < M - 2; j++)
+    {
+      xi = (j + 1) * h;
+
+      if (xi >= x_pos - .5 * x_width && xi <= x_pos + .501 * x_width)
+      {
+        if (yi <= e_length)
+        {
+          V(i, j) = V_0;
+        }
+        else if (yi >= e_length + app && yi <= e_length + app + c_length)
+        {
+          V(i, j) = V_0;
+        }
+        else if (yi >= 1. - e_length)
+        {
+          V(i, j) = V_0;
+        }
+      }
+    }
+  }
 }
 
+// Fill the matrices according to the Crank-Nicolson regime
 void Matrix::fill_matrices()
 {
   // Vectors a and b, which will be the main diagonals of A and B
@@ -83,4 +127,43 @@ void Matrix::fill_matrices()
   // Setting main diagonals of A and B
   A.diag() = a;
   B.diag() = b;
+}
+
+// Solve matrix eq. Au^(n+1) = Bu^n
+void Matrix::solve()
+{
+  for (int i = 0; i < N; i++)
+  {
+    S.slice(i) = U;
+    u_new = arma::spsolve(A, B * u_current);
+    u_current = u_new;
+  }
+}
+
+// Set the initial state of the system
+void Matrix::set_initial_state(double x_c, double sigma_x, double p_x, double y_c,
+                       double sigma_y, double p_y)
+{
+  arma::cx_double exponent;
+  double re, im;
+  int xi, yi;
+
+  for (int i = 0; i < M - 2; i++)
+  {
+    yi = i;
+
+    for (int j = 0; j < M - 2; j++)
+    {
+      xi = j;
+
+      re = ((xi - x_c) * (xi - x_c)) / (2 * sigma_x * sigma_x)
+         - ((yi - y_c) * (yi - y_c)) / (2 * sigma_y * sigma_y);
+
+      im = p_x * (xi - x_c) + (yi - y_c);
+
+      exponent = arma::cx_double(re, im);
+
+      U(i, j) = exp(exponent);
+    }
+  }
 }
