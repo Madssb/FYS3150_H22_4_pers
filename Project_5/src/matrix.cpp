@@ -4,6 +4,7 @@ This file contains the definition of the Matrix class
 
 #include "matrix.hpp"
 #include <complex>
+#include <fstream>
 
 // Constructor that takes no. of steps in space (M) and time (N), and the
 // total time (T)
@@ -19,7 +20,7 @@ Matrix::Matrix(double h_in, double dt_in, double T_in)
 
   U.zeros(M - 2, M - 2);
   V.zeros(M - 2, M - 2);
-  S.zeros(M - 2, M - 2, N);
+  // S.zeros(M - 2, M - 2, N);
 
   u_new = U.as_col();
   u_current = U.as_col();
@@ -130,14 +131,20 @@ void Matrix::fill_matrices()
 }
 
 // Solve matrix eq. Au^(n+1) = Bu^n
-void Matrix::solve()
+void Matrix::solve(std::string out_filename)
 {
+  std::ofstream outfile;
+  outfile.open(out_filename);
+
   for (int i = 0; i < N; i++)
   {
-    S.slice(i) = U;
+    outfile << U << std::endl;
+    // S.slice(i) = U;
     u_new = arma::spsolve(A, B * u_current);
     u_current = u_new;
   }
+  
+  outfile.close();
 }
 
 // Set the initial state of the system

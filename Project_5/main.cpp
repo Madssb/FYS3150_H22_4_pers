@@ -10,9 +10,11 @@ int main(int argc, const char* argv[])
 {
   const string configuration_in = argv[2];
   const string potential_in = argv[3];
+  const string filename = argv[4];
 
   string config_file = configuration_in + ".txt";
   string potential = potential_in + ".txt";
+  string out_filename = filename + ".txt";
 
   arma::rowvec config;
   config.load(config_file, arma::raw_ascii);
@@ -30,11 +32,11 @@ int main(int argc, const char* argv[])
 
 
 
-  Matrix test = Matrix(h_in, dt_in, T_in);
-  test.fill_matrices();
-  test.set_initial_state(x_c, sigma_x, p_x, y_c, sigma_y, p_y);
-  test.set_potential(potential, V_0);
-  // test.solve();
+  Matrix matrix = Matrix(h_in, dt_in, T_in);
+  matrix.fill_matrices();
+  matrix.set_initial_state(x_c, sigma_x, p_x, y_c, sigma_y, p_y);
+  matrix.set_potential(potential, V_0);
+  matrix.solve(out_filename);
 
   return 0;
 }
