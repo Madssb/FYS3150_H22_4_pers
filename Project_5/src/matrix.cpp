@@ -5,6 +5,7 @@ This file contains the definition of the Matrix class
 #include "matrix.hpp"
 #include <complex>
 #include <fstream>
+#include <assert.h>
 
 // Constructor that takes no. of steps in space (M) and time (N), and the
 // total time (T)
@@ -15,15 +16,12 @@ Matrix::Matrix(double h_in, double dt_in, double T_in)
   T = T_in;
 
   M = 1. / h + 1;
-  N = 1. / dt + 1;
+  N = T / dt + 1;
   r = arma::cx_double(0, dt / (2 * h * h));
 
   U.zeros(M - 2, M - 2);
   V.zeros(M - 2, M - 2);
-  // S.zeros(M - 2, M - 2, N);
-
-  u_new = U.as_col();
-  u_current = U.as_col();
+  S.zeros(M - 2, M - 2, N);
 
   A.zeros((M - 2) * (M - 2), (M - 2) * (M - 2));
   B.zeros((M - 2) * (M - 2), (M - 2) * (M - 2));
@@ -36,48 +34,12 @@ int Matrix::index_k(int i, int j)
 }
 
 // Set potential barriers
-void Matrix::set_potential(std::string filename, double V_0)
+void Matrix::set_potential(std::string filename)
 {
-  // Extracting potenital parameters from file
-  arma::rowvec params;
-  params.load(filename, arma::raw_ascii);
+  // Load the file into the potential
+  V.load(filename, arma::raw_ascii);
+  assert(V.n_rows == (M - 2) && V.n_cols == (M - 2));
 
-  int n_slits = params(0);        // No.  of slits
-  double x_pos = params(1);       // Position (center) at the x axis
-  double x_width = params(2);     // Width of barrier along x axis
-  double app = params(3);         // Apperture
-  double c_length = params(4);    // Length of (one of the) center barrier(s)
-
-  int n_center = n_slits - 1; // No. of center barriers
-  double e_length = .5 * (1. - c_length - n_slits * app);
-
-  double xi, yi;
-
-  for (int i = 0; i < M - 2; i++)
-  {
-    yi = (i + 1) * h;
-
-    for (int j = 0; j < M - 2; j++)
-    {
-      xi = (j + 1) * h;
-
-      if (xi >= x_pos - .5 * x_width && xi <= x_pos + .501 * x_width)
-      {
-        if (yi <= e_length)
-        {
-          V(i, j) = V_0;
-        }
-        else if (yi >= e_length + app && yi <= e_length + app + c_length)
-        {
-          V(i, j) = V_0;
-        }
-        else if (yi >= 1. - e_length)
-        {
-          V(i, j) = V_0;
-        }
-      }
-    }
-  }
 }
 
 // Fill the matrices according to the Crank-Nicolson regime
@@ -131,20 +93,16 @@ void Matrix::fill_matrices()
 }
 
 // Solve matrix eq. Au^(n+1) = Bu^n
-void Matrix::solve(std::string out_filename)
+void Matrix::solve()
 {
-  std::ofstream outfile;
-  outfile.open(out_filename);
-
-  for (int i = 0; i < N; i++)
+  // Solving the equation for each time step and saving as slice in S
+  for (int i = 1; i < N; i++)
   {
-    outfile << U << std::endl;
-    // S.slice(i) = U;
+    S.slice(i) = U;
+    u_current = U.as_col();
     u_new = arma::spsolve(A, B * u_current);
     u_current = u_new;
   }
-  
-  outfile.close();
 }
 
 // Set the initial state of the system
@@ -163,14 +121,16 @@ void Matrix::set_initial_state(double x_c, double sigma_x, double p_x, double y_
     {
       xi = j;
 
-      re = ((xi - x_c) * (xi - x_c)) / (2 * sigma_x * sigma_x)
-         - ((yi - y_c) * (yi - y_c)) / (2 * sigma_y * sigma_y);
+      re = -(xi - x_c) * (xi * x_c) / (2 * sigma_x * sigma_x)
+           -(yi - y_c) * (yi - y_c) / (2 * sigma_y * sigma_y);
 
       im = p_x * (xi - x_c) + (yi - y_c);
 
       exponent = arma::cx_double(re, im);
 
-      U(i, j) = exp(exponent);
+      U(i, j) = std::exp(exponent);
     }
   }
+
+  S.slice(0) = U;
 }
