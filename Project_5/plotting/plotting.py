@@ -7,7 +7,7 @@ from matplotlib.animation import FuncAnimation
 plt.rc('font', size=14)
 plt.rc('axes', labelsize=16)
 
-def deviation(filename_in, save=False):
+def deviation(filename_in, T=2.5e-5, save=False):
 
     filename = filename_in + '.bin'
     out_filename = 'figures/' + filename_in + '_dev.pdf'
@@ -17,7 +17,7 @@ def deviation(filename_in, save=False):
     S = np.array(solution)
 
     N = len(S)
-    x = np.arange(N)
+    t = np.linspace(0, T, N)
     devs = np.zeros(N)
 
     for n in range(N):
@@ -29,8 +29,8 @@ def deviation(filename_in, save=False):
     abs_errs = abs(1 - devs)
 
     fig = plt.figure(figsize=(8, 4))
-    plt.plot(x, abs_errs, color='black', lw=1)
-    plt.xlabel('No. of time steps')
+    plt.plot(t, abs_errs, color='black', lw=1)
+    plt.xlabel('Time')
     plt.ylabel('Rel. error')
     plt.tight_layout()
 
@@ -103,7 +103,7 @@ def animate(filename_in, h=.005, dt=2.5e-5, save=None):
 
         plt.show()
 
-# deviation('problem_7', save=True)
+deviation('problem_7', save=True)
 deviation('problem_7_wo_potential', save=True)
 # animate('problem_7', save=True)
 # animate('problem_7')
