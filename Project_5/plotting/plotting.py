@@ -4,12 +4,13 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-def animate(filename, h=.005, dt=2.5e-5):
+def animate(filename_in, h=.005, dt=2.5e-5, save=None):
+
+    filename = filename_in + '.bin'
 
     solution = pa.cx_cube()
     solution.load(filename)
     S = np.array(solution)
-
 
     X = np.arange(0, 1 + h, h)
     Y = np.arange(0, 1 + h, h)
@@ -34,7 +35,7 @@ def animate(filename, h=.005, dt=2.5e-5):
     plt.yticks(fontsize=fontsize)
 
     cbar = fig.colorbar(img, ax=ax)
-    cbar.set_label("z(x,y,t)", fontsize=fontsize)
+    cbar.set_label('Wave intensity', fontsize=fontsize)
     cbar.ax.tick_params(labelsize=fontsize)
 
     time_txt = plt.text(0.95, 0.95, "t = {:.3f}".format(t_min), color="white",
@@ -43,8 +44,8 @@ def animate(filename, h=.005, dt=2.5e-5):
 
     def animation(i):
         # Normalize the colour scale to the current frame?
-        norm = matplotlib.cm.colors.Normalize(vmin=0.0, vmax=np.max(abs(S[i,:,:])))
-        img.set_norm(norm)
+        # norm = matplotlib.cm.colors.Normalize(vmin=0.0, vmax=np.max(abs(S[i,:,:])))
+        # img.set_norm(norm)
 
         # Update z data
         img.set_data(abs(S[i,:,:]))
@@ -55,9 +56,17 @@ def animate(filename, h=.005, dt=2.5e-5):
 
         return img
 
-    anim = FuncAnimation(fig, animation, interval=1, frames=np.arange(0, len(S[0,:,:]), 2), repeat=True, blit=0)
+    anim = FuncAnimation(fig, animation, interval=10, frames=np.arange(0, len(S[0,:,:]), 2), repeat=True, blit=0)
 
-    plt.show()
+    if save == True:
+
+        writer = matplotlib.animation.PillowWriter(fps=30)
+        anim.save('figures/' + filename_in + '.gif', writer=writer)
+
+    else:
+
+        plt.show()
+
 
 
 # solution = pa.cx_cube()
@@ -66,4 +75,4 @@ def animate(filename, h=.005, dt=2.5e-5):
 # # S = S.reshape((S.shape[1], S.shape[2], S.shape[0]))
 # print(S.shape)
 # plt.imshow(np.abs(S[0]))
-animate('problem_7.bin')
+animate('problem_7', save=True)

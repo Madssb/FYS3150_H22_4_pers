@@ -131,10 +131,10 @@ void Matrix::set_initial_state(double x_c, double sigma_x, double p_x, double y_
     {
       xi = j;
 
-      re = -(xi - x_c) * (xi * x_c) / (2 * sigma_x * sigma_x)
-           -(yi - y_c) * (yi - y_c) / (2 * sigma_y * sigma_y);
+      re = -(xi * h - x_c) * (xi * h * x_c) / (2 * sigma_x * sigma_x)
+           -(yi * h - y_c) * (yi * h - y_c) / (2 * sigma_y * sigma_y);
 
-      im = p_x * (xi - x_c) + (yi - y_c);
+      im = p_x * (xi * h - x_c) + (yi * h - y_c);
 
       exponent = arma::cx_double(re, im);
 
