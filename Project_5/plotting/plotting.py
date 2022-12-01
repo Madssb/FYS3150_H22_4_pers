@@ -37,7 +37,7 @@ def animate(filename, h=.005, dt=2.5e-5):
     cbar.set_label("z(x,y,t)", fontsize=fontsize)
     cbar.ax.tick_params(labelsize=fontsize)
 
-    time_txt = plt.text(0.95, 0.95, "t = {:.3e}".format(t_min), color="white",
+    time_txt = plt.text(0.95, 0.95, "t = {:.3f}".format(t_min), color="white",
                     horizontalalignment="right", verticalalignment="top", fontsize=fontsize)
 
 
@@ -51,7 +51,7 @@ def animate(filename, h=.005, dt=2.5e-5):
 
         # Update the time label
         current_time = t_min + i * dt
-        time_txt.set_text("t = {:.3e}".format(current_time))
+        time_txt.set_text("t = {:.3f}".format(current_time))
 
         return img
 

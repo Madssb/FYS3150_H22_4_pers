@@ -98,9 +98,19 @@ void Matrix::solve()
   // Solving the equation for each time step and saving as slice in S
   for (int i = 1; i < N; i++)
   {
-    S.slice(i) = U;
     u_current = U.as_col();
     u_new = arma::spsolve(A, B * u_current);
+
+    // Refilling u vector into U matrix
+    for (int n = 0; n < U.n_cols; n ++)
+    {
+      for (int k = 0; k < M - 2; k++)
+      {
+        U.col(n)(k) = u_new(k + n * (M - 2));
+      }
+    }
+
+    S.slice(i) = U;
     u_current = u_new;
   }
 }
@@ -131,6 +141,8 @@ void Matrix::set_initial_state(double x_c, double sigma_x, double p_x, double y_
       U(i, j) = std::exp(exponent);
     }
   }
+
+  U /= std::sqrt(arma::accu(arma::conj(U) % U));
 
   S.slice(0) = U;
 }
