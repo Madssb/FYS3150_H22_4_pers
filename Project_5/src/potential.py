@@ -61,5 +61,6 @@ def potential(n_slits, out_filename_in, spatial_step_length=.005, V_0=1e10, thic
         plt.show()
 
 # potential(2, 'zero_potential', V_0=0, save=True)
-# potential(3, '3_slits', save=True)
-potential(1, 'single_slit', save=True)
+# potential(2, 'double_slit_potential', save=True)
+# potential(3, 'triple_slit_potential', save=True)
+# potential(1, 'single_slit', save=True)
