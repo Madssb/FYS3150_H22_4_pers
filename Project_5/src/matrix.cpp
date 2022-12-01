@@ -7,8 +7,7 @@ This file contains the definition of the Matrix class
 #include <fstream>
 #include <assert.h>
 
-// Constructor that takes no. of steps in space (M) and time (N), and the
-// total time (T)
+// Constructor takes spatial and time step lentgth as well as total time
 Matrix::Matrix(double h_in, double dt_in, double T_in)
 {
   h = h_in;
@@ -142,7 +141,7 @@ void Matrix::set_initial_state(double x_c, double sigma_x, double p_x, double y_
     }
   }
 
+  // Normalize
   U /= std::sqrt(arma::accu(arma::conj(U) % U));
-
   S.slice(0) = U;
 }

@@ -4,6 +4,42 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
+plt.rc('font', size=14)
+plt.rc('axes', labelsize=16)
+
+def deviation(filename_in, save=False):
+
+    filename = filename_in + '.bin'
+    out_filename = 'figures/' + filename_in + '_dev.pdf'
+
+    solution = pa.cx_cube()
+    solution.load(filename)
+    S = np.array(solution)
+
+    N = len(S)
+    x = np.arange(N)
+    devs = np.zeros(N)
+
+    for n in range(N):
+
+        S_n = S[n, :, :]
+        dev = np.real(np.sum(np.conj(S_n) * S_n))
+        devs[n] = dev
+
+    abs_errs = abs(1 - devs)
+
+    fig = plt.figure(figsize=(8, 4))
+    plt.plot(x, abs_errs, color='black', lw=1)
+    plt.xlabel('No. of time steps')
+    plt.ylabel('Rel. error')
+    plt.tight_layout()
+
+    if save:
+
+        plt.savefig(out_filename)
+
+    plt.show()
+
 def animate(filename_in, h=.005, dt=2.5e-5, save=None):
 
     filename = filename_in + '.bin'
@@ -67,6 +103,8 @@ def animate(filename_in, h=.005, dt=2.5e-5, save=None):
 
         plt.show()
 
-animate('problem_7', save=True)
+# deviation('problem_7', save=True)
+deviation('problem_7_wo_potential', save=True)
+# animate('problem_7', save=True)
 # animate('problem_7')
-animate('problem_7_wo_potential', save=True)
+# animate('problem_7_wo_potential', save=True)
