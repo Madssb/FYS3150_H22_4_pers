@@ -27,7 +27,7 @@ def animate(filename_in, h=.005, dt=2.5e-5, save=None):
     ax = plt.gca()
 
     norm = matplotlib.cm.colors.Normalize(vmin=0.0, vmax=np.max(abs(S[0])))
-    img = ax.imshow(abs(S[0,:,:]), extent=[x_min,x_max,y_min,y_max], cmap=plt.get_cmap("viridis"), norm=norm)
+    img = ax.imshow(abs(S[0,:,:]), extent=[x_min,x_max,y_min,y_max], cmap=plt.get_cmap("afmhot"), norm=norm)
 
     plt.xlabel("x", fontsize=fontsize)
     plt.ylabel("y", fontsize=fontsize)
@@ -67,5 +67,6 @@ def animate(filename_in, h=.005, dt=2.5e-5, save=None):
 
         plt.show()
 
-# animate('problem_7', save=True)
-# animate('problem_7_wo_potential', save=True)
+animate('problem_7', save=True)
+# animate('problem_7')
+animate('problem_7_wo_potential', save=True)
