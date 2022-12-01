@@ -67,12 +67,5 @@ def animate(filename_in, h=.005, dt=2.5e-5, save=None):
 
         plt.show()
 
-
-
-# solution = pa.cx_cube()
-# solution.load('problem_7.bin')
-# S = np.array(solution)
-# # S = S.reshape((S.shape[1], S.shape[2], S.shape[0]))
-# print(S.shape)
-# plt.imshow(np.abs(S[0]))
-animate('problem_7', save=True)
+# animate('problem_7', save=True)
+# animate('problem_7_wo_potential', save=True)

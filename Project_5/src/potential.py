@@ -2,7 +2,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def potential(n_slits, spatial_step_length=.005, V_0=1e10, thickness=.02, center_length=.05, apperture=.05):
+def potential(n_slits, out_filename, spatial_step_length=.005, V_0=1e10, thickness=.02, center_length=.05, apperture=.05, save=None):
+
+    out_filename += '.dat'
 
     M = 1 / spatial_step_length + 1
     N = int(np.ceil(M - 2))
@@ -28,38 +30,14 @@ def potential(n_slits, spatial_step_length=.005, V_0=1e10, thickness=.02, center
 
                 V[i, j] = V_0
 
-    #
-    # center_walls = n_slits - 1
-    # end_length = .5 * (center_walls * center_length + n_slits * apperture)
-    #
-    # x_min = .5 * (1 - thickness)
-    # x_max = .5 * (1 + thickness)
-    #
-    # center_start = .5 * (1 - center_length)
-    # center_stop = .5 * (1 + center_length)
-    #
-    # if n_slits == 2:
-    #
-    #     for i in range(N):
-    #
-    #         yi = (i + 1) * spatial_step_length
-    #
-    #         for j in range(N):
-    #
-    #             xi = (j + 1) * spatial_step_length
-    #
-    #             if x_min < xi < x_max:
-    #                 if yi < end_length or center_start < yi < center_stop \
-    #                 or end_length + n_slits * apperture + center_length < yi:
-    #
-    #                     V[i, j] = V_0
-    if N == 9:
-        print(V)
-        print(f'M={M}, V={N}x{N}')
-    # plt.imshow(V)
-    # plt.show()
-    # np.savetxt(f'../{n_slits}_slits_{N}x{N}_potential.dat', V)
+    if save == True:
 
-potential(2)
+        np.savetxt('../' + out_filename, V)
 
-# potential(2, spatial_step_length=.1, thickness=.05, center_length=.25, apperture=.2)
+    else:
+
+        plt.imshow(V)
+        plt.show()
+
+# potential(2, 'zero_potential', V_0=0, save=True)
+potential(2, 'zero_potential', V_0=0)
