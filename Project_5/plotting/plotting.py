@@ -161,6 +161,76 @@ def colormaps_multiple(filename_in, dt=2.5e-5, save=False):
 
         plt.show()
 
+
+def colormaps(filename_in, dt=2.5e-5, save=False):
+
+    filename = filename_in + '.bin'
+
+    solution = pa.cx_cube()
+    solution.load(filename)
+    S = np.array(solution)
+
+    S_cx = abs(S)**2
+    S_real = np.real(S)
+    S_imag = np.imag(S)
+
+    S_list = np.array([S_cx, S_real, S_imag])
+    t_list = np.array([0., .001, .002])
+    savefig_names = ['complex', 'real', 'imag']
+    x_ticks = np.linspace(.2, .8, 4)
+    x_labels = ['0.2', '0.4', '0.6', '0.8']
+
+    for n in range(len(S_list)):
+
+        plt.rc('xtick', top=True)
+        plt.rc('xtick', labeltop=True)
+        plt.rc('xtick', bottom=False)
+        plt.rc('xtick', labelbottom=False)
+
+        S_n = S_list[n]
+
+        norm = matplotlib.cm.colors.Normalize(vmin=0.0, vmax=np.max(S_n[0]))
+
+        fig, axes = plt.subplots(1, 3, figsize=(12, 6), sharey=True)
+
+        for i in range(len(axes)):
+
+            ax = axes[i]
+
+            idx = int(t_list[i] / dt)
+            S_n_idx = S_n[idx, :, :]
+
+            ax.text(.95, .95, f't = {t_list[i]:.3f}', color='white', horizontalalignment='right', verticalalignment='top')
+            im = ax.imshow(S_n_idx, extent=[0., 1., 0., 1.], cmap=plt.get_cmap("afmhot"), norm=norm)
+            ax.set_xticks(x_ticks)
+            ax.set_xticklabels(x_labels)
+            ax.set_xlabel('x', labelpad=-250)
+
+        axes[0].set_ylabel('y')
+
+        fig.subplots_adjust(wspace=.005)
+        c_ax = fig.add_axes([0.125, .2, .775, .033])
+        fig.colorbar(im, cax=c_ax, orientation='horizontal', label='Probability')
+
+        if save:
+
+            plt.savefig('figures/' + savefig_names[n] + '.pdf')
+
+        else:
+
+            continue
+
+    if save:
+
+        pass
+
+    else:
+
+        plt.show()
+
+
+
+
 def probability(filename_in, out_filename_in, save=False):
 
     plt.rc('font', size=14)
@@ -194,6 +264,7 @@ def probability(filename_in, out_filename_in, save=False):
 
         plt.show()
 
+
 deviation('double_slit_long', save=True)
 deviation('no_potential', save=True)
 animate('double_slit_long', save=True)
@@ -205,3 +276,4 @@ probability('triple_slit', 'prob_triple_slit', save=True)
 probability('single_slit', 'prob_single_slit', save=True)
 animate('triple_slit', save=True)
 animate('single_slit', save=True)
+colormaps('double_slit_short', save=True)
