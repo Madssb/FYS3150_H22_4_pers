@@ -112,46 +112,48 @@ def colormaps_multiple(filename_in, dt=2.5e-5, save=False):
     solution.load(filename)
     S = np.array(solution)
 
+    S_cx = abs(S)**2
+    S_real = np.real(S)
+    S_imag = np.imag(S)
+
+    S_list = np.array([S_cx, S_real, S_imag])
+    x_ticks = np.linspace(.2, .8, 4)
+    x_labels = ['0.2', '0.4', '0.6', '0.8']
+    S_names = [r'$p_{ij}^n$', r'Re{$p_{ij}^n$}', r'Im{$p_{ij}^n$}']
+
     t_list = np.array([0., .001, .002])
 
-    fig, axes = plt.subplots(3, 3, figsize=(14, 7), sharex=True, sharey=True)
-    norm = matplotlib.cm.colors.Normalize(vmin=0.0, vmax=np.max(abs(S[0]))**2)
-    norm_real = matplotlib.cm.colors.Normalize(vmin=0.0, vmax=np.max(np.real(S[0])))
-    norm_imag = matplotlib.cm.colors.Normalize(vmin=0.0, vmax=np.max(np.imag(S[0])))
+    plt.rc('xtick', top=True)
+    plt.rc('xtick', labeltop=True)
+    plt.rc('xtick', bottom=False)
+    plt.rc('xtick', labelbottom=False)
+    fig, axes = plt.subplots(3, 3, figsize=(12, 9), sharex=True, sharey=True)
 
     for i in range(3):
 
-        ax1 = axes[0, i]
-        ax2 = axes[1, i]
-        ax3 = axes[2, i]
+        ax = axes[i, :]
+        S_n = S_list[i]
+        norm = matplotlib.cm.colors.Normalize(vmin=0.0, vmax=np.max(S_n[0]))
 
-        idx = int(t_list[i] / dt)
-        S_n = S[idx, :, :]
+        for j in range(3):
 
-        ax1.text(.95, .95, f't = {t_list[i]:.3f}', color='white', horizontalalignment='right', verticalalignment='top')
-        ax2.text(.95, .95, f't = {t_list[i]:.3f}\n' + r'Re(u$_{ij}$)', color='white', horizontalalignment='right', verticalalignment='top')
-        ax3.text(.95, .95, f't = {t_list[i]:.3f}\n' + r'Im(u$_{ij}$)', color='white', horizontalalignment='right', verticalalignment='top')
-        img1 = ax1.imshow(abs(S_n)**2, extent=[0., 1., 0., 1.], cmap=plt.get_cmap("afmhot"), norm=norm)
-        img2 = ax2.imshow(np.real(S_n), extent=[0., 1., 0., 1.], cmap=plt.get_cmap("afmhot"), norm=norm_real)
-        img3 = ax3.imshow(np.imag(S_n), extent=[0., 1., 0., 1.], cmap=plt.get_cmap("afmhot"), norm=norm_imag)
+            idx = int(t_list[j] / dt)
+            S_n_idx = S_n[idx, :, :]
 
-        ax1.set_xlabel('x')
-        ax2.set_xlabel('x')
-        ax3.set_xlabel('x')
+            ax[j].text(.95, .95, f't = {t_list[j]:.3f}\n{S_names[i]}', color='white', horizontalalignment='right', verticalalignment='top')
+            im = ax[j].imshow(S_n_idx, extent=[0., 1., 0., 1.], aspect='auto', cmap=plt.get_cmap("afmhot"), norm=norm)
+            ax[j].set_xticks(x_ticks)
+            ax[j].set_xticklabels(x_labels)
 
-        ax1.set_ylabel('y')
-        ax2.set_ylabel('y')
-        ax3.set_ylabel('y')
+        cax = fig.add_axes([0.125, .65 - (.2765 * i), .775, .01])
+        fig.colorbar(im, cax=cax, orientation='horizontal')
 
-        cbar1 =fig.colorbar(img1, ax=ax1)
-        cbar2 =fig.colorbar(img1, ax=ax2)
-        cbar3 =fig.colorbar(img1, ax=ax3)
 
-    fig.tight_layout()
-    # fig.subplots_adjust(right=0.8)
-    # cbar_ax = fig.add_axes([0.75, 0.15, 0.02, 0.7])
-    # fig.colorbar(img, cax=cbar_ax)
-    # fig.subplots_adjust(hspace=0, wspace=0)
+    fig.subplots_adjust(wspace=.007, hspace=.275)
+    fig.text(.5, .04, 'Probability', ha='center')
+    fig.text(.07, .5, 'Position in y direction', va='center', rotation='vertical')
+    fig.text(.5, .93, 'Position in x direction', ha='center')
+
 
     if save:
 
@@ -265,15 +267,15 @@ def probability(filename_in, out_filename_in, save=False):
         plt.show()
 
 
-deviation('double_slit_long', save=True)
-deviation('no_potential', save=True)
-animate('double_slit_long', save=True)
-animate('no_potential', save=True)
-animate('double_slit_short', save=True)
+# deviation('double_slit_long', save=True)
+# deviation('no_potential', save=True)
+# animate('double_slit_long', save=True)
+# animate('no_potential', save=True)
+# animate('double_slit_short', save=True)
 colormaps_multiple('double_slit_short', save=True)
-probability('double_slit_short', 'prob_double_slit', save=True)
-probability('triple_slit', 'prob_triple_slit', save=True)
-probability('single_slit', 'prob_single_slit', save=True)
-animate('triple_slit', save=True)
-animate('single_slit', save=True)
-colormaps('double_slit_short', save=True)
+# probability('double_slit_short', 'prob_double_slit', save=True)
+# probability('triple_slit', 'prob_triple_slit', save=True)
+# probability('single_slit', 'prob_single_slit', save=True)
+# animate('triple_slit', save=True)
+# animate('single_slit', save=True)
+# colormaps('double_slit_short', save=True)
