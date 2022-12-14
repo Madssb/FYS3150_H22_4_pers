@@ -1,11 +1,20 @@
+'''
+This program contains plotting functions to visualise the wave packet
+simulations.
+'''
+
 import numpy as np
 import pyarma as pa
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+from scipy.signal import find_peaks
 
 
-def deviation(filename_in, T=2.5e-5, save=False):
+def deviation(filename_in, T=0.008, save=False):
+    '''
+    Computing the total probability relative to one at each time step
+    '''
 
     plt.rc('font', size=14)
     plt.rc('axes', labelsize=16)
@@ -31,9 +40,11 @@ def deviation(filename_in, T=2.5e-5, save=False):
 
     fig = plt.figure(figsize=(8, 4))
     plt.plot(t, abs_errs, color='black', lw=1)
-    plt.xlabel('Time')
+    plt.xlabel('Time [s]')
     plt.ylabel('Rel. error')
     plt.tight_layout()
+
+    print(f'Init. err.: {abs_errs[0]:.3e}\nFinal err.:{abs_errs[-1]:.3e}')
 
     if save:
 
@@ -41,7 +52,12 @@ def deviation(filename_in, T=2.5e-5, save=False):
 
     plt.show()
 
+
 def animate(filename_in, h=.005, dt=2.5e-5, save=None):
+    '''
+    Produce animated .gif files of the wave packet traversing
+    a potential barrier
+    '''
 
     plt.rc('font', size=14)
     plt.rc('axes', labelsize=16)
@@ -105,7 +121,10 @@ def animate(filename_in, h=.005, dt=2.5e-5, save=None):
 
 
 def colormaps_multiple(filename_in, dt=2.5e-5, save=False):
-
+    '''
+    Will plot 9 subplots of the wave packet: 3 for the full probability,
+    3 for the real part of u, and 3 for the imaginary part.
+    '''
     filename = filename_in + '.bin'
 
     solution = pa.cx_cube()
@@ -119,7 +138,7 @@ def colormaps_multiple(filename_in, dt=2.5e-5, save=False):
     S_list = np.array([S_cx, S_real, S_imag])
     x_ticks = np.linspace(.2, .8, 4)
     x_labels = ['0.2', '0.4', '0.6', '0.8']
-    S_names = [r'$p_{ij}^n$', r'Re{$p_{ij}^n$}', r'Im{$p_{ij}^n$}']
+    S_names = [r'$p_{ij}^n$', r'Re{$u_{ij}^n$}', r'Im{$u_{ij}^n$}']
 
     t_list = np.array([0., .001, .002])
 
@@ -165,6 +184,10 @@ def colormaps_multiple(filename_in, dt=2.5e-5, save=False):
 
 
 def colormaps(filename_in, dt=2.5e-5, save=False):
+    '''
+    Will produce 3 subplots, so have to be run 3 times to get full
+    probability, real part of u and imaginary part of u
+    '''
 
     filename = filename_in + '.bin'
 
@@ -231,9 +254,11 @@ def colormaps(filename_in, dt=2.5e-5, save=False):
         plt.show()
 
 
-
-
 def probability(filename_in, out_filename_in, save=False):
+    '''
+    Computing and plotting the 1D probability function at time t=0.002 s,
+    measured at x=0.8
+    '''
 
     plt.rc('font', size=14)
     plt.rc('axes', labelsize=16)
@@ -253,8 +278,11 @@ def probability(filename_in, out_filename_in, save=False):
     p /= np.sum(p)
     y = np.linspace(0, 1, len(S[0]))
 
+    peaks, _ = find_peaks(p, height=.005)
+
     plt.figure(figsize=(8, 6))
     plt.plot(y, p, color='black', lw=1)
+
     plt.xlabel('y')
     plt.ylabel('Probability')
 
@@ -263,6 +291,11 @@ def probability(filename_in, out_filename_in, save=False):
         plt.savefig(out_filename)
 
     else:
+
+        print(f'Peaks for ' + out_filename_in + ':')
+
+        for i in range(len(peaks)):
+            print(f'p({y[peaks[i]]:.3f}) = {np.real(p[peaks[i]]):.3f}')
 
         plt.show()
 

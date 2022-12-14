@@ -3,6 +3,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def potential(n_slits, out_filename_in, spatial_step_length=.005, V_0=1e10, thickness=.02, center_length=.05, apperture=.05, save=None):
+    '''
+    This function will create a potential to be used in the main.cpp file.
+    It will convert lengths in x and y to indicies corresponding to the grid
+    of points.
+    '''
 
     out_filename = out_filename_in + '.dat'
 
@@ -60,7 +65,7 @@ def potential(n_slits, out_filename_in, spatial_step_length=.005, V_0=1e10, thic
         plt.imshow(V)
         plt.show()
 
-# potential(2, 'zero_potential', V_0=0, save=True)
-# potential(2, 'double_slit_potential', save=True)
-# potential(3, 'triple_slit_potential', save=True)
-# potential(1, 'single_slit', save=True)
+potential(2, 'zero_potential', V_0=0, save=True)
+potential(2, 'double_slit_potential', save=True)
+potential(3, 'triple_slit_potential', save=True)
+potential(1, 'single_slit', save=True)
