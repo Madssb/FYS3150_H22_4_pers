@@ -4,11 +4,14 @@
 *.txt
 *.exe
 *.o
+*.dat
+*.bin
 
 # Figures
 *.pdf
 *.gif
 *.png
+
 # Don't know it, don't want it
 .DS_Store
 
